@@ -121,3 +121,15 @@ test('voz: elige la más humana de cada navegador y lee frase a frase', async ()
   assert.deepEqual(frases('Hola. ¿Qué tal? Bien:  vale'), ['Hola.', '¿Qué tal?', 'Bien:', 'vale']);
   assert.deepEqual(frases('Cuesta 1.221 € al mes.'), ['Cuesta 1.221 € al mes.']);
 });
+
+test('palabras difíciles: se marcan una vez, enteras y nunca dentro de una web', async () => {
+  const { marcarTerminos, terminosEn, GLOSARIO } = await import('../assets/js/guia.js');
+  const usados = new Set();
+  const html = marcarTerminos('El IPREM y otra vez el IPREM. Entra en imv.seg-social.es para pedir el IMV.', usados);
+  assert.equal(html.match(/data-termino="IPREM"/g).length, 1);
+  assert.equal(html.match(/data-termino="IMV"/g).length, 1);
+  assert.ok(html.includes('imv.seg-social.es'));
+  assert.equal(marcarTerminos('Más IPREM.', usados), 'Más IPREM.', 'ya marcado en la misma ficha');
+  assert.deepEqual(terminosEn('empadronados'), [], 'no dentro de otra palabra');
+  for (const [k, d] of Object.entries(GLOSARIO)) assert.ok(d.length > 15 && d.length < 260 && /\.$/.test(d), `explicación de ${k}`);
+});

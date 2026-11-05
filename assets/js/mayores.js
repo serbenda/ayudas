@@ -4,7 +4,7 @@
 import { evaluar, perfilVacio, porDondeEmpezar } from './reglas.js';
 import { POR_ID, COMUNIDADES } from './ayudas.js';
 import { tramiteDe, papelesPara } from './tramites.js';
-import { DOCUMENTOS } from './guia.js';
+import { DOCUMENTOS, marcarTerminos } from './guia.js';
 import { icono } from './iconos.js';
 import { botonTelefono, esc, cajaEjemplo } from './tarjeta.js';
 import { hablar, puedeHablar } from './voz.js';
@@ -165,20 +165,22 @@ function perfil() {
 function tarjetaMayores(r, ccaa, numero) {
   const a = POR_ID[r.id];
   const t = tramiteDe(r.id, ccaa);
+  const usados = new Set();
+  const ex = (texto) => marcarTerminos(esc(texto), usados);
   return `
   <article class="ficha-mayores${r.urgente ? ' urgente' : ''}" id="m-${r.id}">
     <h3><span class="numero">${numero}</span>${esc(a.nombre)}</h3>
     ${r.importe?.texto ? `<p class="cuanto">${esc(r.importe.texto)}</p>` : ''}
-    <ul class="frases">${t.facil.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
-    ${r.estado === 'quizas' && r.comprobar.length ? `<p class="comprobar-mayores"><strong>Hay que comprobar:</strong> ${esc(r.comprobar[0])}</p>` : ''}
+    <ul class="frases">${t.facil.map((f) => `<li>${ex(f)}</li>`).join('')}</ul>
+    ${r.estado === 'quizas' && r.comprobar.length ? `<p class="comprobar-mayores"><strong>Hay que comprobar:</strong> ${ex(r.comprobar[0])}</p>` : ''}
     ${botonEscuchar(r.id)}
     <details class="como-mayores">
       <summary>Qué tengo que hacer</summary>
       ${cajaEjemplo(r.id)}
-      <ol>${t.pasos.map((p) => `<li>${esc(p)}</li>`).join('')}</ol>
+      <ol>${t.pasos.map((p) => `<li>${ex(p)}</li>`).join('')}</ol>
       ${t.telefonos.length ? `<h4>Llama a</h4><div class="llamadas">${t.telefonos.map(botonTelefono).join('')}</div>` : ''}
       ${t.documentos.length ? `<h4>Lleva estos papeles</h4><ul class="papeles">${t.documentos.map((d) => `<li>${esc(DOCUMENTOS[d].nombre)}</li>`).join('')}</ul>` : ''}
-      <p><strong>Cuándo:</strong> ${esc(t.plazo)}</p>
+      <p><strong>Cuándo:</strong> ${ex(t.plazo)}</p>
     </details>
   </article>`;
 }

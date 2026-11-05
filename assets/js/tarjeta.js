@@ -3,7 +3,7 @@
 
 import { POR_ID, COMUNIDADES, enlaceDe } from './ayudas.js';
 import { tramiteDe } from './tramites.js';
-import { DOCUMENTOS, TELEFONOS, GLOSARIO, terminosEn, tel } from './guia.js';
+import { DOCUMENTOS, TELEFONOS, GLOSARIO, terminosEn, marcarTerminos, tel } from './guia.js';
 import { icono } from './iconos.js';
 import { EJEMPLOS, TABLAS } from './ejemplos.js';
 import { umbralDe, miembros } from './reglas.js';
@@ -92,6 +92,9 @@ export function tarjeta(id, { resultado = null, ccaa = null, seguimiento, abiert
   const etiqueta = r ? (r.estado === 'si' ? 'Cumples lo principal' : 'Mira si cumples') : '';
   const textoCompleto = [a.resumen, a.cuantia, ...a.requisitos, ...t.pasos, t.plazo, t.respuesta, ...(t.ojo ?? [])].join(' ');
   const terminos = terminosEn(textoCompleto);
+  // Palabras difíciles: se pueden pulsar para ver qué significan (la primera vez que salen en la ficha)
+  const usados = new Set();
+  const ex = (texto) => marcarTerminos(esc(texto), usados);
   const seguir = seguimiento !== undefined
     ? `<label class="seguir">¿Cómo va?
         <select data-seguir="${id}">${ESTADOS_SEGUIMIENTO.map(([v, n]) => `<option value="${v}"${v === seguimiento ? ' selected' : ''}>${n}</option>`).join('')}</select>
@@ -109,23 +112,23 @@ export function tarjeta(id, { resultado = null, ccaa = null, seguimiento, abiert
       </summary>
       <div class="ayuda-detalle">
         <button type="button" class="escuchar" data-leer="${esc([a.nombre, r?.importe?.texto ?? '', ...t.facil, 'Cómo se pide.', ...t.pasos].filter(Boolean).join('. '))}">${icono('altavoz')} Escuchar esta ayuda</button>
-        ${r?.motivos.length ? `<div><h4>¿Por qué me sale?</h4><ul class="motivos">${r.motivos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul>${perfil ? barraUmbral(umbralDe(id, perfil)) : ''}</div>` : ''}
-        ${r?.comprobar.length ? `<div><h4>¿Qué tengo que comprobar?</h4><ul class="comprobar">${r.comprobar.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
-        <div><h4>¿Cuánto dan?</h4><p>${esc(a.cuantia)}</p>${id === 'deducciones-ccaa' ? bloqueDeducciones(ccaa) : ''}${id === 'renta-minima' && cuantiaRenta(ccaa) ? `<p><strong>En ${esc(COMUNIDADES.find((c) => c.id === ccaa)?.nombre ?? '')}:</strong> ${esc(cuantiaRenta(ccaa))}</p>` : ''}${barrasTabla(TABLAS[id]?.(), id === 'imv' && perfil ? Math.min(miembros(perfil), 5) - 1 : -1)}${cajaEjemplo(id)}</div>
-        <div class="solo-normal"><h4>¿Quién puede pedirla?</h4><ul>${a.requisitos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>
+        ${r?.motivos.length ? `<div><h4>¿Por qué me sale?</h4><ul class="motivos">${r.motivos.map((m) => `<li>${ex(m)}</li>`).join('')}</ul>${perfil ? barraUmbral(umbralDe(id, perfil)) : ''}</div>` : ''}
+        ${r?.comprobar.length ? `<div><h4>¿Qué tengo que comprobar?</h4><ul class="comprobar">${r.comprobar.map((m) => `<li>${ex(m)}</li>`).join('')}</ul></div>` : ''}
+        <div><h4>¿Cuánto dan?</h4><p>${ex(a.cuantia)}</p>${id === 'deducciones-ccaa' ? bloqueDeducciones(ccaa) : ''}${id === 'renta-minima' && cuantiaRenta(ccaa) ? `<p><strong>En ${esc(COMUNIDADES.find((c) => c.id === ccaa)?.nombre ?? '')}:</strong> ${esc(cuantiaRenta(ccaa))}</p>` : ''}${barrasTabla(TABLAS[id]?.(), id === 'imv' && perfil ? Math.min(miembros(perfil), 5) - 1 : -1)}${cajaEjemplo(id)}</div>
+        <div class="solo-normal"><h4>¿Quién puede pedirla?</h4><ul>${a.requisitos.map((m) => `<li>${ex(m)}</li>`).join('')}</ul></div>
         <div class="como">
           <h4>¿Cómo la pido? Paso a paso</h4>
-          <ol class="pasos-tramite">${t.pasos.map((p) => `<li>${esc(p)}</li>`).join('')}</ol>
+          <ol class="pasos-tramite">${t.pasos.map((p) => `<li>${ex(p)}</li>`).join('')}</ol>
           <p class="sin-internet">${icono('escudo')} ${esc(t.pasosAntes)}</p>
         </div>
         ${t.telefonos.length ? `<div><h4>¿A quién llamo?</h4><div class="llamadas">${t.telefonos.map(botonTelefono).join('')}</div></div>` : ''}
-        ${t.documentos.length ? `<div><h4>¿Qué papeles llevo?</h4><ul class="papeles">${t.documentos.map((d) => `<li><strong>${esc(DOCUMENTOS[d].nombre)}</strong>. ${esc(DOCUMENTOS[d].ayuda)}</li>`).join('')}</ul></div>` : ''}
+        ${t.documentos.length ? `<div><h4>¿Qué papeles llevo?</h4><ul class="papeles">${t.documentos.map((d) => `<li><strong>${esc(DOCUMENTOS[d].nombre)}</strong>. ${ex(DOCUMENTOS[d].ayuda)}</li>`).join('')}</ul></div>` : ''}
         <dl class="plazos">
-          <div><dt>¿Cuándo la pido?</dt><dd>${esc(t.plazo)}</dd></div>
-          <div><dt>¿Cuánto tardan? ¿Y si me dicen que no?</dt><dd>${esc(t.respuesta)}</dd></div>
+          <div><dt>¿Cuándo la pido?</dt><dd>${ex(t.plazo)}</dd></div>
+          <div><dt>¿Cuánto tardan? ¿Y si me dicen que no?</dt><dd>${ex(t.respuesta)}</dd></div>
         </dl>
-        ${t.ojo?.length ? `<div class="ojo"><h4>Importante</h4><ul>${t.ojo.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
-        ${terminos.length ? `<details class="glosario"><summary>Palabras difíciles de esta ayuda</summary><dl>${terminos.map((k) => `<div><dt>${esc(k)}</dt><dd>${esc(GLOSARIO[k])}</dd></div>`).join('')}</dl></details>` : ''}
+        ${t.ojo?.length ? `<div class="ojo"><h4>Importante</h4><ul>${t.ojo.map((m) => `<li>${ex(m)}</li>`).join('')}</ul></div>` : ''}
+        ${terminos.length ? `<details class="glosario"><summary>Palabras difíciles de esta ayuda</summary><dl>${terminos.map((k) => `<div><dt>${esc(k)}</dt><dd>${esc(GLOSARIO[k])}</dd></div>`).join('')}</dl><p><a href="/palabras/">Todas las palabras difíciles, explicadas</a></p></details>` : ''}
         <p class="ayuda-pie"><span>${esc(a.ambito)} · ${esc(a.organismo)}</span>${seguir}<a class="boton secundario" href="/ayuda/${id}/">Ficha para guardar<span class="oculto"> de ${esc(a.nombre)}</span></a>${enlace.url ? `<a class="boton secundario" href="${esc(enlace.url)}" rel="noopener" target="_blank">Web oficial<span class="oculto"> (${esc(enlace.texto)}, se abre en otra pestaña)</span></a>` : ''}</p>
       </div>
     </details>
