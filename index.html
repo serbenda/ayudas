@@ -135,6 +135,7 @@
               <label class="opcion"><input type="radio" name="residencia" value="no"><span>No tengo papeles</span></label>
             </div>
             <small>Algunas ayudas lo piden. Sin papeles también hay cosas a las que tienes derecho.</small>
+            <details class="porque"><summary>¿Por qué lo preguntamos?</summary><p>Así no te enseñamos ayudas que no puedes pedir, y sí las que te corresponden igualmente: médico, empadronamiento, comida y ayudas de emergencia. No se guarda ni se envía.</p></details>
           </div>
           <div class="pregunta" role="radiogroup" aria-labelledby="t-situacion">
             <span class="etiqueta" id="t-situacion">¿Cuál es tu situación?</span>
@@ -195,6 +196,7 @@
             <label for="ingresosHogar">¿Cuánto entra en casa al año, entre todos?</label>
             <span class="con-unidad"><input id="ingresosHogar" name="ingresosHogar" type="text" inputmode="decimal" autocomplete="off" placeholder="Por ejemplo, 24.000" aria-describedby="ayuda-hogar"><b aria-hidden="true">€</b></span>
             <small id="ayuda-hogar">Suma sueldos, pensiones, paro y otras rentas de todas las personas de casa, en un año. Para la mayoría de ayudas cuenta lo del año pasado.</small>
+            <details class="porque"><summary>¿Por qué lo preguntamos?</summary><p>Casi todas las ayudas tienen un límite de ingresos. Con esta cifra vemos si estás por debajo y cuánto podrías cobrar. No sale de tu navegador.</p></details>
           </div>
           <div class="pregunta" data-si="ingresos-propios">
             <label for="ingresosPropios">¿Y tú, solo lo tuyo, al año?</label>
@@ -208,6 +210,7 @@
               <label class="opcion"><input type="radio" name="patrimonio" value="alto"><span>Más</span></label>
               <label class="opcion"><input type="radio" name="patrimonio" value=""><span>Prefiero no decirlo</span></label>
             </div>
+            <details class="porque"><summary>¿Por qué lo preguntamos?</summary><p>El Ingreso Mínimo Vital y otras ayudas no se dan si hay muchos ahorros. Tu casa no cuenta.</p></details>
           </div>
           <div class="pregunta" role="radiogroup" aria-labelledby="t-vivienda">
             <span class="etiqueta" id="t-vivienda">¿Tu vivienda es…?</span>
@@ -343,6 +346,13 @@
           <div class="cifra si"><dt>Cumples lo principal</dt><dd id="n-si">0<small>Por lo que has contestado</small></dd></div>
           <div class="cifra quizas"><dt>Mira si cumples</dt><dd id="n-quizas">0<small>Depende de algo que hay que comprobar</small></dd></div>
         </dl>
+        <section class="dinero" id="dinero" aria-labelledby="t-dinero" hidden>
+          <h3 id="t-dinero">Lo que podría entrar en casa</h3>
+          <p class="dinero-total" id="dinero-total"></p>
+          <div class="dinero-barra" id="dinero-barra" role="img"></div>
+          <ul class="dinero-leyenda" id="dinero-leyenda"></ul>
+          <p class="nota">Solo suma las ayudas en las que cumples lo principal y que se pueden cobrar a la vez. El IMV descuenta lo que ya cobras de otras. Es una estimación: la cifra real la da cada organismo.</p>
+        </section>
         <div class="acciones">
           <div class="chips" role="group" aria-label="Filtrar">
             <button type="button" data-filtro="todas" aria-pressed="true">Todas</button>
@@ -369,6 +379,7 @@
       </div>
       <p class="nota">«Enviar a un familiar» manda solo la lista de ayudas y un enlace con los pasos. No envía tus respuestas.</p>
       <div class="aviso" style="margin-top:1.75rem">
+        <p><strong>Vuelve a mirarlo cada año</strong> o cuando cambie algo en casa: las cifras suben cada enero y tu situación también cambia.</p>
         <p><strong>Es una orientación, no una resolución.</strong> Quien decide si te corresponde una ayuda es el organismo que la gestiona, con tus datos reales. Las cifras son las de 2026; algunas ayudas dependen de convocatorias que abren y cierran.</p>
         <p>Si dudas, los <strong>servicios sociales de tu ayuntamiento</strong> te pueden orientar gratis. <a href="catalogo/">Ver todas las ayudas</a>.</p>
       </div>

@@ -557,7 +557,7 @@ section + .empezar { margin-top: 1.75rem; }
 }
 
 /* ── Portada más cálida: héroe con ilustración, confianza y temas ───── */
-:root { --calido: #f6d7b8; --calido-fuerte: #c8692b; --s-smi: #2a78d6; --s-pnc: #eb6834; --s-imv: #1baf7a; --s-iprem: #eda100; }
+:root { --calido: #f6d7b8; --calido-fuerte: #a14e16; --s-smi: #2a78d6; --s-pnc: #eb6834; --s-imv: #1baf7a; --s-iprem: #eda100; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) { --calido: #4a3322; --calido-fuerte: #e8935a; --s-smi: #3987e5; --s-pnc: #d95926; --s-imv: #199e70; --s-iprem: #c98500; }
 }
@@ -657,3 +657,64 @@ section + .empezar { margin-top: 1.75rem; }
 [data-contraste] .ayuda { border-bottom: 2px solid var(--tinta); }
 [data-contraste] .tenue, [data-contraste] small, [data-contraste] .nota, [data-contraste] .entradilla { color: var(--tinta); }
 [data-contraste] .ilustracion { filter: grayscale(1) contrast(1.4); }
+
+/* ── Explicar mejor: por qué preguntamos, ejemplos, umbrales y tablas ── */
+.porque { font-size: 0.9rem; }
+.porque > summary { cursor: pointer; color: var(--acento); font-weight: 600; width: max-content; max-width: 100%; }
+.porque p { margin: 0.4rem 0 0; color: var(--tenue); max-width: 46ch; }
+
+.ayuda-detalle h4 { font-size: 1rem; text-transform: none; letter-spacing: 0; color: var(--tinta); margin-bottom: 0.45rem; }
+.plazos dt { font-size: 1rem; text-transform: none; letter-spacing: 0; color: var(--tinta); }
+
+.umbral { margin: 0.9rem 0 0; padding: 0.85rem 1rem; background: var(--papel); border-radius: var(--radio); }
+.umbral figcaption { font-size: 0.92rem; color: var(--tenue); }
+.umbral figcaption strong { color: var(--tinta); }
+.umbral-pista { position: relative; height: 1.1rem; margin: 1.6rem 0 0.5rem; background: var(--linea); border-radius: 999px; }
+.umbral-tuyo { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: var(--acento); }
+.umbral.fuera .umbral-tuyo { background: var(--quizas); }
+.umbral-limite { position: absolute; top: -0.45rem; bottom: -0.45rem; width: 3px; margin-left: -1.5px; background: var(--tinta); border-radius: 2px; }
+.umbral-limite i { position: absolute; bottom: calc(100% + 0.15rem); left: 50%; transform: translateX(-50%); font-style: normal; font-size: 0.75rem; font-weight: 700; white-space: nowrap; color: var(--tinta); }
+.umbral p { margin: 0; font-weight: 700; font-size: 0.95rem; }
+.umbral.dentro p { color: var(--acento); }
+.umbral.fuera p { color: var(--quizas); }
+
+.tabla-barras { margin: 0.9rem 0 0; }
+.tabla-barras figcaption { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.5rem; }
+.tabla-barras ul { list-style: none; padding: 0 !important; margin: 0; display: grid; gap: 0.35rem !important; }
+.tabla-barras li { display: grid; grid-template-columns: minmax(7rem, 11rem) 1fr auto; align-items: center; gap: 0.6rem; font-size: 0.9rem; }
+.tb-pista { height: 0.8rem; background: var(--linea); border-radius: 999px; overflow: hidden; }
+.tb-barra { display: block; height: 100%; background: var(--acento); border-radius: 999px; opacity: 0.55; }
+.tabla-barras li.tu-caso .tb-barra { opacity: 1; }
+.tabla-barras li.tu-caso { font-weight: 700; }
+.tabla-barras em { font-style: normal; color: var(--acento); font-weight: 600; }
+.tabla-barras strong { font-variant-numeric: tabular-nums; }
+@media (max-width: 30rem) { .tabla-barras li { grid-template-columns: 1fr auto; } .tb-pista { grid-column: 1 / -1; grid-row: 2; } }
+
+.ejemplo { margin-top: 0.9rem; padding: 0.9rem 1.1rem; border-radius: var(--radio); background: var(--superficie); border: 1px dashed var(--calido-fuerte); }
+.ejemplo h5 { margin: 0 0 0.35rem; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--calido-fuerte); }
+.ej-quien { font-weight: 600; }
+.ejemplo ul { margin: 0.4rem 0; color: var(--tenue); }
+.ej-resultado { font-weight: 800; color: var(--tinta); }
+
+/* Pasos como una línea de tiempo */
+.pasos-tramite { list-style: none; padding-left: 0 !important; counter-reset: paso-tramite; gap: 0 !important; }
+.pasos-tramite li { counter-increment: paso-tramite; position: relative; padding: 0 0 1rem 2.6rem !important; min-height: 2.2rem; }
+.pasos-tramite li::before {
+  content: counter(paso-tramite); position: absolute; left: 0; top: -0.1rem; width: 1.9rem; height: 1.9rem; border-radius: 50%;
+  display: grid; place-items: center; background: var(--acento); color: var(--papel); font-weight: 800; font-size: 0.95rem;
+}
+.pasos-tramite li:not(:last-child)::after { content: ''; position: absolute; left: 0.9rem; top: 1.9rem; bottom: 0.1rem; width: 2px; background: var(--acento-suave); }
+
+/* Lo que podría entrar en casa */
+.dinero { background: var(--superficie); border: 1px solid var(--linea); border-radius: calc(var(--radio) * 2); padding: 1.1rem 1.25rem 1.2rem; }
+.dinero h3 { font-size: 1.15rem; }
+.dinero-total { font-size: 1.15rem; margin: 0.4rem 0 0.9rem; }
+.dinero-total strong { color: var(--acento); font-stretch: 110%; }
+.dinero-barra { display: flex; gap: 2px; height: 1.6rem; border-radius: 999px; overflow: hidden; }
+.dinero-barra span { min-width: 6px; }
+.dinero-barra .ya { background-image: repeating-linear-gradient(45deg, transparent 0 6px, rgb(0 0 0 / 0.08) 6px 12px) !important; }
+.dinero-leyenda { list-style: none; padding: 0; margin: 0.9rem 0 0.5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 0.4rem 1.25rem; font-size: 0.92rem; }
+.dinero-leyenda li { display: flex; align-items: baseline; gap: 0.4rem; flex-wrap: wrap; }
+.dinero-leyenda i { width: 0.8rem; height: 0.8rem; border-radius: 3px; flex: none; align-self: center; }
+.dinero-leyenda i.anual { background: transparent; border: 2px solid var(--acento); }
+.dinero-leyenda small { color: var(--tenue); }
