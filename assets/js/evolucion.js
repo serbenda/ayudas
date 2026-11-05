@@ -50,7 +50,7 @@ export function pintarEvolucion(caja) {
     <div class="subidas">${series.map((s) => `<div class="subida"><span><i class="s-${s.id}"></i>${esc(s.nombre)}</span><strong>${subida(s) > 0 ? '+' : ''}${subida(s)} %</strong><small>desde ${años[s.valores.findIndex((v) => v != null)]}</small></div>`).join('')}</div>
     <details class="tabla-datos">
       <summary>Ver los datos en una tabla</summary>
-      <div class="tabla-scroll"><table>
+      <div class="tabla-scroll" tabindex="0" role="region" aria-label="Datos del gráfico, año a año"><table>
         <thead><tr><th scope="col">Año</th>${series.map((s) => `<th scope="col">${esc(s.nombre)}</th>`).join('')}</tr></thead>
         <tbody>${años.map((a, i) => `<tr><th scope="row">${a}</th>${series.map((s) => `<td>${s.valores[i] == null ? '—' : euros(s.valores[i])}</td>`).join('')}</tr>`).join('')}</tbody>
       </table></div>
