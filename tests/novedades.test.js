@@ -28,7 +28,8 @@ test('Madrid enseña sus ayudas propias y las de la capital', () => {
   const m = ayudasDe('madrid');
   assert.ok(m.propias.includes('rmi-madrid') && m.capital.includes('tarjeta-familias'));
   assert.ok(!m.comunes.includes('renta-minima'));
-  assert.equal(ayudasDe('galicia').propias.length, 0);
+  assert.ok(ayudasDe('galicia').propias.includes('tarxeta-benvida'));
+  assert.equal(ayudasDe('ceuta').propias.length, 0);
 });
 
 test('nuevas ayudas: autónomos, retornados, vivienda y salud', () => {
@@ -132,4 +133,22 @@ test('palabras difíciles: se marcan una vez, enteras y nunca dentro de una web'
   assert.equal(marcarTerminos('Más IPREM.', usados), 'Más IPREM.', 'ya marcado en la misma ficha');
   assert.deepEqual(terminosEn('empadronados'), [], 'no dentro de otra palabra');
   for (const [k, d] of Object.entries(GLOSARIO)) assert.ok(d.length > 15 && d.length < 260 && /\.$/.test(d), `explicación de ${k}`);
+});
+
+test('ayudas propias de cada comunidad: ficha, regla, pasos y salen solo allí', async () => {
+  const { AYUDAS_CCAA } = await import('../assets/js/ayudas-ccaa.js');
+  const comunes = new Set(['madrid', 'ceuta', 'melilla']);
+  const conPropia = new Set(AYUDAS_CCAA.map((a) => a.ccaa));
+  for (const c of COMUNIDADES) if (!comunes.has(c.id)) assert.ok(conPropia.has(c.id), `${c.id} sin ayudas propias`);
+  const familia = { bebe: true, hijos: { menor3: 1, de3a5: 0, de6a17: 1 }, familiaNumerosa: 'especial', monoparental: true, pension: 'pnc', situacion: 'cuenta-ajena', ingresosHogar: 20000 };
+  for (const a of AYUDAS_CCAA) {
+    assert.ok(POR_ID[a.id] && tramiteDe(a.id, a.ccaa).pasos.length >= 2, a.id);
+    assert.ok(/^https:\/\//.test(a.enlace.url), a.id);
+    const otra = a.ccaa === 'galicia' ? 'rioja' : 'galicia';
+    assert.ok(!ids({ ...familia, ccaa: otra }).includes(a.id), `${a.id} no debe salir en ${otra}`);
+  }
+  assert.ok(ids({ ...familia, ccaa: 'galicia' }).includes('tarxeta-benvida'));
+  assert.ok(ids({ ...familia, ccaa: 'pais-vasco' }).includes('ayuda-hijos-euskadi'));
+  assert.ok(ids({ ...familia, ccaa: 'canarias' }).includes('complemento-pnc-canarias'));
+  assert.ok(ids({ ...familia, ccaa: 'murcia' }).includes('familias-especiales-murcia'));
 });
