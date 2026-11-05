@@ -235,7 +235,7 @@ function showQuestion(i) {
     </div>
     <h2 class="question-large" id="question" tabindex="-1">${esc(q.text)}</h2>
     ${q.help ? `<p class="question-help">${esc(q.help)}</p>` : ''}
-    ${listenButton('pregunta')}
+    ${listenButton('question')}
     ${options}
     <div class="browse">
       ${i > 0 ? '<button type="button" class="button secondary large" data-back>← Volver</button>' : ''}
@@ -252,11 +252,11 @@ box.addEventListener('click', (e) => {
   const b = e.target.closest('button');
   if (!b || !q) return;
   if (b.dataset.listen) return read(box.dataset.text);
-  if ('volver' in b.dataset) {
+  if ('back' in b.dataset) {
     const previous = registerHistory.pop() ?? 0;
     return showQuestion(previous);
   }
-  if ('saltar' in b.dataset) {
+  if ('skip' in b.dataset) {
     delete answers[q.id];
   } else if (b.dataset.fieldValue !== undefined) {
     answers[q.id] = b.dataset.fieldValue;
@@ -362,15 +362,15 @@ result.addEventListener('click', (e) => {
     const t = procedureOf(b.dataset.listen, profile().region);
     return read([BY_ID[b.dataset.listen].name, card.querySelector('.how-much')?.textContent ?? '', ...t.easy, 'Qué tengo que hacer.', ...t.steps].join('. '));
   }
-  if ('compartir' in b.dataset) {
+  if ('share' in b.dataset) {
     const ids = [...result.querySelectorAll('.senior-card')].map((f) => f.id.replace(/^m-/, ''));
     return share(ids);
   }
-  if ('imprimir' in b.dataset) {
+  if ('print' in b.dataset) {
     result.querySelectorAll('details').forEach((d) => (d.open = true));
     return print();
   }
-  if ('cambiar' in b.dataset) {
+  if ('change' in b.dataset) {
     result.hidden = true;
     box.hidden = false;
     registerHistory = [];
@@ -384,5 +384,5 @@ document.getElementById('start').addEventListener('click', () => {
   box.hidden = false;
   showQuestion(0);
 });
-document.querySelector('[data-listen="bienvenida"]')?.addEventListener('click', () => read(document.getElementById('welcome').innerText));
-if (!canSpeak) document.querySelector('[data-listen="bienvenida"]')?.remove();
+document.querySelector('[data-listen="welcome"]')?.addEventListener('click', () => read(document.getElementById('welcome').innerText));
+if (!canSpeak) document.querySelector('[data-listen="welcome"]')?.remove();
