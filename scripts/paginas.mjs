@@ -10,6 +10,7 @@ import { RENTA_CCAA } from '../assets/js/comunidades.js';
 import { panelDe } from '../assets/js/panel-ccaa.js';
 import { IDIOMAS, FRASE } from './idiomas.mjs';
 import { icono } from '../assets/js/iconos.js';
+import { enlacesIdiomas } from '../assets/js/banderas.js';
 
 const SALIDA = process.argv[2] ?? '_site';
 const WEB = 'https://ayudas.bendi.dev';
@@ -115,7 +116,7 @@ for (const [codigo, t] of Object.entries(IDIOMAS)) {
     .replace(/<div class="envoltorio barra">[\s\S]*?<\/div>\n/, '')
     .replace(/<footer class="envoltorio pie">[\s\S]*?<\/footer>/, `<footer class="envoltorio pie" lang="${t.lang}">
     <p>${esc(t.nota)} <a href="/fuentes/#t-error">${esc(t.aviso)}</a>.</p>
-    <p lang="es">${otrosIdiomas(codigo)}</p>
+    <nav class="idiomas-pie" aria-label="${esc(t.otros)}"><p>${esc(t.otros)}</p>${enlacesIdiomas('/', codigo)}</nav>
   </footer>`)
     .replace(/<main class="envoltorio">[\s\S]*?<\/main>/, `<main class="envoltorio guia-idioma">
     <section aria-labelledby="titular">
@@ -142,12 +143,6 @@ for (const [codigo, t] of Object.entries(IDIOMAS)) {
   writeFileSync(join(carpeta, 'index.html'), html);
 }
 
-function otrosIdiomas(actual) {
-  return [['es', 'Español', '/'], ...Object.entries(IDIOMAS).map(([c, o]) => [o.lang, o.nombre, `/${c}/`])]
-    .filter(([c]) => c !== (IDIOMAS[actual]?.lang ?? actual))
-    .map(([c, n, u]) => `<a href="${u}" hreflang="${c}" lang="${c}">${esc(n)}</a>`)
-    .join(' · ');
-}
 
 writeFileSync(join(SALIDA, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
