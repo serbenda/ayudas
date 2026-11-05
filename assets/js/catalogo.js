@@ -13,6 +13,8 @@ const chips = document.getElementById('categorias');
 const CLAVE_CCAA = 'ayudas:ccaa';
 
 let tema = new URLSearchParams(location.search).get('tema') ?? 'todas';
+// Lista enviada por alguien («Enviar a un familiar»): solo esas ayudas, en ese orden
+const enviadas = (new URLSearchParams(location.search).get('ver') ?? '').split(',').filter((id) => AYUDAS.some((a) => a.id === id));
 
 for (const c of COMUNIDADES) selectCcaa.add(new Option(c.nombre, c.id));
 try {
@@ -31,7 +33,18 @@ chips.addEventListener('click', (e) => {
 // Busca sin tildes ni mayúsculas
 const normal = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 
+function pintarEnviadas() {
+  const ccaa = selectCcaa.value || null;
+  document.getElementById('titular').textContent = 'Ayudas que te han enviado.';
+  document.querySelector('.entradilla').innerHTML = 'Alguien te ha mandado esta lista. Pulsa cada ayuda para ver <strong>cómo se pide, paso a paso</strong>. <a href="./">Ver todas las ayudas</a>.';
+  document.querySelector('.filtros .buscador').hidden = true;
+  chips.hidden = true;
+  cuantas.textContent = `${enviadas.length} ${enviadas.length === 1 ? 'ayuda' : 'ayudas'}`;
+  lista.innerHTML = `<ul class="lista-ayudas">${enviadas.map((id) => tarjeta(id, { ccaa })).join('')}</ul>`;
+}
+
 function pintar() {
+  if (enviadas.length) return pintarEnviadas();
   const q = normal(buscar.value.trim());
   const ccaa = selectCcaa.value || null;
   const filtradas = AYUDAS.filter((a) => (tema === 'todas' || a.categoria === tema) && (!q || normal([a.nombre, a.resumen, a.cuantia, a.organismo, ...a.requisitos, ...(TRAMITES[a.id]?.facil ?? [])].join(' ')).includes(q)));

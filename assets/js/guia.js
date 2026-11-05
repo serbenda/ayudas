@@ -22,6 +22,8 @@ export const DOCUMENTOS = {
   tituloFN: { nombre: 'Título de familia numerosa', ayuda: 'El carné en vigor.' },
   informeEmbarazo: { nombre: 'Informe médico del embarazo', ayuda: 'Con la semana de embarazo y la fecha prevista de parto.' },
   cartaPension: { nombre: 'Carta de tu pensión', ayuda: 'La de la Seguridad Social con lo que cobras.' },
+  justificanteImv: { nombre: 'Justificante de haber pedido el IMV', ayuda: 'El resguardo que te dan al pedir el Ingreso Mínimo Vital.' },
+  extractos: { nombre: 'Movimientos del banco de los 2 últimos meses', ayuda: 'De todas las cuentas de las personas que viven contigo.' },
   ordenProteccion: { nombre: 'Orden de protección o informe', ayuda: 'O un informe de servicios sociales o del centro de la mujer. No hace falta denuncia para todo.' },
 };
 
@@ -39,6 +41,9 @@ export const TELEFONOS = {
   citaAeat: { numero: '91 290 13 40', texto: 'Cita previa de Hacienda', cuando: 'Para la renta y las deducciones.' },
   madrid012: { numero: '012', texto: 'Comunidad de Madrid', cuando: 'Información de todas sus ayudas.' },
   madridPnc: { numero: '91 392 56 86', texto: 'Pensiones no contributivas (Madrid)', cuando: 'Información sobre tu solicitud.' },
+  andalucia: { numero: '955 012 012', texto: 'Junta de Andalucía', cuando: 'Información de sus ayudas. También el 012.' },
+  cataluna: { numero: '012', texto: 'Generalitat de Catalunya', cuando: 'Gratis. Para pedir cita, dudas y ver cómo va tu trámite.', gratis: true },
+  valencia: { numero: '012', texto: 'Generalitat Valenciana', cuando: 'Información de sus ayudas.' },
   linea010: { numero: '010', texto: 'Ayuntamiento de Madrid (Línea Madrid)', cuando: 'Desde fuera de Madrid: 91 480 00 10.' },
   mayoresMadrid: { numero: '900 111 065', texto: 'Línea para mayores de 65 (Ayuntamiento de Madrid)', cuando: 'Gratis, las 24 horas. Información y trámites sin salir de casa.', gratis: true },
 };

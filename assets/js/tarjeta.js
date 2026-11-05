@@ -50,6 +50,7 @@ export function tarjeta(id, { resultado = null, ccaa = null, seguimiento, abiert
         <p class="ayuda-resumen">${r ? `<span class="estado ${r.estado}">${etiqueta}</span> ` : ''}${marcaSeguimiento}<span class="solo-normal">${esc(a.resumen)}</span><span class="solo-facil">${t.facil.map(esc).join(' ')}</span></p>
       </summary>
       <div class="ayuda-detalle">
+        <button type="button" class="escuchar" data-leer="${esc([a.nombre, r?.importe?.texto ?? '', ...t.facil, 'Cómo se pide.', ...t.pasos].filter(Boolean).join('. '))}">${icono('altavoz')} Escuchar esta ayuda</button>
         ${r?.motivos.length ? `<div><h4>Por qué te sale</h4><ul class="motivos">${r.motivos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
         ${r?.comprobar.length ? `<div><h4>Qué falta comprobar</h4><ul class="comprobar">${r.comprobar.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
         <div><h4>Cuánto da en 2026</h4><p>${esc(a.cuantia)}</p></div>

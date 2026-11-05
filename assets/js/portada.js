@@ -9,6 +9,7 @@ import { leerNumero } from './formato.js';
 import { icono } from './iconos.js';
 import { tarjeta, botonTelefono, esc } from './tarjeta.js';
 import { pintarEvolucion } from './evolucion.js';
+import { compartir } from './compartir.js';
 
 const form = document.getElementById('cuestionario');
 const pasos = [...form.querySelectorAll('.paso')];
@@ -306,6 +307,11 @@ for (const b of document.querySelectorAll('[data-filtro]')) {
 
 document.getElementById('cambiar').addEventListener('click', () => irA(1));
 document.getElementById('imprimir').addEventListener('click', () => print());
+document.getElementById('compartir').addEventListener('click', () => {
+  const p = leerPerfil();
+  const ids = porDondeEmpezar(evaluar(p), 99).concat(evaluar(p)).map((r) => r.id).filter((id, i, a) => a.indexOf(id) === i);
+  if (ids.length) compartir(ids);
+});
 document.getElementById('borrar').addEventListener('click', () => {
   form.reset();
   personasCaja.replaceChildren();

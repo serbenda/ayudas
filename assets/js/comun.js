@@ -1,5 +1,10 @@
 // Código común a todas las páginas: contador de visitas y enlaces para avisar de errores.
 
+// Funciona sin conexión e instalable en el móvil: guarda la web en el navegador
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  navigator.serviceWorker.register(new URL('../../sw.js', import.meta.url), { scope: new URL('../../', import.meta.url).pathname }).catch(() => {});
+}
+
 // Visitas con GoatCounter: sin cookies ni datos personales. Solo en la web publicada.
 // Las rutas se cuentan como /ayudas/… para que no se mezclen con las de bendi.dev en el panel de visitas.
 // Solo se cuenta la página, nunca las respuestas del cuestionario.
@@ -50,4 +55,40 @@ if (botonFacil) {
     } catch {}
     pintarFacil();
   });
+}
+
+// Alto contraste: negro sobre blanco (o al revés en modo oscuro), bordes gruesos y enlaces subrayados
+const botonContraste = document.getElementById('contraste');
+if (botonContraste) {
+  const pintar = () => botonContraste.setAttribute('aria-pressed', String('contraste' in document.documentElement.dataset));
+  pintar();
+  botonContraste.addEventListener('click', () => {
+    const activo = !('contraste' in document.documentElement.dataset);
+    if (activo) document.documentElement.dataset.contraste = '';
+    else delete document.documentElement.dataset.contraste;
+    try {
+      localStorage.setItem('ayudas:contraste', activo ? '1' : '0');
+    } catch {}
+    pintar();
+  });
+}
+
+// Leer en voz alta: cualquier botón con data-leer lee su texto
+if ('speechSynthesis' in window) {
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-leer]');
+    if (!b) return;
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+      return;
+    }
+    const u = new SpeechSynthesisUtterance(b.dataset.leer);
+    u.lang = 'es-ES';
+    u.rate = 0.9;
+    const voz = speechSynthesis.getVoices().find((v) => v.lang?.startsWith('es'));
+    if (voz) u.voice = voz;
+    speechSynthesis.speak(u);
+  });
+} else {
+  document.documentElement.classList.add('sin-voz');
 }

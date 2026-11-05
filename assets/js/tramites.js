@@ -44,6 +44,29 @@ export const TRAMITES = {
   'renta-minima': {
     facil: ['Tu comunidad tiene su propia ayuda para quien no tiene casi ingresos.', 'Se pide en los servicios sociales.'],
     pasos: ['Pide cita en los servicios sociales de tu ayuntamiento.', 'Llévate los papeles de la lista.', 'La trabajadora social te ayuda a rellenar la solicitud.'],
+    pasosCcaa: {
+      andalucia: [
+        'En Andalucía se llama Renta Mínima de Inserción Social (RMISA).',
+        'No se puede cobrar a la vez que el IMV, salvo urgencia social. En servicios sociales te dicen cuál te conviene.',
+        'Pide cita en los servicios sociales comunitarios de tu ayuntamiento: te ayudan a pedirla.',
+        'Se presenta en la web de la Junta de Andalucía (con certificado o Cl@ve) o en una oficina de registro con cita.',
+      ],
+      cataluna: [
+        'En Cataluña se llama Renda Garantida de Ciutadania (RGC).',
+        'Primero pide el Ingreso Mínimo Vital: te piden el justificante.',
+        'Pide cita llamando al 012 (gratis) para ir a una oficina de atención ciudadana. Allí te la rellenan en media hora.',
+        'También se puede pedir por internet en ciutada.esocial.gencat.cat con certificado o idCAT Mòbil, o por videollamada con cita.',
+        'Lleva los movimientos del banco de los 2 últimos meses de todas las personas de casa.',
+      ],
+      valencia: [
+        'En la Comunitat Valenciana se llama Renta Valenciana de Inclusión.',
+        'Pide cita en los servicios sociales de tu ayuntamiento: se pide allí.',
+        'Te dicen qué papeles necesitas según tu caso.',
+      ],
+    },
+    telefonosCcaa: { andalucia: ['andalucia'], cataluna: ['cataluna'], valencia: ['valencia'] },
+    documentosCcaa: { cataluna: ['dni', 'justificanteImv', 'iban', 'extractos'] },
+    respuestaCcaa: { cataluna: 'Tienen hasta 8 meses. Si no contestan en ese plazo, se entiende concedida.' },
     documentos: ['dni', 'padronHistorico', 'libroFamilia', 'ingresos', 'iban'],
     plazo: 'Cuando quieras.',
     respuesta: 'Depende de tu comunidad. Si te dicen que no, pregunta en servicios sociales cómo reclamar.',
@@ -344,8 +367,18 @@ export const TRAMITES = {
       'La Comunidad te llama para la visita de valoración en casa.',
       'Te llega la carta con el grado y el plan de ayudas (PIA).',
     ],
+    pasosCcaa: {
+      andalucia: [
+        'Pide a tu médico de cabecera el «informe sobre condiciones de salud» para la dependencia.',
+        'Preséntala en la web de la Junta de Andalucía (con certificado o Cl@ve) o en una oficina de registro con cita previa.',
+        'Te llaman para una única visita en casa.',
+        'Recibes una sola carta con el grado y el plan de ayudas (PIA). De media tarda cerca de un año; menos en urgencias, niños pequeños y ELA.',
+        'Dudas: 012 o 955 012 012.',
+      ],
+    },
     telefonos: [],
     telefonosMadrid: ['madrid012', 'linea010'],
+    telefonosCcaa: { andalucia: ['andalucia'], cataluna: ['cataluna'], valencia: ['valencia'] },
     documentos: ['dni', 'padronHistorico', 'informeSalud', 'informeSocial', 'iban'],
     plazo: 'Cuanto antes: tarda meses.',
     respuesta: 'Tienen 6 meses. Si no estás de acuerdo con el grado, presenta un «recurso de alzada» en un mes.',
@@ -625,11 +658,12 @@ export const TRAMITES = {
 export function tramiteDe(id, ccaa) {
   const t = TRAMITES[id] ?? { facil: [], pasos: [], documentos: [] };
   const madrid = ccaa === 'madrid';
-  const telefonos = (madrid && t.telefonosMadrid) || t.telefonos || [];
   return {
     ...t,
-    pasos: (madrid && t.pasosMadrid) || t.pasos,
-    telefonos,
+    pasos: t.pasosCcaa?.[ccaa] || (madrid && t.pasosMadrid) || t.pasos || [],
+    telefonos: t.telefonosCcaa?.[ccaa] || (madrid && t.telefonosMadrid) || t.telefonos || [],
+    documentos: t.documentosCcaa?.[ccaa] || t.documentos || [],
+    respuesta: t.respuestaCcaa?.[ccaa] || t.respuesta,
     pasosAntes: SIN_INTERNET,
   };
 }

@@ -9,9 +9,11 @@
   <link rel="canonical" href="https://ayudas.bendi.dev/mayores/">
   <meta name="theme-color" content="#f3f1ec" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#12161e" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
   <link rel="stylesheet" href="../vendor/fuentes/archivo.css">
   <link rel="stylesheet" href="../assets/css/estilos.css">
-  <script>try{if(localStorage.getItem('ayudas:facil')==='1')document.documentElement.dataset.facil=''}catch(e){}</script>
+  <script>try{var d=document.documentElement.dataset;if(localStorage.getItem('ayudas:facil')==='1')d.facil='';if(localStorage.getItem('ayudas:contraste')==='1')d.contraste=''}catch(e){}</script>
 </head>
 <body class="pagina-mayores">
   <header class="envoltorio cabecera">
@@ -32,6 +34,7 @@
   <div class="envoltorio barra">
     <a class="boton urgente" href="../#ayuda-hoy">Necesito ayuda hoy</a>
     <button type="button" class="boton secundario" id="facil" aria-pressed="false">Letra grande y fácil</button>
+    <button type="button" class="boton secundario" id="contraste" aria-pressed="false">Alto contraste</button>
   </div>
 
   <main class="envoltorio">

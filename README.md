@@ -101,6 +101,13 @@ Todas las cifras están en un único sitio, [`assets/js/cifras.js`](assets/js/ci
 | Bono social de la luz | 42,5 % / 57,5 % | MITECO (vuelve al 35 % / 50 % en 2027 si no se prorroga) |
 | Alquiler joven | hasta 300 €/mes | Plan Estatal de Vivienda 2026-2030 |
 
+## Accesibilidad
+
+- **Letra grande y fácil**, **alto contraste** y **escuchar** (lectura en voz alta) en todas las páginas.
+- Se instala en el móvil como una app y funciona sin conexión.
+- **Enviar a un familiar**: manda solo la lista de ayudas y un enlace con los pasos (`/catalogo/?ver=…`), nunca las respuestas.
+- Pasos propios para la Comunidad de Madrid, Andalucía, Cataluña y la Comunitat Valenciana en las ayudas que gestionan ellas.
+
 ## Privacidad
 
 - Las reglas se ejecutan en el navegador. **No hay servidor que reciba las respuestas.**
@@ -134,9 +141,9 @@ npm run dev    # sirve la web en local
 
 La Action [`publicar.yml`](.github/workflows/publicar.yml):
 
-1. En cada **PR a `main`**: pasa los tests y prepara la web (sin publicar).
+1. En cada **PR a `main`**: pasa los tests de reglas y los de navegador (axe WCAG 2.2 AA, sin desbordar, sin errores) en móvil, tablet y ordenador, claro, oscuro y alto contraste.
 2. En cada **push a `main`**: además, la publica en GitHub Pages, con la fuente incluida y una versión en cada CSS/JS para que nadie mezcle ficheros nuevos y viejos.
-3. **Cada lunes**: comprueba los enlaces oficiales y abre un issue si alguno se ha roto (y lo cierra cuando vuelven a funcionar).
+3. **Cada lunes**: comprueba los enlaces oficiales (issue si alguno se rompe) y **mira el BOE de la semana**: si sale algo sobre pensiones, SMI, IPREM, IMV, bono social, dependencia, paro, vivienda o copago, abre un issue para revisar las cifras.
 
 Se trabaja en la rama `development` y se lleva a `main` con una PR.
 

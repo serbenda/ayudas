@@ -637,3 +637,23 @@ section + .empezar { margin-top: 1.75rem; }
 .tabla-datos th:first-child { text-align: left; }
 .explica { margin-top: 1.25rem; display: grid; gap: 0.6rem; max-width: var(--medida); }
 .explica p { margin: 0; padding: 0.8rem 1rem; background: var(--superficie); border-radius: var(--radio); border-left: 4px solid var(--calido-fuerte); }
+
+/* ── Leer en voz alta y alto contraste ─────────────────────────────── */
+.sin-voz [data-leer], .sin-voz .escuchar { display: none !important; }
+.ayuda-detalle > .escuchar { justify-self: start; margin-top: 0; }
+#contraste[aria-pressed='true'] { background: var(--tinta); color: var(--papel); }
+:root[data-contraste] {
+  --papel: #ffffff; --superficie: #ffffff; --tinta: #000000; --tenue: #1f1f1f; --linea: #000000;
+  --acento: #00524f; --acento-suave: #e3f1f0; --quizas: #7a3500; --quizas-suave: #fbeee2; --urgente: #a10000; --urgente-suave: #fde8e8;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-contraste]:not([data-theme='light']) {
+    --papel: #000000; --superficie: #000000; --tinta: #ffffff; --tenue: #f0f0f0; --linea: #ffffff;
+    --acento: #7fffe8; --acento-suave: #002b28; --quizas: #ffc58a; --quizas-suave: #2b1600; --urgente: #ff9a9a; --urgente-suave: #2b0000;
+  }
+}
+[data-contraste] a { text-decoration: underline !important; text-underline-offset: 3px; }
+[data-contraste] .opcion span, [data-contraste] .tema, [data-contraste] .llamar, [data-contraste] .ayuda, [data-contraste] .cifra, [data-contraste] .confianza li { border-width: 2px; border-color: var(--tinta); }
+[data-contraste] .ayuda { border-bottom: 2px solid var(--tinta); }
+[data-contraste] .tenue, [data-contraste] small, [data-contraste] .nota, [data-contraste] .entradilla { color: var(--tinta); }
+[data-contraste] .ilustracion { filter: grayscale(1) contrast(1.4); }

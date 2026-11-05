@@ -15,9 +15,11 @@
   <meta property="og:title" content="ayudas: qué ayudas públicas te pueden corresponder">
   <meta property="og:description" content="Contesta unas preguntas y mira qué ayudas te pueden corresponder, cuánto dan en 2026 y dónde se piden.">
   <meta property="og:url" content="https://ayudas.bendi.dev/">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
   <link rel="stylesheet" href="vendor/fuentes/archivo.css">
   <link rel="stylesheet" href="assets/css/estilos.css">
-  <script>try{if(localStorage.getItem('ayudas:facil')==='1')document.documentElement.dataset.facil=''}catch(e){}</script>
+  <script>try{var d=document.documentElement.dataset;if(localStorage.getItem('ayudas:facil')==='1')d.facil='';if(localStorage.getItem('ayudas:contraste')==='1')d.contraste=''}catch(e){}</script>
 </head>
 <body>
   <header class="envoltorio cabecera">
@@ -38,6 +40,7 @@
   <div class="envoltorio barra">
     <a class="boton urgente" href="#ayuda-hoy">Necesito ayuda hoy</a>
     <button type="button" class="boton secundario" id="facil" aria-pressed="false">Letra grande y fácil</button>
+    <button type="button" class="boton secundario" id="contraste" aria-pressed="false">Alto contraste</button>
   </div>
 
   <main class="envoltorio">
@@ -51,6 +54,7 @@
             <a class="boton grande" href="#cuestionario">Empezar las preguntas</a>
             <a class="boton secundario grande" href="mayores/">Soy una persona mayor</a>
           </div>
+          <button type="button" class="escuchar" data-leer="Contesta unas preguntas sencillas y te decimos qué ayudas públicas puedes pedir: por tus hijos, tu pensión, por cuidar a alguien, tu casa o tu trabajo. Y te explicamos cómo se pide cada una, paso a paso. Pulsa Empezar las preguntas. Si eres una persona mayor, pulsa Soy una persona mayor."><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9Z M16.5 8.5a5 5 0 0 1 0 7 M19 6a8.5 8.5 0 0 1 0 12"/></svg> Escuchar</button>
         </div>
         <svg class="ilustracion" viewBox="0 0 360 300" role="img" aria-label="Una familia y una persona mayor bajo un salvavidas, junto a su casa">
           <circle class="il-sol" cx="292" cy="62" r="34"/>
@@ -359,9 +363,11 @@
       </details>
       <div class="acciones" style="margin-top:1.75rem">
         <button type="button" class="boton secundario" id="cambiar">Cambiar mis respuestas</button>
+        <button type="button" class="boton" id="compartir">Enviar a un familiar</button>
         <button type="button" class="boton secundario" id="imprimir">Imprimir o guardar en PDF</button>
         <button type="button" class="boton texto" id="borrar">Empezar de cero</button>
       </div>
+      <p class="nota">«Enviar a un familiar» manda solo la lista de ayudas y un enlace con los pasos. No envía tus respuestas.</p>
       <div class="aviso" style="margin-top:1.75rem">
         <p><strong>Es una orientación, no una resolución.</strong> Quien decide si te corresponde una ayuda es el organismo que la gestiona, con tus datos reales. Las cifras son las de 2026; algunas ayudas dependen de convocatorias que abren y cierran.</p>
         <p>Si dudas, los <strong>servicios sociales de tu ayuntamiento</strong> te pueden orientar gratis. <a href="catalogo/">Ver todas las ayudas</a>.</p>

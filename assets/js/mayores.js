@@ -7,6 +7,7 @@ import { tramiteDe, papelesPara } from './tramites.js';
 import { DOCUMENTOS } from './guia.js';
 import { icono } from './iconos.js';
 import { botonTelefono, esc } from './tarjeta.js';
+import { compartir } from './compartir.js';
 
 const caja = document.getElementById('asistente');
 const resultado = document.getElementById('resultado');
@@ -210,7 +211,8 @@ function mostrarResultado() {
       <div class="llamadas">${[...(madrid ? ['mayoresMadrid', 'madrid012', 'linea010'] : []), 'cruzRoja', 'infoInss', 'emergencias'].map(botonTelefono).join('')}</div>
     </section>
     <div class="navegar">
-      <button type="button" class="boton grande" data-imprimir>Imprimir para llevar</button>
+      <button type="button" class="boton grande" data-compartir>Enviar a un familiar</button>
+      <button type="button" class="boton secundario grande" data-imprimir>Imprimir para llevar</button>
       <button type="button" class="boton secundario grande" data-cambiar>Cambiar respuestas</button>
       <a class="boton texto" href="../">Ver la versión completa</a>
     </div>
@@ -225,6 +227,10 @@ resultado.addEventListener('click', (e) => {
     const ficha = document.getElementById(`m-${b.dataset.escuchar}`);
     const t = tramiteDe(b.dataset.escuchar, perfil().ccaa);
     return leer([POR_ID[b.dataset.escuchar].nombre, ficha.querySelector('.cuanto')?.textContent ?? '', ...t.facil, 'Qué tengo que hacer.', ...t.pasos].join('. '));
+  }
+  if ('compartir' in b.dataset) {
+    const ids = [...resultado.querySelectorAll('.ficha-mayores')].map((f) => f.id.replace(/^m-/, ''));
+    return compartir(ids);
   }
   if ('imprimir' in b.dataset) {
     resultado.querySelectorAll('details').forEach((d) => (d.open = true));
