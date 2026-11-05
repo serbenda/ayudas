@@ -15,8 +15,11 @@
   <meta property="og:title" content="ayudas: qué ayudas públicas te pueden corresponder">
   <meta property="og:description" content="Contesta unas preguntas y mira qué ayudas te pueden corresponder, cuánto dan en 2026 y dónde se piden.">
   <meta property="og:url" content="https://ayudas.bendi.dev/">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
   <link rel="stylesheet" href="vendor/fuentes/archivo.css">
   <link rel="stylesheet" href="assets/css/estilos.css">
+  <script>try{var d=document.documentElement.dataset;if(localStorage.getItem('ayudas:facil')==='1')d.facil='';if(localStorage.getItem('ayudas:contraste')==='1')d.contraste=''}catch(e){}</script>
 </head>
 <body>
   <header class="envoltorio cabecera">
@@ -29,15 +32,62 @@
     </a>
     <nav class="nav" aria-label="Secciones">
       <a href="./" aria-current="page"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z M5.6 5.6l3.6 3.6 M14.8 14.8l3.6 3.6 M18.4 5.6l-3.6 3.6 M9.2 14.8l-3.6 3.6"/></svg><span>Tus ayudas</span></a>
+      <a href="mayores/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z M9 21l2-6 M11 15l1-6 3 3 M12 9l-3 3 M17 12v9 M17 12a1.5 1.5 0 0 0-3 0"/></svg><span>Mayores</span></a>
       <a href="catalogo/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6h12 M8 12h12 M8 18h12 M4 6h.01 M4 12h.01 M4 18h.01"/></svg><span>Todas las ayudas</span></a>
       <a href="fuentes/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2Z M4 20a2 2 0 0 0 2 2h13v-4"/></svg><span>Fuentes</span></a>
     </nav>
   </header>
+  <div class="envoltorio barra">
+    <a class="boton urgente" href="#ayuda-hoy">Necesito ayuda hoy</a>
+    <button type="button" class="boton secundario" id="facil" aria-pressed="false">Letra grande y fácil</button>
+    <button type="button" class="boton secundario" id="contraste" aria-pressed="false">Alto contraste</button>
+  </div>
 
   <main class="envoltorio">
     <section class="portada" aria-labelledby="titular">
-      <h1 class="titular" id="titular">Lo que te puede tocar.</h1>
-      <p class="entradilla">Contesta unas preguntas sobre ti y tu hogar y te decimos qué <strong>ayudas públicas</strong> te pueden corresponder en España: por hijos, por ser mayor, por tu pensión, por cuidar a alguien con discapacidad o dependencia, por tu vivienda… Con lo que dan en 2026 y dónde se piden.</p>
+      <div class="heroe">
+        <div class="heroe-texto">
+          <h1 class="titular" id="titular">Lo que te puede tocar.</h1>
+          <p class="entradilla">Contesta unas preguntas sencillas y te decimos qué <strong>ayudas públicas</strong> puedes pedir: por tus hijos, tu pensión, por cuidar a alguien, tu casa o tu trabajo.</p>
+          <p class="entradilla">Y te explicamos <strong>cómo se pide cada una, paso a paso</strong>.</p>
+          <div class="heroe-botones">
+            <a class="boton grande" href="#cuestionario">Empezar las preguntas</a>
+            <a class="boton secundario grande" href="mayores/">Soy una persona mayor</a>
+          </div>
+          <button type="button" class="escuchar" data-leer="Contesta unas preguntas sencillas y te decimos qué ayudas públicas puedes pedir: por tus hijos, tu pensión, por cuidar a alguien, tu casa o tu trabajo. Y te explicamos cómo se pide cada una, paso a paso. Pulsa Empezar las preguntas. Si eres una persona mayor, pulsa Soy una persona mayor."><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9Z M16.5 8.5a5 5 0 0 1 0 7 M19 6a8.5 8.5 0 0 1 0 12"/></svg> Escuchar</button>
+        </div>
+        <svg class="ilustracion" viewBox="0 0 360 300" role="img" aria-label="Una familia y una persona mayor bajo un salvavidas, junto a su casa">
+          <circle class="il-sol" cx="292" cy="62" r="34"/>
+          <path class="il-suelo" d="M0 262c60-18 120-22 180-18s120 12 180 0v56H0Z"/>
+          <path class="il-casa" d="M186 250V160l58-46 58 46v90Z"/>
+          <path class="il-tejado" d="M176 166l68-56 68 56" fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect class="il-puerta" x="232" y="204" width="26" height="46" rx="4"/>
+          <rect class="il-ventana" x="200" y="176" width="22" height="20" rx="3"/>
+          <rect class="il-ventana" x="266" y="176" width="22" height="20" rx="3"/>
+          <circle class="il-aro" cx="104" cy="96" r="44" fill="none" stroke-width="16"/>
+          <circle class="il-bandas" cx="104" cy="96" r="44" fill="none" stroke-width="16" stroke-dasharray="34.56 34.56" stroke-dashoffset="17.28"/>
+          <g class="il-persona p1"><circle cx="58" cy="176" r="13"/><path d="M40 254v-46a18 18 0 0 1 36 0v46Z"/></g>
+          <g class="il-persona p2"><circle cx="104" cy="168" r="15"/><path d="M83 254v-52a21 21 0 0 1 42 0v52Z"/></g>
+          <g class="il-persona p3"><circle cx="148" cy="196" r="10"/><path d="M135 254v-32a13 13 0 0 1 26 0v32Z"/></g>
+          <path class="il-baston" d="M30 254v-40a6 6 0 0 1 12 0" fill="none" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <ul class="confianza" aria-label="Sobre esta web">
+        <li><strong id="n-ayudas">58</strong><span>ayudas explicadas, con sus pasos</span></li>
+        <li><strong>2026</strong><span>cifras y trámites revisados</span></li>
+        <li><strong>0</strong><span>datos tuyos guardados ni enviados</span></li>
+      </ul>
+      <nav class="temas" aria-labelledby="t-temas">
+        <h2 id="t-temas" class="temas-titulo">¿Qué te preocupa?</h2>
+        <ul>
+          <li><a href="catalogo/?tema=urgente" class="tema urgente-tema"><span class="tema-icono" data-icono="urgente"></span><strong>Lo necesito ya</strong><span>Comida, casa, violencia</span></a></li>
+          <li><a href="catalogo/?tema=mayores" class="tema"><span class="tema-icono" data-icono="mayores"></span><strong>Pensiones</strong><span>Mínimas, viudedad, no contributivas</span></a></li>
+          <li><a href="catalogo/?tema=familia" class="tema"><span class="tema-icono" data-icono="familia"></span><strong>Hijos</strong><span>Bebé, colegio, familia numerosa</span></a></li>
+          <li><a href="catalogo/?tema=cuidados" class="tema"><span class="tema-icono" data-icono="cuidados"></span><strong>Cuidar a alguien</strong><span>Dependencia y discapacidad</span></a></li>
+          <li><a href="catalogo/?tema=casa" class="tema"><span class="tema-icono" data-icono="casa"></span><strong>Casa y facturas</strong><span>Alquiler, luz, agua</span></a></li>
+          <li><a href="catalogo/?tema=dinero" class="tema"><span class="tema-icono" data-icono="monedas"></span><strong>Sin trabajo o pocos ingresos</strong><span>Paro, IMV, rentas</span></a></li>
+        </ul>
+      </nav>
       <div class="ejemplos" role="group" aria-label="Probar con un ejemplo">
         <span>¿Solo quieres echar un vistazo? Prueba:</span>
         <button type="button" data-ejemplo="familia">Familia joven con bebé</button>
@@ -46,13 +96,14 @@
         <button type="button" data-ejemplo="paro">En paro con 55 años</button>
       </div>
 
-      <form class="cuestionario" id="cuestionario" novalidate>
+      <form class="cuestionario" id="cuestionario" novalidate tabindex="-1">
         <ol class="pasos" id="pasos" aria-label="Pasos">
           <li><button type="button" data-ir="1">Sobre ti</button></li>
           <li><button type="button" data-ir="2">Tu hogar</button></li>
           <li><button type="button" data-ir="3">Dinero y casa</button></li>
           <li><button type="button" data-ir="4">Salud y cuidados</button></li>
           <li><button type="button" data-ir="5">Trabajo y pensión</button></li>
+          <li><button type="button" data-ir="6">Ahora mismo</button></li>
         </ol>
 
         <!-- 1. Sobre ti -->
@@ -67,6 +118,23 @@
             <label for="ccaa">¿En qué comunidad vives?</label>
             <select id="ccaa" name="ccaa"><option value="">Elige tu comunidad</option></select>
             <small>Muchas ayudas las gestionan las comunidades, y algunas son solo de la tuya.</small>
+          </div>
+          <div class="pregunta" data-si="madrid" role="radiogroup" aria-labelledby="t-capital">
+            <span class="etiqueta" id="t-capital">¿Vives en la ciudad de Madrid (la capital)?</span>
+            <div class="opciones dos">
+              <label class="opcion"><input type="radio" name="madridCapital" value="si"><span>Sí</span></label>
+              <label class="opcion"><input type="radio" name="madridCapital" value="no"><span>No, en otro municipio</span></label>
+            </div>
+            <small>El Ayuntamiento de Madrid tiene ayudas propias.</small>
+          </div>
+          <div class="pregunta" role="radiogroup" aria-labelledby="t-residencia">
+            <span class="etiqueta" id="t-residencia">¿Tienes nacionalidad española o permiso de residencia?</span>
+            <div class="opciones">
+              <label class="opcion"><input type="radio" name="residencia" value="si"><span>Sí (española, de la UE o con permiso)</span></label>
+              <label class="opcion"><input type="radio" name="residencia" value="tramite"><span>Lo tengo en trámite</span></label>
+              <label class="opcion"><input type="radio" name="residencia" value="no"><span>No tengo papeles</span></label>
+            </div>
+            <small>Algunas ayudas lo piden. Sin papeles también hay cosas a las que tienes derecho.</small>
           </div>
           <div class="pregunta" role="radiogroup" aria-labelledby="t-situacion">
             <span class="etiqueta" id="t-situacion">¿Cuál es tu situación?</span>
@@ -240,7 +308,19 @@
             </div>
             <small>Lo ves en tu informe de vida laboral, en la web de la Seguridad Social.</small>
           </div>
-          <p class="nota" data-si="nada-paso5">Si no cobras pensión ni estás en paro, puedes pasar directamente a ver tus ayudas.</p>
+          <p class="nota" data-si="nada-paso5">Si no cobras pensión ni estás en paro, puedes pasar al último paso.</p>
+        </fieldset>
+
+        <!-- 6. Ahora mismo -->
+        <fieldset class="paso" data-paso="6" hidden>
+          <legend>Ahora mismo</legend>
+          <p class="paso-ayuda">Marca lo que te esté pasando. Así te enseñamos primero lo más urgente. Nadie más lo ve.</p>
+          <label class="casilla"><input type="checkbox" name="u-comida"><span>No llego para comer o pagar lo básico este mes</span></label>
+          <label class="casilla"><input type="checkbox" name="u-casaRiesgo"><span>Puedo perder mi casa (desahucio, impago del alquiler o la hipoteca)</span></label>
+          <label class="casilla"><input type="checkbox" name="u-sinCasa"><span>No tengo casa</span></label>
+          <label class="casilla"><input type="checkbox" name="u-violencia"><span>Sufro violencia de género o violencia sexual</span></label>
+          <label class="casilla"><input type="checkbox" name="u-soledad"><span>Me siento solo o sola a menudo</span></label>
+          <p class="aviso">Si estás en peligro ahora, llama al <a href="tel:112"><strong>112</strong></a>. Para violencia contra las mujeres, el <a href="tel:016"><strong>016</strong></a>: es gratis y no sale en la factura.</p>
         </fieldset>
 
         <div class="paso-botones">
@@ -271,16 +351,46 @@
           </div>
         </div>
       </div>
+      <section class="empezar" id="empezar" aria-labelledby="t-empezar" hidden>
+        <h3 id="t-empezar">Por dónde empezar</h3>
+        <ol id="empezar-lista"></ol>
+      </section>
       <div id="lista" aria-live="polite"></div>
+      <details class="bloque" id="papeles-bloque">
+        <summary><span class="insignia"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 3h7l5 5v13H7Z M14 3v5h5 M10 13h6 M10 17h6"/></svg></span>Papeles que vas a necesitar</summary>
+        <p class="nota">Junta estos papeles una vez y te sirven para varias ayudas. Haz fotocopias.</p>
+        <ul class="papeles-todos" id="papeles"></ul>
+      </details>
       <div class="acciones" style="margin-top:1.75rem">
         <button type="button" class="boton secundario" id="cambiar">Cambiar mis respuestas</button>
+        <button type="button" class="boton" id="compartir">Enviar a un familiar</button>
         <button type="button" class="boton secundario" id="imprimir">Imprimir o guardar en PDF</button>
         <button type="button" class="boton texto" id="borrar">Empezar de cero</button>
       </div>
+      <p class="nota">«Enviar a un familiar» manda solo la lista de ayudas y un enlace con los pasos. No envía tus respuestas.</p>
       <div class="aviso" style="margin-top:1.75rem">
         <p><strong>Es una orientación, no una resolución.</strong> Quien decide si te corresponde una ayuda es el organismo que la gestiona, con tus datos reales. Las cifras son las de 2026; algunas ayudas dependen de convocatorias que abren y cierran.</p>
         <p>Si dudas, los <strong>servicios sociales de tu ayuntamiento</strong> te pueden orientar gratis. <a href="catalogo/">Ver todas las ayudas</a>.</p>
       </div>
+    </section>
+    <section class="evolucion" aria-labelledby="t-evolucion">
+      <div class="seccion-titulo">
+        <h2 id="t-evolucion">Cómo han subido las ayudas</h2>
+        <p>Euros al mes, de 2018 a 2026. Pasa el dedo o el ratón por el gráfico para ver cada año.</p>
+      </div>
+      <div id="evolucion"></div>
+      <div class="explica">
+        <p><strong>Las pensiones no contributivas y el Ingreso Mínimo Vital han subido mucho</strong> desde 2023.</p>
+        <p><strong>El IPREM apenas se ha movido</strong>: lleva en 600 € desde 2023. Muchos límites de ingresos se calculan con él. Por eso, con el mismo dinero en casa, cada año es más fácil pasarse del límite de algunas ayudas.</p>
+      </div>
+    </section>
+
+    <section class="ayuda-hoy" id="ayuda-hoy" aria-labelledby="t-hoy" tabindex="-1">
+      <div class="seccion-titulo">
+        <h2 id="t-hoy">Necesito ayuda hoy</h2>
+        <p>Si es urgente, no esperes a ninguna ayuda: llama o ve a los servicios sociales de tu ayuntamiento. Te atienden gratis.</p>
+      </div>
+      <div class="llamadas" id="telefonos-hoy"></div>
     </section>
   </main>
 

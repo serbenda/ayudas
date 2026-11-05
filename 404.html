@@ -6,8 +6,11 @@
   <title>Página no encontrada · ayudas</title>
   <meta name="robots" content="noindex">
   <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
   <link rel="stylesheet" href="/vendor/fuentes/archivo.css">
   <link rel="stylesheet" href="/assets/css/estilos.css">
+  <script>try{var d=document.documentElement.dataset;if(localStorage.getItem('ayudas:facil')==='1')d.facil='';if(localStorage.getItem('ayudas:contraste')==='1')d.contraste=''}catch(e){}</script>
 </head>
 <body>
   <header class="envoltorio cabecera">
@@ -20,10 +23,16 @@
     </a>
     <nav class="nav" aria-label="Secciones">
       <a href="/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z M5.6 5.6l3.6 3.6 M14.8 14.8l3.6 3.6 M18.4 5.6l-3.6 3.6 M9.2 14.8l-3.6 3.6"/></svg><span>Tus ayudas</span></a>
+      <a href="/mayores/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z M9 21l2-6 M11 15l1-6 3 3 M12 9l-3 3 M17 12v9 M17 12a1.5 1.5 0 0 0-3 0"/></svg><span>Mayores</span></a>
       <a href="/catalogo/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6h12 M8 12h12 M8 18h12 M4 6h.01 M4 12h.01 M4 18h.01"/></svg><span>Todas las ayudas</span></a>
       <a href="/fuentes/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2Z M4 20a2 2 0 0 0 2 2h13v-4"/></svg><span>Fuentes</span></a>
     </nav>
   </header>
+  <div class="envoltorio barra">
+    <a class="boton urgente" href="/#ayuda-hoy">Necesito ayuda hoy</a>
+    <button type="button" class="boton secundario" id="facil" aria-pressed="false">Letra grande y fácil</button>
+    <button type="button" class="boton secundario" id="contraste" aria-pressed="false">Alto contraste</button>
+  </div>
   <main class="envoltorio no-encontrada">
     <h1 class="titular">Esta página no existe.</h1>
     <p class="entradilla">Puede que el enlace esté mal o que la página haya cambiado de sitio.</p>

@@ -46,13 +46,17 @@ Es hermana de [hucha](https://github.com/serbenda/hucha) (a dónde va el dinero 
 
 | Página | Qué hay |
 | --- | --- |
-| **Tus ayudas** (`/`) | El cuestionario en 5 pasos y la lista de ayudas que te salen, agrupadas por tema. Ejemplos para probar sin rellenar nada. |
+| **Tus ayudas** (`/`) | Cuestionario en 6 pasos y la lista de ayudas que te salen, con **por dónde empezar**, los **papeles** que necesitas juntos, el seguimiento de cada ayuda y una **hoja para imprimir**. Accesos por tema, botón «Necesito ayuda hoy» con teléfonos y un gráfico de cómo han subido las ayudas desde 2018. |
+| **Mayores** (`/mayores/`) | Para personas mayores o con poca soltura con el móvil: una pregunta cada vez, botones grandes, frases cortas, **lectura en voz alta** y los pasos de cada ayuda explicados. |
 | **Todas las ayudas** (`/catalogo/`) | Todas las fichas, con buscador (sin tildes) y filtro por tema. Elige tu comunidad y los enlaces apuntan a su web. |
 | **Fuentes** (`/fuentes/`) | Cómo funciona, la tabla de cifras de 2026 con su fuente, dónde se piden las ayudas y cómo avisar de un error. |
 
 ## Qué ayudas recoge
 
-42 fichas en siete temas:
+58 fichas en ocho temas. Cada una explica **cómo se pide paso a paso** (dónde, a quién llamar, qué papeles, cuánto tardan y qué hacer si dicen que no), con los pasos de la Comunidad de Madrid cuando son distintos. Los trámites están en [`assets/js/tramites.js`](assets/js/tramites.js) y los teléfonos, papeles y palabras difíciles en [`assets/js/guia.js`](assets/js/guia.js).
+
+- **Si lo necesitas ya:** emergencia social, comida, violencia de género (016), desahucio, sin hogar, soledad y sanidad sin papeles.
+- **Comunidad y Ayuntamiento de Madrid:** RMI, Tarjeta Familias, agua de Canal de Isabel II, vivienda social, escuelas infantiles gratis, teleasistencia (900 111 065), transporte gratis desde 65 años.
 
 - **Ingresos y prestaciones:** Ingreso Mínimo Vital, renta mínima autonómica, paro, subsidio por desempleo, subsidio para mayores de 52.
 - **Hijos y familia:** complemento de ayuda para la infancia, prestación por nacimiento (19 semanas), subsidio y pago único por nacimiento, ayuda a la natalidad de la Comunidad de Madrid, título de familia numerosa, cuidado de menores con enfermedad grave, escuela infantil y ayudas escolares, orfandad.
@@ -77,6 +81,10 @@ Algunos cálculos que hace:
 - **Pensión mínima** que te toca según tipo, edad y cónyuge, y el complemento hasta llegar a ella.
 - **Brecha de género**: 36,90 € por hijo (hasta 4) si la pensión empezó en 2021 o después.
 
+Si no tienes papeles, no salen las ayudas que piden residencia legal, pero sí las que no (médico, padrón, comida, emergencia). Lo urgente sale siempre primero en «Por dónde empezar».
+
+**Modo fácil:** el botón «Letra grande y fácil» agranda la letra y cambia los resúmenes por frases muy cortas. Las palabras difíciles (IPREM, PIA, Cl@ve…) se explican en cada ficha.
+
 Las preguntas que no aplican se esconden (por ejemplo, la de familia monoparental solo sale si no vives en pareja y tienes hijos).
 
 ## Las cifras y de dónde salen
@@ -92,6 +100,13 @@ Todas las cifras están en un único sitio, [`assets/js/cifras.js`](assets/js/ci
 | Subsidio por desempleo | 570 / 540 / 480 €/mes | SEPE |
 | Bono social de la luz | 42,5 % / 57,5 % | MITECO (vuelve al 35 % / 50 % en 2027 si no se prorroga) |
 | Alquiler joven | hasta 300 €/mes | Plan Estatal de Vivienda 2026-2030 |
+
+## Accesibilidad
+
+- **Letra grande y fácil**, **alto contraste** y **escuchar** (lectura en voz alta) en todas las páginas.
+- Se instala en el móvil como una app y funciona sin conexión.
+- **Enviar a un familiar**: manda solo la lista de ayudas y un enlace con los pasos (`/catalogo/?ver=…`), nunca las respuestas.
+- Pasos propios para la Comunidad de Madrid, Andalucía, Cataluña y la Comunitat Valenciana en las ayudas que gestionan ellas.
 
 ## Privacidad
 
@@ -126,9 +141,9 @@ npm run dev    # sirve la web en local
 
 La Action [`publicar.yml`](.github/workflows/publicar.yml):
 
-1. En cada **PR a `main`**: pasa los tests y prepara la web (sin publicar).
+1. En cada **PR a `main`**: pasa los tests de reglas y los de navegador (axe WCAG 2.2 AA, sin desbordar, sin errores) en móvil, tablet y ordenador, claro, oscuro y alto contraste.
 2. En cada **push a `main`**: además, la publica en GitHub Pages, con la fuente incluida y una versión en cada CSS/JS para que nadie mezcle ficheros nuevos y viejos.
-3. **Cada lunes**: comprueba los enlaces oficiales y abre un issue si alguno se ha roto (y lo cierra cuando vuelven a funcionar).
+3. **Cada lunes**: comprueba los enlaces oficiales (issue si alguno se rompe) y **mira el BOE de la semana**: si sale algo sobre pensiones, SMI, IPREM, IMV, bono social, dependencia, paro, vivienda o copago, abre un issue para revisar las cifras.
 
 Se trabaja en la rama `development` y se lleva a `main` con una PR.
 

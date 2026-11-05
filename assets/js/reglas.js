@@ -41,6 +41,9 @@ export function perfilVacio() {
     hijosTenidos: 0,
     cotizado15: null,
     cotizadoUnAño: null,
+    madridCapital: null,
+    residencia: null, // 'si' (española, UE o permiso) | 'tramite' | 'no'
+    urgencias: { comida: false, casaRiesgo: false, sinCasa: false, violencia: false, soledad: false },
   };
 }
 
@@ -153,6 +156,7 @@ const REGLAS = {
   },
 
   'renta-minima'(p) {
+    if (p.ccaa === 'madrid') return null;
     const anual = rentaGarantizada(p) * 12;
     if (p.ingresosHogar != null && p.ingresosHogar < anual) {
       return { estado: 'quizas', motivos: ['Vuestros ingresos son bajos y tu comunidad puede tener una renta propia que complementa el IMV.'], comprobar: ['Los requisitos de empadronamiento de tu comunidad.'] };
@@ -543,6 +547,127 @@ const REGLAS = {
     if (p.ingresosHogar > limite) return null;
     return { estado: 'si', motivos: [`Vuestros ingresos no pasan de ${año(limite)}.`], comprobar: ['Solo si necesitas un abogado o ir a juicio.'] };
   },
+
+  // ── Si lo necesitas ya ─────────────────────────────────────────────────
+  'violencia-genero'(p) {
+    if (!p.urgencias.violencia) return null;
+    return { estado: 'si', motivos: ['Has marcado que sufres violencia de género.'], comprobar: ['Llama al 016 aunque no hayas denunciado: te orientan y no sale en la factura.'], importe: { texto: '016 · 24 horas' }, urgente: true };
+  },
+
+  'sin-hogar'(p) {
+    if (!p.urgencias.sinCasa) return null;
+    return { estado: 'si', motivos: ['Has marcado que no tienes casa.'], comprobar: [], urgente: true };
+  },
+
+  desahucio(p) {
+    if (!p.urgencias.casaRiesgo) return null;
+    return { estado: 'si', motivos: ['Has marcado que puedes perder tu casa.'], comprobar: ['Si ya te ha llegado una carta del juzgado, pide abogado de oficio hoy mismo.'], urgente: true };
+  },
+
+  alimentos(p) {
+    if (!p.urgencias.comida && !p.urgencias.sinCasa) return null;
+    return { estado: 'si', motivos: ['Has marcado que no llegas para comer o para pagar lo básico.'], comprobar: [], urgente: true };
+  },
+
+  'emergencia-social'(p) {
+    const muyBajos = p.ingresosHogar != null && p.ingresosHogar < rentaGarantizada(p) * 12 * 0.5;
+    if (!p.urgencias.comida && !p.urgencias.casaRiesgo && !p.urgencias.sinCasa && !muyBajos) return null;
+    return { estado: p.urgencias.comida || p.urgencias.casaRiesgo || p.urgencias.sinCasa ? 'si' : 'quizas', motivos: [muyBajos && !p.urgencias.comida ? 'Vuestros ingresos son muy bajos.' : 'No llegas a cubrir lo básico este mes.'], comprobar: ['Pide cita urgente: no esperes a que llegue el IMV.'], urgente: true };
+  },
+
+  soledad(p) {
+    const vivoSolo = (p.edad ?? 0) >= 65 && p.adultos === 1;
+    if (!p.urgencias.soledad && !vivoSolo) return null;
+    return { estado: p.urgencias.soledad ? 'si' : 'quizas', motivos: [p.urgencias.soledad ? 'Has marcado que te sientes solo o sola.' : 'Tienes 65 años o más y vives solo o sola.'], comprobar: [] };
+  },
+
+  'sanidad-sin-papeles'(p) {
+    if (p.residencia !== 'no' && p.residencia !== 'tramite') return null;
+    return { estado: 'si', motivos: ['No tienes permiso de residencia (o está en trámite).'], comprobar: ['Pide orientación a una ONG para regularizar tu situación.'] };
+  },
+
+  // ── Comunidad y Ayuntamiento de Madrid ─────────────────────────────────
+  'rmi-madrid'(p) {
+    if (p.ccaa !== 'madrid') return null;
+    if (p.pension === 'jubilacion' || p.pension === 'pnc') return null;
+    const anual = rentaGarantizada(p) * 12;
+    if (p.ingresosHogar != null && p.ingresosHogar >= anual) return null;
+    if (p.ingresosHogar == null && !enParo(p) && !p.urgencias.comida) return null;
+    return {
+      estado: 'quizas',
+      motivos: ['Vives en la Comunidad de Madrid.', p.ingresosHogar != null ? 'Vuestros ingresos son bajos.' : 'Estás en una situación de ingresos bajos.'],
+      comprobar: ['Pide antes el Ingreso Mínimo Vital: la RMI lo complementa.', 'La cuantía exacta te la dicen en servicios sociales.'],
+    };
+  },
+
+  'tarjeta-familias'(p) {
+    if (p.ccaa !== 'madrid' || p.madridCapital === false) return null;
+    const limite = 752 * 12;
+    const bajos = p.ingresosHogar != null && p.ingresosHogar <= limite;
+    if (!bajos && !p.urgencias.comida) return null;
+    const comprobar = ['La concede servicios sociales tras una entrevista.'];
+    if (p.madridCapital == null) comprobar.unshift('Solo para quien vive en la ciudad de Madrid (la capital).');
+    return { estado: p.madridCapital && bajos ? 'si' : 'quizas', motivos: [bajos ? `Vuestros ingresos (${año(p.ingresosHogar)}) no pasan de 752 € al mes.` : 'Has marcado que no llegas para comer.'], comprobar, importe: { texto: 'De 146 € a 735 € al mes' } };
+  },
+
+  'agua-canal'(p) {
+    if (p.ccaa !== 'madrid') return null;
+    const motivos = [];
+    if (REGLAS.imv(p)?.estado === 'si') motivos.push('Te puede corresponder el IMV, que acredita la vulnerabilidad.');
+    if (p.familiaNumerosa !== 'no') motivos.push('Sois familia numerosa.');
+    if (miembros(p) > 4) motivos.push(`Vivís ${miembros(p)} personas en casa.`);
+    if (p.ingresosHogar != null && p.ingresosHogar <= limiteBonoSocial(p).euros && !motivos.length) motivos.push('Vuestros ingresos son bajos.');
+    if (!motivos.length) return null;
+    return { estado: 'quizas', motivos, comprobar: ['Para la exención social, cobrar el IMV o un informe de servicios sociales.'] };
+  },
+
+  'vivienda-social-madrid'(p) {
+    if (p.ccaa !== 'madrid') return null;
+    const sinVivienda = p.vivienda === 'alquiler' || p.vivienda === 'otra' || p.urgencias.sinCasa || p.urgencias.casaRiesgo;
+    if (!sinVivienda) return null;
+    if (p.ingresosHogar != null && p.ingresosHogar > 3.5 * CIFRAS.iprem.anual14) return null;
+    if (p.ingresosHogar == null && !p.urgencias.casaRiesgo && !p.urgencias.sinCasa) return null;
+    return { estado: 'quizas', motivos: ['Vives en la Comunidad de Madrid, sin vivienda propia y con ingresos bajos.'], comprobar: ['Hay lista de espera: apúntate cuanto antes.'] };
+  },
+
+  'escuela-infantil-madrid'(p) {
+    if (p.ccaa !== 'madrid' || p.madridCapital === false || !(p.hijos.menor3 > 0 || p.bebe)) return null;
+    return { estado: p.madridCapital ? 'si' : 'quizas', motivos: [p.bebe ? 'Esperáis un bebé o tenéis uno pequeño.' : 'Tenéis hijos menores de 3 años.'], comprobar: ['El plazo es en abril para el curso siguiente.', ...(p.madridCapital ? [] : ['Solo para quien vive en la ciudad de Madrid.'])], importe: { texto: 'Gratis (salvo comedor)' } };
+  },
+
+  'teleasistencia-madrid'(p) {
+    const cuidoMayor = p.cuidados.some((c) => (c.edad ?? 0) >= 65);
+    if (p.ccaa !== 'madrid' || p.madridCapital === false || ((p.edad ?? 0) < 65 && !cuidoMayor)) return null;
+    return { estado: p.madridCapital ? 'si' : 'quizas', motivos: [(p.edad ?? 0) >= 65 ? 'Tienes 65 años o más.' : 'Cuidas de una persona mayor.'], comprobar: ['Llama al 900 111 065 (gratis).'] };
+  },
+
+  'transporte-madrid'(p) {
+    if (p.ccaa !== 'madrid') return null;
+    const e = p.edad;
+    const motivos = [];
+    let texto = '';
+    if (e != null && e >= 65) { motivos.push('Tienes 65 años o más: viajas gratis.'); texto = 'Gratis'; }
+    else if (e != null && e >= 15 && e <= 25) { motivos.push(`Tienes ${e} años: abono joven.`); texto = '10 € al mes'; }
+    if (totalHijos(p) > 0) motivos.push('Los menores de 14 viajan gratis.');
+    if (!motivos.length) return null;
+    return { estado: 'si', motivos, comprobar: ['Necesitas la Tarjeta Transporte Público personal.'], importe: texto ? { texto } : undefined };
+  },
+
+  'copago-farmaceutico'(p) {
+    const motivos = [];
+    if (p.pension === 'pnc') motivos.push('Cobras una pensión no contributiva: las medicinas son gratis.');
+    if (REGLAS.imv(p)?.estado === 'si') motivos.push('Si te conceden el IMV, las medicinas son gratis.');
+    if (p.situacion === 'paro-sin') motivos.push('En paro sin cobrar prestación, las medicinas son gratis.');
+    if (REGLAS['complemento-minimos'](p)?.estado === 'si') motivos.push('Con complemento a mínimos en la pensión, las medicinas son gratis.');
+    if (!motivos.length && PENSIONES_CONTRIBUTIVAS.includes(p.pension)) motivos.push('Como pensionista pagas el 10 %, con un tope al mes según tus ingresos.');
+    if (!motivos.length) return null;
+    return { estado: 'si', motivos, comprobar: ['Se aplica solo. Pregunta en la farmacia si pagas de más.'] };
+  },
+
+  'bono-cultural-joven'(p) {
+    if (p.edad !== 18) return null;
+    return { estado: 'quizas', motivos: ['Tienes 18 años.'], comprobar: ['Es para quien cumple 18 este año (en 2026, los nacidos en 2008).'], importe: { texto: '400 €' } };
+  },
 };
 
 function lista(xs) {
@@ -552,15 +677,45 @@ function capital(s) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+// Ayudas que piden nacionalidad, residencia legal o estar dado de alta en Hacienda o la Seguridad Social
+const PIDEN_RESIDENCIA = new Set([
+  'imv', 'capi', 'renta-minima', 'rmi-madrid', 'subsidio-desempleo', 'subsidio-52', 'paro', 'nacimiento', 'pago-unico-nacimiento',
+  'madrid-natalidad', 'titulo-familia-numerosa', 'pnc-jubilacion', 'pnc-invalidez', 'pnc-alquiler', 'alquiler-joven', 'alquiler-general',
+  'vivienda-social-madrid', 'bono-cultural-joven', 'dependencia-valoracion', 'dependencia-prestacion', 'hijo-cargo-discapacidad',
+]);
+
 /** Evalúa todas las reglas. Devuelve los resultados en el orden del catálogo. */
 export function evaluar(perfil) {
-  const p = { ...perfilVacio(), ...perfil, hijos: { ...perfilVacio().hijos, ...(perfil?.hijos ?? {}) } };
+  const base = perfilVacio();
+  const p = { ...base, ...perfil, hijos: { ...base.hijos, ...(perfil?.hijos ?? {}) }, urgencias: { ...base.urgencias, ...(perfil?.urgencias ?? {}) } };
   const resultados = [];
   for (const [id, regla] of Object.entries(REGLAS)) {
-    const r = regla(p);
-    if (r) resultados.push({ id, ...r });
+    let r = regla(p);
+    if (!r) continue;
+    if (PIDEN_RESIDENCIA.has(id)) {
+      if (p.residencia === 'no') continue;
+      if (p.residencia === 'tramite') r = { ...r, estado: 'quizas', comprobar: ['Necesitas tener ya el permiso de residencia.', ...r.comprobar] };
+    }
+    resultados.push({ id, ...r });
   }
   return resultados;
+}
+
+// Orden en que conviene pedir las cosas: primero lo urgente, luego lo que abre la puerta a lo demás
+const PRIORIDAD = [
+  'violencia-genero', 'sin-hogar', 'desahucio', 'alimentos', 'emergencia-social', 'sanidad-sin-papeles',
+  'imv', 'dependencia-valoracion', 'certificado-discapacidad', 'paro', 'subsidio-desempleo', 'subsidio-52', 'pnc-jubilacion', 'pnc-invalidez',
+  'complemento-minimos', 'rmi-madrid', 'renta-minima', 'tarjeta-familias', 'capi', 'nacimiento', 'madrid-natalidad', 'viudedad', 'orfandad',
+  'titulo-familia-numerosa', 'bono-social', 'brecha-genero', 'hijo-cargo-discapacidad', 'dependencia-prestacion', 'convenio-cuidadores',
+];
+
+/** Las primeras cosas que hacer, en orden (como mucho `n`) */
+export function porDondeEmpezar(resultados, n = 4) {
+  const rango = (id) => {
+    const i = PRIORIDAD.indexOf(id);
+    return i === -1 ? PRIORIDAD.length : i;
+  };
+  return [...resultados].sort((a, b) => rango(a.id) - rango(b.id) || (a.estado === b.estado ? 0 : a.estado === 'si' ? -1 : 1)).filter((r) => rango(r.id) < PRIORIDAD.length).slice(0, n);
 }
 
 export const IDS_CON_REGLA = Object.keys(REGLAS);

@@ -8,6 +8,10 @@ export const ICONOS = {
   casa: 'M3 11 12 3l9 8 M5 9.5V21h14V9.5 M10 21v-6h4v6',
   impuestos: 'M6 3h9l4 4v14H6Z M14 3v5h5 M9.5 17l5-6 M10 11.5h.01 M14 16.5h.01',
   otras: 'M2 9l10-5 10 5-10 5Z M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5 M22 9v6',
+  urgente: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z M12 7.5v5.5 M12 16.5h.01',
+  telefono: 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z',
+  papeles: 'M7 3h7l5 5v13H7Z M14 3v5h5 M10 13h6 M10 17h6',
+  altavoz: 'M4 9v6h4l5 4V5L8 9Z M16.5 8.5a5 5 0 0 1 0 7 M19 6a8.5 8.5 0 0 1 0 12',
   escudo: 'M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6Z M9 12l2 2 4-4',
 };
 

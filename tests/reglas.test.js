@@ -163,3 +163,82 @@ test('leer números escritos a la española', () => {
   assert.equal(euros(1200), '1.200 €');
   assert.equal(euros(628.8), '628,80 €');
 });
+
+// ── Trámites, urgencias y Madrid ─────────────────────────────────────────
+import { TRAMITES, tramiteDe, papelesPara } from '../assets/js/tramites.js';
+import { DOCUMENTOS, TELEFONOS } from '../assets/js/guia.js';
+import { porDondeEmpezar } from '../assets/js/reglas.js';
+
+test('cada ayuda explica cómo se pide, con papeles y teléfonos que existen', () => {
+  for (const a of AYUDAS) {
+    const t = TRAMITES[a.id];
+    assert.ok(t, `falta el trámite de ${a.id}`);
+    assert.ok(t.facil?.length && t.pasos?.length && t.plazo && t.respuesta, `trámite incompleto: ${a.id}`);
+    for (const d of t.documentos) assert.ok(DOCUMENTOS[d], `papel desconocido ${d} en ${a.id}`);
+    for (const k of [...(t.telefonos ?? []), ...(t.telefonosMadrid ?? [])]) assert.ok(TELEFONOS[k], `teléfono desconocido ${k} en ${a.id}`);
+    // Frases cortas en el resumen fácil: que lo pueda leer cualquiera
+    for (const f of t.facil) assert.ok(f.split(' ').length <= 20, `frase larga en ${a.id}: ${f}`);
+  }
+});
+
+test('en Madrid salen los pasos y teléfonos de Madrid', () => {
+  assert.match(tramiteDe('pnc-jubilacion', 'madrid').pasos.join(' '), /sede\.comunidad\.madrid/);
+  assert.ok(tramiteDe('pnc-jubilacion', 'madrid').telefonos.includes('madridPnc'));
+  assert.doesNotMatch(tramiteDe('pnc-jubilacion', 'galicia').pasos.join(' '), /comunidad\.madrid/);
+});
+
+test('papeles agrupados: los que piden más ayudas, primero', () => {
+  const p = papelesPara(['imv', 'capi', 'bono-social']);
+  assert.equal(p[0].doc, 'dni');
+  assert.deepEqual(p[0].ayudas, ['imv', 'capi', 'bono-social']);
+});
+
+test('urgencias: violencia, desahucio y comida salen primero', () => {
+  const r = evaluar(perfil({ edad: 40, ccaa: 'madrid', madridCapital: true, ingresosHogar: 6000, urgencias: { violencia: true, comida: true, casaRiesgo: true } }));
+  const orden = porDondeEmpezar(r).map((x) => x.id);
+  assert.deepEqual(orden.slice(0, 3), ['violencia-genero', 'desahucio', 'alimentos']);
+  for (const id of ['tarjeta-familias', 'rmi-madrid', 'emergencia-social']) assert.ok(ids(r).includes(id), `falta ${id}`);
+  assert.ok(!ids(r).includes('renta-minima'), 'en Madrid sale la RMI, no la genérica');
+});
+
+test('sin permiso de residencia no salen las ayudas que lo piden, pero sí las demás', () => {
+  const r = evaluar(perfil({ edad: 35, ingresosHogar: 3000, residencia: 'no', urgencias: { comida: true } }));
+  assert.ok(!ids(r).includes('imv'));
+  for (const id of ['sanidad-sin-papeles', 'alimentos', 'emergencia-social', 'justicia-gratuita']) assert.ok(ids(r).includes(id), `falta ${id}`);
+  const tramite = evaluar(perfil({ edad: 35, ingresosHogar: 3000, residencia: 'tramite' }));
+  assert.equal(de(tramite, 'imv').estado, 'quizas');
+});
+
+test('mayor de 65 que vive solo en Madrid capital', () => {
+  const r = evaluar(perfil({ edad: 78, ccaa: 'madrid', madridCapital: true, adultos: 1, pension: 'jubilacion', pensionMes: 800 }));
+  for (const id of ['teleasistencia-madrid', 'transporte-madrid', 'soledad', 'copago-farmaceutico', 'complemento-minimos']) assert.ok(ids(r).includes(id), `falta ${id}`);
+  assert.equal(de(r, 'transporte-madrid').importe.texto, 'Gratis');
+});
+
+// ── Vigilancia del BOE ───────────────────────────────────────────────────
+import { buscar } from '../scripts/boe.mjs';
+
+test('BOE: encuentra la revalorización de pensiones y el SMI, con item suelto o en lista', () => {
+  const sumario = {
+    data: { sumario: { diario: [{ seccion: [
+      { codigo: '1', nombre: 'I. Disposiciones generales', departamento: [
+        { nombre: 'MINISTERIO DE INCLUSIÓN', epigrafe: [{ nombre: 'Pensiones', item: { identificador: 'BOE-A-2026-1', titulo: 'Real Decreto 1/2026, sobre revalorización de las pensiones', url_html: 'https://www.boe.es/1' } }] },
+        { nombre: 'MINISTERIO DE TRABAJO', epigrafe: [{ nombre: 'SMI', item: [{ identificador: 'BOE-A-2026-2', titulo: 'Real Decreto por el que se fija el salario mínimo interprofesional para 2027', url_html: 'https://www.boe.es/2' }] }] },
+      ] },
+      { codigo: '2B', nombre: 'Oposiciones', departamento: [{ nombre: 'X', epigrafe: [{ item: { identificador: 'BOE-A-2026-3', titulo: 'Pensiones: plazas de funcionario', url_html: '' } }] }] },
+    ] }] } },
+  };
+  const r = buscar(sumario);
+  assert.deepEqual(r.map((x) => x.tema), ['Pensiones', 'Salario mínimo']);
+  assert.deepEqual(buscar({}), []);
+});
+
+test('teléfonos y pasos por comunidad existen', () => {
+  for (const [id, t] of Object.entries(TRAMITES)) {
+    for (const lista of Object.values(t.telefonosCcaa ?? {})) for (const k of lista) assert.ok(TELEFONOS[k], `teléfono ${k} en ${id}`);
+    for (const lista of Object.values(t.documentosCcaa ?? {})) for (const d of lista) assert.ok(DOCUMENTOS[d], `papel ${d} en ${id}`);
+  }
+  assert.match(tramiteDe('renta-minima', 'cataluna').pasos.join(' '), /Renda Garantida/);
+  assert.match(tramiteDe('dependencia-valoracion', 'andalucia').pasos.join(' '), /Junta de Andalucía/);
+  assert.match(tramiteDe('renta-minima', 'galicia').pasos.join(' '), /servicios sociales/);
+});

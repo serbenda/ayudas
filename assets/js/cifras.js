@@ -81,5 +81,22 @@ export const FUENTES_CIFRAS = [
   { tema: 'Bono social eléctrico', valor: '42,5 % y 57,5 % de descuento en 2026', fuente: 'Ministerio para la Transición Ecológica', url: 'https://www.bonosocial.gob.es/' },
   { tema: 'Permiso por nacimiento', valor: '19 semanas por progenitor (32 en monoparentales)', fuente: 'Real Decreto-ley 9/2025 y Seguridad Social', url: 'https://www.seg-social.es/' },
   { tema: 'Alquiler', valor: 'Hasta 300 €/mes para menores de 35', fuente: 'Plan Estatal de Vivienda 2026-2030', url: 'https://www.mivau.gob.es/' },
+  { tema: 'Transporte en la Comunidad de Madrid', valor: 'Gratis desde 65 y hasta 14 años · abono joven 10 €', fuente: 'Consorcio Regional de Transportes (hasta el 31/12/2026)', url: 'https://www.crtm.es/' },
+  { tema: 'Tarjeta Familias (Ayuntamiento de Madrid)', valor: '146 € a 735 € al mes · ingresos hasta 752 €/mes', fuente: 'Diario del Ayuntamiento de Madrid', url: 'https://diario.madrid.es/' },
+  { tema: 'Natalidad Comunidad de Madrid', valor: '500 €/mes hasta los 2 años · madres de 30 o menos', fuente: 'Sede de la Comunidad de Madrid', url: 'https://sede.comunidad.madrid/ayudas-becas-subvenciones/ayudas-economicas-natalidad' },
+  { tema: 'Pensiones no contributivas en Madrid', valor: 'Se resuelven en 90 días · información 91 392 56 86', fuente: 'Sede de la Comunidad de Madrid', url: 'https://sede.comunidad.madrid/prestacion-social/pension-no-contributiva-jubilacion' },
+  { tema: 'Medicinas (copago)', valor: 'Pensionistas: 10 % con tope desde 8,23 €/mes', fuente: 'Real Decreto-ley 11/2026', url: 'https://www.boe.es/' },
   { tema: 'Deducciones familiares', valor: '1.200 € por hijo menor de 3, familia numerosa, discapacidad…', fuente: 'Agencia Tributaria', url: 'https://sede.agenciatributaria.gob.es/' },
 ];
+
+// Cómo han cambiado, en euros al mes. Fuentes: IMSERSO (informes y fichas de PNC), BOE (reales decretos del SMI),
+// Seguridad Social (IMV: la renta garantizada de un adulto es la PNC anual entre 12) y leyes de Presupuestos (IPREM).
+export const EVOLUCION = {
+  años: [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
+  series: [
+    { id: 'smi', nombre: 'Salario mínimo', valores: [735.9, 900, 950, 965, 1000, 1080, 1134, 1184, 1221], nota: 'Al mes, en 14 pagas' },
+    { id: 'pnc', nombre: 'Pensión no contributiva', valores: [380.1, 392, 395.6, 402.8, 421.4, 484.61, 517.9, 564.7, 628.8], nota: 'Al mes, en 14 pagas' },
+    { id: 'imv', nombre: 'Ingreso Mínimo Vital', valores: [null, null, 461.53, 469.93, 491.63, 565.38, 604.21, 658.81, 733.6], nota: 'Un adulto solo, al mes (existe desde junio de 2020)' },
+    { id: 'iprem', nombre: 'IPREM', valores: [537.84, 537.84, 537.84, 564.9, 579.02, 600, 600, 600, 600], nota: 'La cifra que decide quién entra en muchas ayudas' },
+  ],
+};

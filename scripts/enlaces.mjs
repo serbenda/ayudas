@@ -18,7 +18,7 @@ const anotar = (url, donde) => {
 for (const a of AYUDAS) anotar(a.enlace.url, `ayuda ${a.id}`);
 for (const c of COMUNIDADES) anotar(c.url, `comunidad ${c.id}`);
 for (const f of FUENTES_CIFRAS) anotar(f.url, `cifra «${f.tema}»`);
-for (const pagina of ['index.html', 'catalogo/index.html', 'fuentes/index.html']) {
+for (const pagina of ['index.html', 'mayores/index.html', 'catalogo/index.html', 'fuentes/index.html']) {
   const html = await readFile(new URL(pagina, raiz), 'utf8');
   for (const [, url] of html.matchAll(/href="(https:\/\/[^"]+)"/g)) {
     if (/github\.com\/(sponsors|serbenda\/ayudas\/issues)|bendi\.dev|goatcounter/.test(url)) continue;

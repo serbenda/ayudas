@@ -1,7 +1,9 @@
 // Todas las ayudas, con buscador y filtro por tema
 
-import { AYUDAS, CATEGORIAS, COMUNIDADES, enlaceDe } from './ayudas.js';
+import { AYUDAS, CATEGORIAS, COMUNIDADES } from './ayudas.js';
+import { TRAMITES } from './tramites.js';
 import { icono } from './iconos.js';
+import { tarjeta, esc } from './tarjeta.js';
 
 const lista = document.getElementById('lista');
 const buscar = document.getElementById('buscar');
@@ -10,14 +12,16 @@ const selectCcaa = document.getElementById('ccaa');
 const chips = document.getElementById('categorias');
 const CLAVE_CCAA = 'ayudas:ccaa';
 
-let tema = 'todas';
+let tema = new URLSearchParams(location.search).get('tema') ?? 'todas';
+// Lista enviada por alguien («Enviar a un familiar»): solo esas ayudas, en ese orden
+const enviadas = (new URLSearchParams(location.search).get('ver') ?? '').split(',').filter((id) => AYUDAS.some((a) => a.id === id));
 
 for (const c of COMUNIDADES) selectCcaa.add(new Option(c.nombre, c.id));
 try {
   selectCcaa.value = localStorage.getItem(CLAVE_CCAA) ?? '';
 } catch {}
 
-chips.innerHTML = [{ id: 'todas', nombre: 'Todas' }, ...CATEGORIAS].map((c) => `<button type="button" data-tema="${c.id}" aria-pressed="${c.id === 'todas'}">${c.nombre}</button>`).join('');
+chips.innerHTML = [{ id: 'todas', nombre: 'Todas' }, ...CATEGORIAS].map((c) => `<button type="button" data-tema="${c.id}" aria-pressed="${c.id === tema}">${c.nombre}</button>`).join('');
 chips.addEventListener('click', (e) => {
   const b = e.target.closest('[data-tema]');
   if (!b) return;
@@ -26,42 +30,32 @@ chips.addEventListener('click', (e) => {
   pintar();
 });
 
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 // Busca sin tildes ni mayúsculas
 const normal = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 
-function ficha(a, ccaa) {
-  const enlace = enlaceDe(a, ccaa);
-  const boton = enlace.url ? `<a class="boton" href="${esc(enlace.url)}" rel="noopener" target="_blank">Dónde se pide<span class="oculto"> (${esc(enlace.texto)}, se abre en otra pestaña)</span></a>` : '<span>Se pide en tu comunidad: elígela arriba para ver el enlace.</span>';
-  return `
-  <li id="${a.id}">
-    <details class="ayuda">
-      <summary>
-        <span class="ayuda-nombre">${esc(a.nombre)}</span>
-        <p class="ayuda-importe"></p>
-        <p class="ayuda-resumen">${esc(a.resumen)}</p>
-      </summary>
-      <div class="ayuda-detalle">
-        <div><h4>Cuánto da en 2026</h4><p>${esc(a.cuantia)}</p></div>
-        <div><h4>Requisitos principales</h4><ul>${a.requisitos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>
-        <p class="ayuda-pie"><span>${esc(a.ambito)} · ${esc(a.organismo)}</span>${boton}</p>
-      </div>
-    </details>
-  </li>`;
+function pintarEnviadas() {
+  const ccaa = selectCcaa.value || null;
+  document.getElementById('titular').textContent = 'Ayudas que te han enviado.';
+  document.querySelector('.entradilla').innerHTML = 'Alguien te ha mandado esta lista. Pulsa cada ayuda para ver <strong>cómo se pide, paso a paso</strong>. <a href="./">Ver todas las ayudas</a>.';
+  document.querySelector('.filtros .buscador').hidden = true;
+  chips.hidden = true;
+  cuantas.textContent = `${enviadas.length} ${enviadas.length === 1 ? 'ayuda' : 'ayudas'}`;
+  lista.innerHTML = `<ul class="lista-ayudas">${enviadas.map((id) => tarjeta(id, { ccaa })).join('')}</ul>`;
 }
 
 function pintar() {
+  if (enviadas.length) return pintarEnviadas();
   const q = normal(buscar.value.trim());
   const ccaa = selectCcaa.value || null;
-  const filtradas = AYUDAS.filter((a) => (tema === 'todas' || a.categoria === tema) && (!q || normal([a.nombre, a.resumen, a.cuantia, a.organismo, ...a.requisitos].join(' ')).includes(q)));
+  const filtradas = AYUDAS.filter((a) => (tema === 'todas' || a.categoria === tema) && (!q || normal([a.nombre, a.resumen, a.cuantia, a.organismo, ...a.requisitos, ...(TRAMITES[a.id]?.facil ?? [])].join(' ')).includes(q)));
   cuantas.textContent = `${filtradas.length} de ${AYUDAS.length} ayudas`;
   lista.innerHTML = filtradas.length
     ? CATEGORIAS.map((c) => {
         const delGrupo = filtradas.filter((a) => a.categoria === c.id);
         if (!delGrupo.length) return '';
-        return `<section class="grupo" aria-labelledby="g-${c.id}">
+        return `<section class="grupo grupo-${c.id}" aria-labelledby="g-${c.id}">
         <h2 class="grupo-titulo" id="g-${c.id}"><span class="insignia">${icono(c.icono)}</span>${esc(c.nombre)}</h2>
-        <ul class="lista-ayudas">${delGrupo.map((a) => ficha(a, ccaa)).join('')}</ul>
+        <ul class="lista-ayudas">${delGrupo.map((a) => tarjeta(a.id, { ccaa })).join('')}</ul>
       </section>`;
       }).join('')
     : '<p class="vacio">No hay ninguna ayuda con esa búsqueda. Prueba con otra palabra o <a href="../fuentes/#t-error">avísanos si falta alguna</a>.</p>';
@@ -79,7 +73,8 @@ pintar();
 
 // Si se llega con #id-de-ayuda, se abre esa ficha
 if (location.hash) {
-  const d = document.getElementById(decodeURIComponent(location.hash.slice(1)))?.querySelector('details');
+  const id = decodeURIComponent(location.hash.slice(1)).replace(/^ayuda-/, '');
+  const d = document.getElementById(`ayuda-${id}`)?.querySelector('details');
   if (d) {
     d.open = true;
     d.scrollIntoView({ block: 'start' });
