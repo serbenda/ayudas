@@ -104,3 +104,19 @@ test('guías en otros idiomas: completas y con los mismos apartados', async () =
   }
   assert.equal(IDIOMAS.ar.dir, 'rtl');
 });
+
+test('voz: elige la más humana de cada navegador y lee frase a frase', async () => {
+  const { mejorVoz, frases, puntuar } = await import('../assets/js/voz.js');
+  const v = (name, lang, extra = {}) => ({ name, lang, voiceURI: name, ...extra });
+  const edge = [v('Microsoft Helena - Spanish (Spain)', 'es-ES', { default: true }), v('Microsoft Elvira Online (Natural) - Spanish (Spain)', 'es-ES'), v('Microsoft Sonia Online (Natural) - English (United Kingdom)', 'en-GB')];
+  assert.match(mejorVoz(edge, 'es').name, /Elvira/);
+  assert.match(mejorVoz(edge, 'en').name, /Sonia/);
+  const apple = [v('Eddy (Spanish (Spain))', 'es-ES'), v('Mónica', 'es-ES'), v('Mónica (Mejorada)', 'es-ES'), v('Jorge', 'es-ES')];
+  assert.equal(mejorVoz(apple, 'es').name, 'Mónica (Mejorada)');
+  const chrome = [v('Google español', 'es-ES'), v('Google español de Estados Unidos', 'es-US'), v('eSpeak Spanish', 'es')];
+  assert.equal(mejorVoz(chrome, 'es').name, 'Google español');
+  assert.equal(mejorVoz(chrome, 'ar'), null);
+  assert.equal(puntuar(v('Google UK English Female', 'en-GB'), 'es'), -Infinity);
+  assert.deepEqual(frases('Hola. ¿Qué tal? Bien:  vale'), ['Hola.', '¿Qué tal?', 'Bien:', 'vale']);
+  assert.deepEqual(frases('Cuesta 1.221 € al mes.'), ['Cuesta 1.221 € al mes.']);
+});

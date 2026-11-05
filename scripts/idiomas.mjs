@@ -14,6 +14,7 @@ export const FRASE = 'Hola. No hablo bien español. Necesito ayuda para pedir ay
 
 export const IDIOMAS = {
   ca: {
+    escuchar: 'Escolta aquesta guia', escucharFrase: 'Escolta-la en castellà',
     nombre: 'Català', lang: 'ca', dir: 'ltr',
     titulo: 'Ajudes públiques a Espanya: guia per començar',
     descripcion: 'Guia en català de les ajudes públiques a Espanya: per on començar, telèfons d\'urgència i les ajudes principals.',
@@ -48,6 +49,7 @@ export const IDIOMAS = {
     otros: 'Altres idiomes',
   },
   gl: {
+    escuchar: 'Escoita esta guía', escucharFrase: 'Escóitaa en castelán',
     nombre: 'Galego', lang: 'gl', dir: 'ltr',
     titulo: 'Axudas públicas en España: guía para comezar',
     descripcion: 'Guía en galego das axudas públicas en España: por onde comezar, teléfonos de urxencia e as axudas principais.',
@@ -82,6 +84,7 @@ export const IDIOMAS = {
     otros: 'Outros idiomas',
   },
   eu: {
+    escuchar: 'Entzun gida hau', escucharFrase: 'Entzun gaztelaniaz',
     nombre: 'Euskara', lang: 'eu', dir: 'ltr',
     titulo: 'Laguntza publikoak Espainian: hasteko gida',
     descripcion: 'Espainiako laguntza publikoen gida euskaraz: nondik hasi, larrialdi-telefonoak eta laguntza nagusiak.',
@@ -116,6 +119,7 @@ export const IDIOMAS = {
     otros: 'Beste hizkuntza batzuk',
   },
   en: {
+    escuchar: 'Listen to this guide', escucharFrase: 'Play it in Spanish',
     nombre: 'English', lang: 'en', dir: 'ltr',
     titulo: 'Public benefits in Spain: a starter guide',
     descripcion: 'Guide in English to public benefits in Spain: where to start, emergency numbers and the main benefits.',
@@ -150,6 +154,7 @@ export const IDIOMAS = {
     otros: 'Other languages',
   },
   ar: {
+    escuchar: 'استمع إلى هذا الدليل', escucharFrase: 'استمع إليها بالإسبانية',
     nombre: 'العربية', lang: 'ar', dir: 'rtl',
     titulo: 'المساعدات العامة في إسبانيا: دليل للبدء',
     descripcion: 'دليل باللغة العربية للمساعدات العامة في إسبانيا: من أين تبدأ، وأرقام الطوارئ، وأهم المساعدات.',
@@ -184,6 +189,7 @@ export const IDIOMAS = {
     otros: 'لغات أخرى',
   },
   ro: {
+    escuchar: 'Ascultă acest ghid', escucharFrase: 'Ascult-o în spaniolă',
     nombre: 'Română', lang: 'ro', dir: 'ltr',
     titulo: 'Ajutoare publice în Spania: ghid pentru început',
     descripcion: 'Ghid în limba română despre ajutoarele publice din Spania: de unde începi, numere de urgență și principalele ajutoare.',

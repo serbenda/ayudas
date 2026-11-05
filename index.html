@@ -42,6 +42,15 @@
     <a class="boton urgente" href="#ayuda-hoy">Necesito ayuda hoy</a>
     <button type="button" class="boton secundario" id="facil" aria-pressed="false">Letra grande y fácil</button>
     <button type="button" class="boton secundario" id="contraste" aria-pressed="false">Alto contraste</button>
+    <details class="ajuste-voz" id="ajuste-voz">
+      <summary class="boton secundario">Voz</summary>
+      <div class="ajuste-voz-panel">
+        <label>Voz que lee <select name="voz"><option value="">La del aparato</option></select></label>
+        <label class="casilla"><input type="checkbox" name="despacio"><span>Leer más despacio</span></label>
+        <button type="button" class="boton secundario" data-probar="Hola. Así suena la voz que te lee las ayudas. Si no te gusta, elige otra.">Probar la voz</button>
+        <p class="nota">Las voces con ★ suenan más naturales. Si tu aparato tiene pocas, puedes descargar voces mejores en los ajustes de idioma o de accesibilidad del sistema.</p>
+      </div>
+    </details>
   </div>
 
   <main class="envoltorio">

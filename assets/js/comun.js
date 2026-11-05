@@ -1,5 +1,7 @@
 // Código común a todas las páginas: contador de visitas y enlaces para avisar de errores.
 
+import { hablar, parar, hablando, puedeHablar, voces, vozPara, prepararAjustes } from './voz.js';
+
 // Funciona sin conexión e instalable en el móvil: guarda la web en el navegador
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   navigator.serviceWorker.register(new URL('../../sw.js', import.meta.url), { scope: new URL('../../', import.meta.url).pathname }).catch(() => {});
@@ -73,25 +75,30 @@ if (botonContraste) {
   });
 }
 
-// Leer en voz alta: cualquier botón con data-leer lee su texto
-if ('speechSynthesis' in window) {
+// Leer en voz alta: cualquier botón con data-leer lee su texto, en el idioma de donde está
+// (las guías en otros idiomas se leen en su idioma) y con la voz más humana del aparato
+// data-lang manda (la frase para la ventanilla se lee en castellano aunque el botón esté en otro idioma)
+const idiomaDe = (b) => b.dataset.lang || b.closest('[lang]')?.lang || 'es';
+if (puedeHablar) {
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-leer]');
     if (!b) return;
-    if (speechSynthesis.speaking) {
-      speechSynthesis.cancel();
-      return;
-    }
-    const u = new SpeechSynthesisUtterance(b.dataset.leer);
-    u.lang = 'es-ES';
-    u.rate = 0.9;
-    const voz = speechSynthesis.getVoices().find((v) => v.lang?.startsWith('es'));
-    if (voz) u.voice = voz;
-    speechSynthesis.speak(u);
+    if (hablando() && b.getAttribute('aria-pressed') === 'true') return parar();
+    hablar(b.dataset.leer, { lang: idiomaDe(b), boton: b });
   });
+  // Si el aparato no tiene ninguna voz para ese idioma, el botón no se enseña
+  voces().then(async (lista) => {
+    // Sin lista de voces (algunos navegadores no la dan) se deja el botón: leerá con la voz por defecto
+    if (!lista.length) return;
+    for (const b of document.querySelectorAll('[data-leer]')) if (!(await vozPara(idiomaDe(b)))) b.hidden = true;
+  });
+  prepararAjustes();
 } else {
   document.documentElement.classList.add('sin-voz');
+  const ajuste = document.getElementById('ajuste-voz');
+  if (ajuste) ajuste.hidden = true;
 }
+addEventListener('pagehide', parar);
 
 // Versión para insertar en otras webs (?widget=1): sin cabecera ni pie, enlaces en otra pestaña
 // y la altura se avisa a la página que la contiene para que no salga barra de desplazamiento.

@@ -7,6 +7,7 @@ import { tramiteDe, papelesPara } from './tramites.js';
 import { DOCUMENTOS } from './guia.js';
 import { icono } from './iconos.js';
 import { botonTelefono, esc, cajaEjemplo } from './tarjeta.js';
+import { hablar, puedeHablar } from './voz.js';
 import { compartir } from './compartir.js';
 
 const caja = document.getElementById('asistente');
@@ -74,16 +75,8 @@ const PREGUNTAS = [
 const activas = () => PREGUNTAS.filter((q) => !q.si || q.si(respuestas));
 
 // ── Leer en voz alta ────────────────────────────────────────────────────
-const puedeHablar = 'speechSynthesis' in window;
 function leer(texto) {
-  if (!puedeHablar) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(texto);
-  u.lang = 'es-ES';
-  u.rate = 0.9;
-  const voz = speechSynthesis.getVoices().find((v) => v.lang?.startsWith('es'));
-  if (voz) u.voice = voz;
-  speechSynthesis.speak(u);
+  hablar(texto, { lang: 'es' });
 }
 const botonEscuchar = (id) => (puedeHablar ? `<button type="button" class="escuchar" data-escuchar="${id}">${icono('altavoz')} Escuchar</button>` : '');
 
