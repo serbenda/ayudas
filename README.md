@@ -159,6 +159,7 @@ tests/e2e/                     Browser and accessibility tests (Playwright + axe
 To run it locally (Node 22, see `.nvmrc`):
 
 ```sh
+npm run lint                  # ESLint and Prettier (npm run format fixes the formatting)
 npm test                      # unit tests
 npm run dev                   # serves site/ locally
 npm run build                 # builds _site/ (what GitHub Pages serves)

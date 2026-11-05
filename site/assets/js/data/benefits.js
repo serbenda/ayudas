@@ -112,7 +112,11 @@ export const BENEFITS = [
     agency: 'SEPE',
     summary: 'Si has perdido el trabajo y has cotizado al menos un año en los últimos seis, puedes cobrar el paro.',
     amount: 'El 70 % de tu base de cotización los primeros 6 meses (60 % después), con un mínimo y un máximo que dependen del IPREM y de si tienes hijos.',
-    requirements: ['Haber cotizado al menos 360 días en los últimos 6 años.', 'Haber perdido el empleo sin querer (despido, fin de contrato…).', 'Inscribirte como demandante y pedirlo en 15 días hábiles.'],
+    requirements: [
+      'Haber cotizado al menos 360 días en los últimos 6 años.',
+      'Haber perdido el empleo sin querer (despido, fin de contrato…).',
+      'Inscribirte como demandante y pedirlo en 15 días hábiles.',
+    ],
     link: SEPE,
   },
 
@@ -125,7 +129,11 @@ export const BENEFITS = [
     agency: 'Seguridad Social',
     summary: 'El permiso por nacimiento o adopción, pagado al 100 % de tu base reguladora y sin IRPF.',
     amount: `${C.nacimiento.weeks} semanas por cada progenitor (${C.nacimiento.weeksSingleParent} en familias monoparentales), cobrando el 100 % de tu base reguladora. Las 6 primeras son obligatorias tras el parto.`,
-    requirements: ['Trabajar y estar dado de alta (o cobrar el paro).', 'Tener cotizado un mínimo, que depende de la edad (los menores de 21 no necesitan).', 'Pedirlo en la Seguridad Social tras el nacimiento.'],
+    requirements: [
+      'Trabajar y estar dado de alta (o cobrar el paro).',
+      'Tener cotizado un mínimo, que depende de la edad (los menores de 21 no necesitan).',
+      'Pedirlo en la Seguridad Social tras el nacimiento.',
+    ],
     link: SS,
   },
   {
@@ -184,7 +192,11 @@ export const BENEFITS = [
     agency: 'Seguridad Social (o tu mutua)',
     summary: 'Si reduces tu jornada para cuidar a tu hijo durante el ingreso y el tratamiento, te pagan lo que dejas de cobrar.',
     amount: 'El 100 % de la base reguladora, en proporción a la reducción de jornada (al menos el 50 %), hasta que el menor cumple 23 años.',
-    requirements: ['Trabajar y que ambos progenitores trabajen (salvo familia monoparental).', 'Hijo con cáncer u otra enfermedad grave que necesite cuidado directo y continuo.', 'Reducir la jornada al menos a la mitad.'],
+    requirements: [
+      'Trabajar y que ambos progenitores trabajen (salvo familia monoparental).',
+      'Hijo con cáncer u otra enfermedad grave que necesite cuidado directo y continuo.',
+      'Reducir la jornada al menos a la mitad.',
+    ],
     link: SS,
   },
   {
@@ -208,7 +220,11 @@ export const BENEFITS = [
     agency: 'IMSERSO y tu comunidad',
     summary: 'Para mayores de 65 que no tienen pensión porque no cotizaron lo suficiente.',
     amount: `Hasta ${euros(C.pnc.perMonth)} al mes en 14 pagas (${euros(C.pnc.annual)} al año), menos lo que ya ingreses.`,
-    requirements: ['Tener 65 años o más.', 'Haber vivido en España 10 años desde los 16 (dos de ellos justo antes de pedirla).', `Ingresos propios por debajo de ${euros(C.pnc.annual)} al año (el límite sube si convives con familia).`],
+    requirements: [
+      'Tener 65 años o más.',
+      'Haber vivido en España 10 años desde los 16 (dos de ellos justo antes de pedirla).',
+      `Ingresos propios por debajo de ${euros(C.pnc.annual)} al año (el límite sube si convives con familia).`,
+    ],
     link: IMSERSO,
   },
   {
@@ -219,7 +235,12 @@ export const BENEFITS = [
     agency: 'IMSERSO y tu comunidad',
     summary: 'Para personas con una discapacidad del 65 % o más que no tienen ingresos suficientes ni pensión.',
     amount: `Hasta ${euros(C.pnc.perMonth)} al mes en 14 pagas; un 50 % más si la discapacidad es del 75 % y necesitas ayuda de otra persona.`,
-    requirements: ['Tener entre 18 y 65 años.', 'Discapacidad del 65 % o más.', 'Haber vivido en España 5 años (dos justo antes de pedirla).', `Ingresos propios por debajo de ${euros(C.pnc.annual)} al año.`],
+    requirements: [
+      'Tener entre 18 y 65 años.',
+      'Discapacidad del 65 % o más.',
+      'Haber vivido en España 5 años (dos justo antes de pedirla).',
+      `Ingresos propios por debajo de ${euros(C.pnc.annual)} al año.`,
+    ],
     link: IMSERSO,
   },
   {
@@ -241,7 +262,11 @@ export const BENEFITS = [
     agency: 'Seguridad Social',
     summary: 'Si tu pensión contributiva es muy baja, la Seguridad Social la sube hasta la pensión mínima.',
     amount: `Hasta la pensión mínima: en 2026, ${euros(C.minimums.retirement65.withoutSpouse)} al mes (jubilación, 65 o más, sin cónyuge) o ${euros(C.minimums.retirement65.withSpouse)} con cónyuge a cargo.`,
-    requirements: ['Cobrar una pensión contributiva por debajo de la mínima.', `Otros ingresos por debajo de ${euros(C.minimums.incomeLimit.withoutSpouse)} al año (${euros(C.minimums.incomeLimit.withSpouse)} con cónyuge a cargo).`, 'Vivir en España.'],
+    requirements: [
+      'Cobrar una pensión contributiva por debajo de la mínima.',
+      `Otros ingresos por debajo de ${euros(C.minimums.incomeLimit.withoutSpouse)} al año (${euros(C.minimums.incomeLimit.withSpouse)} con cónyuge a cargo).`,
+      'Vivir en España.',
+    ],
     link: SS,
   },
   {
@@ -252,7 +277,11 @@ export const BENEFITS = [
     agency: 'Seguridad Social',
     summary: 'Un extra en la pensión por cada hijo, para el progenitor que vio más afectada su carrera laboral (normalmente la madre).',
     amount: `${euros(C.gap)} al mes por hijo, hasta 4 hijos (${euros(C.gap * 4)} al mes).`,
-    requirements: ['Pensión de jubilación, incapacidad permanente o viudedad que empezó en 2021 o después.', 'Haber tenido o adoptado hijos.', 'Lo cobra uno de los dos progenitores: el de menor pensión.'],
+    requirements: [
+      'Pensión de jubilación, incapacidad permanente o viudedad que empezó en 2021 o después.',
+      'Haber tenido o adoptado hijos.',
+      'Lo cobra uno de los dos progenitores: el de menor pensión.',
+    ],
     link: SS,
   },
   {
@@ -274,7 +303,11 @@ export const BENEFITS = [
     agency: 'Seguridad Social',
     summary: 'Para el cónyuge o la pareja de hecho de una persona fallecida que cotizó.',
     amount: `Normalmente el 52 % de la base reguladora (60 % o 70 % en algunos casos). Mínimo en 2026: ${euros(C.minimums.viudedad.from65)} al mes si tienes 65 o más, ${euros(C.minimums.viudedad.withDependants)} con cargas familiares.`,
-    requirements: ['Estar casado o ser pareja de hecho registrada con la persona fallecida.', 'Que la persona fallecida tuviera cotización suficiente o cobrara pensión.', 'Pedirla en la Seguridad Social.'],
+    requirements: [
+      'Estar casado o ser pareja de hecho registrada con la persona fallecida.',
+      'Que la persona fallecida tuviera cotización suficiente o cobrara pensión.',
+      'Pedirla en la Seguridad Social.',
+    ],
     link: SS,
   },
   {
@@ -296,7 +329,11 @@ export const BENEFITS = [
     agency: 'IMSERSO',
     summary: 'Viajes de vacaciones y estancias en balnearios a precio reducido para pensionistas.',
     amount: 'Parte del precio lo paga el IMSERSO. Las plazas se reparten por puntos (edad, ingresos, si no fuiste el año anterior…).',
-    requirements: ['Ser pensionista de jubilación (o de viudedad desde los 55), o tener 65 o más y estar en la Seguridad Social.', 'Valerte por ti mismo para viajar.', 'Para balnearios, necesitar el tratamiento.'],
+    requirements: [
+      'Ser pensionista de jubilación (o de viudedad desde los 55), o tener 65 o más y estar en la Seguridad Social.',
+      'Valerte por ti mismo para viajar.',
+      'Para balnearios, necesitar el tratamiento.',
+    ],
     link: IMSERSO,
   },
   {
@@ -331,7 +368,11 @@ export const BENEFITS = [
     agency: 'Servicios sociales de tu comunidad',
     summary: 'Dinero cada mes para que un familiar cuide en casa a la persona con dependencia.',
     amount: 'La fija tu comunidad según el grado y los ingresos de la persona dependiente. Grado III cobra más que el II y el I.',
-    requirements: ['Tener la dependencia reconocida (grado I, II o III).', 'Que esta prestación se recoja en el Programa Individual de Atención (PIA).', 'Que el cuidador sea un familiar (hasta tercer grado) que conviva con ella.'],
+    requirements: [
+      'Tener la dependencia reconocida (grado I, II o III).',
+      'Que esta prestación se recoja en el Programa Individual de Atención (PIA).',
+      'Que el cuidador sea un familiar (hasta tercer grado) que conviva con ella.',
+    ],
     link: REGION_LINK,
   },
   {
@@ -399,7 +440,11 @@ export const BENEFITS = [
     agency: 'Tu comercializadora de referencia',
     summary: 'Descuento en la factura de la luz para hogares con ingresos bajos, familias numerosas, pensionistas con la mínima y quien cobra el IMV.',
     amount: `${percent(C.socialDiscount.vulnerable)} de descuento (${percent(C.socialDiscount.severe)} si la situación es más grave) en 2026.`,
-    requirements: ['Tener la tarifa regulada (PVPC) con una comercializadora de referencia.', 'Potencia contratada de 10 kW o menos en tu vivienda habitual.', 'Ingresos por debajo del límite, o ser familia numerosa, pensionista con la mínima o cobrar el IMV.'],
+    requirements: [
+      'Tener la tarifa regulada (PVPC) con una comercializadora de referencia.',
+      'Potencia contratada de 10 kW o menos en tu vivienda habitual.',
+      'Ingresos por debajo del límite, o ser familia numerosa, pensionista con la mínima o cobrar el IMV.',
+    ],
     link: SOCIAL_DISCOUNT_LINK,
   },
   {
@@ -421,7 +466,12 @@ export const BENEFITS = [
     agency: 'Tu comunidad',
     summary: 'Ayuda para pagar el alquiler si tienes 35 años o menos.',
     amount: `Hasta ${euros(C.rent.young)} al mes por una vivienda (${euros(C.rent.youngRoom)} por una habitación), sin pasar del 60 % del alquiler, durante 2 años.`,
-    requirements: [`Tener ${C.rent.youngAge} años o menos.`, `Ingresos del hogar de hasta ${C.rent.ipremLimitYoung} veces el IPREM (${euros(C.rent.ipremLimitYoung * C.iprem.annual14)} al año).`, 'Alquiler por debajo del tope de tu comunidad.', 'Esperar a la convocatoria de tu comunidad: se abre una vez al año y se cierra al acabarse el dinero.'],
+    requirements: [
+      `Tener ${C.rent.youngAge} años o menos.`,
+      `Ingresos del hogar de hasta ${C.rent.ipremLimitYoung} veces el IPREM (${euros(C.rent.ipremLimitYoung * C.iprem.annual14)} al año).`,
+      'Alquiler por debajo del tope de tu comunidad.',
+      'Esperar a la convocatoria de tu comunidad: se abre una vez al año y se cierra al acabarse el dinero.',
+    ],
     link: REGION_LINK,
   },
   {
@@ -432,7 +482,11 @@ export const BENEFITS = [
     agency: 'Tu comunidad',
     summary: 'Ayuda para pagar el alquiler de tu vivienda habitual si tus ingresos son bajos.',
     amount: 'Un porcentaje del alquiler (hasta el 50 %, más en algunos casos), según la convocatoria de tu comunidad.',
-    requirements: [`Ingresos del hogar por debajo del límite de la convocatoria (suele rondar ${C.rent.ipremLimitGeneral} veces el IPREM, ${euros(C.rent.ipremLimitGeneral * C.iprem.annual14)} al año; más en familias numerosas o con discapacidad).`, 'Alquiler por debajo del tope de tu comunidad.', 'Estar al día con Hacienda y la Seguridad Social.'],
+    requirements: [
+      `Ingresos del hogar por debajo del límite de la convocatoria (suele rondar ${C.rent.ipremLimitGeneral} veces el IPREM, ${euros(C.rent.ipremLimitGeneral * C.iprem.annual14)} al año; más en familias numerosas o con discapacidad).`,
+      'Alquiler por debajo del tope de tu comunidad.',
+      'Estar al día con Hacienda y la Seguridad Social.',
+    ],
     link: HOUSING_LINK,
   },
 
@@ -631,14 +685,18 @@ export const BENEFITS = [
   },
   {
     id: 'fons-infancia-barcelona',
-    name: 'Fondo de Infancia de Barcelona (Fons d\'Infància)',
+    name: "Fondo de Infancia de Barcelona (Fons d'Infància)",
     category: 'familia',
     scope: 'Ayuntamiento de Barcelona',
     agency: 'Ayuntamiento de Barcelona',
     summary: 'Dinero una vez al año para familias con hijos de 0 a 16 años e ingresos bajos que son usuarias de los servicios sociales de Barcelona.',
     amount: '600 € con un hijo, 1.050 € con dos, 1.320 € con tres y 1.650 € con cuatro (300 € más por cada hijo más). 600 € más con carnet de familia monoparental.',
-    requirements: ['Estar empadronados en Barcelona.', 'Ser usuarios de los servicios sociales del Ayuntamiento.', 'Ingresos del hogar por debajo del límite (por ejemplo, 19.435,24 € al año para 3 personas).'],
-    link: { text: 'Ajuntament de Barcelona: Fons d\'Infància', url: 'https://ajuntament.barcelona.cat/dretssocials/' },
+    requirements: [
+      'Estar empadronados en Barcelona.',
+      'Ser usuarios de los servicios sociales del Ayuntamiento.',
+      'Ingresos del hogar por debajo del límite (por ejemplo, 19.435,24 € al año para 3 personas).',
+    ],
+    link: { text: "Ajuntament de Barcelona: Fons d'Infància", url: 'https://ajuntament.barcelona.cat/dretssocials/' },
   },
   {
     id: 'natalidad-valencia',
@@ -670,7 +728,11 @@ export const BENEFITS = [
     agency: 'Ayuntamiento de Málaga (Plan Corresponsables)',
     summary: 'Una persona cuida gratis a tus hijos en casa unas horas para que puedas trabajar, formarte, ir a una entrevista o a una cita.',
     amount: 'Gratis: de 3 a 7 horas al día, cualquier día de 7 a 21 h, mientras queden horas en la edición.',
-    requirements: ['Niños de 4 meses a 10 años (hasta 16 con necesidades especiales) empadronados en Málaga.', 'Tener un motivo: trabajo, formación, entrevista, cita obligatoria u otro que valore el Ayuntamiento.', 'Tienen prioridad las familias con menos ingresos, monoparentales, numerosas o con discapacidad.'],
+    requirements: [
+      'Niños de 4 meses a 10 años (hasta 16 con necesidades especiales) empadronados en Málaga.',
+      'Tener un motivo: trabajo, formación, entrevista, cita obligatoria u otro que valore el Ayuntamiento.',
+      'Tienen prioridad las familias con menos ingresos, monoparentales, numerosas o con discapacidad.',
+    ],
     link: { text: 'Málaga Ciudad Corresponsable', url: 'https://sede.malaga.eu/' },
   },
   {
@@ -747,7 +809,8 @@ export const BENEFITS = [
     category: 'otras',
     scope: 'Estatal',
     agency: 'Sistema Nacional de Salud',
-    summary: 'Quien cobra el IMV, una pensión no contributiva o la pensión mínima, o está en paro sin prestación, no paga las medicinas de la receta. Los demás pensionistas pagan el 10 % con un tope al mes.',
+    summary:
+      'Quien cobra el IMV, una pensión no contributiva o la pensión mínima, o está en paro sin prestación, no paga las medicinas de la receta. Los demás pensionistas pagan el 10 % con un tope al mes.',
     amount: 'Gratis en los casos de exención. Pensionistas: 10 % con un máximo de 8,23 € al mes si ganan menos de 18.000 € al año.',
     requirements: ['Se aplica solo según tus datos. Si pagas de más, te lo devuelven.'],
     link: { text: 'Comunidad de Madrid: cuánto pagas', url: 'https://www.comunidad.madrid/servicios/salud/cuanto-tengo-pagar-mis-medicamentos' },
@@ -760,7 +823,11 @@ export const BENEFITS = [
     agency: 'Seguridad Social',
     summary: 'Si te das de alta como autónomo por primera vez (o hace más de 2 años que no lo eres), pagas una cuota reducida a la Seguridad Social el primer año.',
     amount: `${euros(C.selfEmployed.flatRate)} al mes de cuota durante ${C.selfEmployed.months} meses. Otros ${C.selfEmployed.extraMonths} meses si lo que ganas no llega al salario mínimo. Algunas comunidades te devuelven esa cuota.`,
-    requirements: ['No haber sido autónomo en los últimos 2 años (3 si ya tuviste la tarifa plana).', 'Pedirla en el momento de darte de alta.', 'No deber dinero a la Seguridad Social ni a Hacienda.'],
+    requirements: [
+      'No haber sido autónomo en los últimos 2 años (3 si ya tuviste la tarifa plana).',
+      'Pedirla en el momento de darte de alta.',
+      'No deber dinero a la Seguridad Social ni a Hacienda.',
+    ],
     link: { text: 'Importass (Seguridad Social)', url: 'https://portal.seg-social.gob.es/' },
   },
   {
@@ -771,7 +838,12 @@ export const BENEFITS = [
     agency: 'Tu mutua colaboradora (o el SEPE o el ISM)',
     summary: 'Dinero cada mes si tienes que cerrar tu negocio o dejar de trabajar como autónomo sin quererlo.',
     amount: 'El 70 % de tu base de cotización media del último año, de 4 a 24 meses según lo cotizado.',
-    requirements: ['Haber cotizado por cese de actividad los 12 meses seguidos de antes del cierre.', 'Cerrar por pérdidas, deudas, fuerza mayor, violencia de género, divorcio u otro motivo que no dependa de ti.', 'Estar al corriente de pago con la Seguridad Social.', 'No tener la edad de jubilación.'],
+    requirements: [
+      'Haber cotizado por cese de actividad los 12 meses seguidos de antes del cierre.',
+      'Cerrar por pérdidas, deudas, fuerza mayor, violencia de género, divorcio u otro motivo que no dependa de ti.',
+      'Estar al corriente de pago con la Seguridad Social.',
+      'No tener la edad de jubilación.',
+    ],
     link: { text: 'Seguridad Social: cese de actividad', url: 'https://www.seg-social.es/' },
   },
   {
@@ -782,7 +854,13 @@ export const BENEFITS = [
     agency: 'SEPE',
     summary: 'Dinero cada mes si eres español, has trabajado fuera y has vuelto a España sin derecho al paro.',
     amount: `${euros(C.allowance.first6Months)} al mes los 6 primeros meses, ${euros(C.allowance.next6Months)} los 6 siguientes y ${euros(C.allowance.rest)} después, hasta 18 meses en total.`,
-    requirements: ['Tener la nacionalidad española.', 'Haber trabajado al menos 12 meses en los últimos 6 años en países de fuera del Espacio Económico Europeo (la Unión Europea, Noruega, Islandia y Liechtenstein) o sin convenio de paro con España.', 'Haber vuelto en los últimos 12 meses.', `No tener ingresos de más de ${euros(C.allowance.monthlyIncomeLimit)} al mes.`, 'Apuntarte como demandante de empleo.'],
+    requirements: [
+      'Tener la nacionalidad española.',
+      'Haber trabajado al menos 12 meses en los últimos 6 años en países de fuera del Espacio Económico Europeo (la Unión Europea, Noruega, Islandia y Liechtenstein) o sin convenio de paro con España.',
+      'Haber vuelto en los últimos 12 meses.',
+      `No tener ingresos de más de ${euros(C.allowance.monthlyIncomeLimit)} al mes.`,
+      'Apuntarte como demandante de empleo.',
+    ],
     link: SEPE,
   },
   {
@@ -793,7 +871,14 @@ export const BENEFITS = [
     agency: 'ICO, a través de los bancos',
     summary: 'Si tienes 35 años o menos, o hijos menores a cargo, el Estado avala parte de la hipoteca. Así el banco te presta hasta el 100 % y no necesitas tantos ahorros.',
     amount: `El aval cubre hasta el ${C.icoGuarantee.aval} % del préstamo (${C.icoGuarantee.efficientGuarantee} % si la casa tiene certificado energético D o mejor). No es dinero: es una garantía.`,
-    requirements: [`Tener ${C.icoGuarantee.age} años o menos al firmar, o hijos menores a cargo.`, `Ingresos de hasta ${euros(C.icoGuarantee.incomePerPerson)} brutos al año por persona (en algunas comunidades, más).`, `No tener más de ${euros(C.icoGuarantee.wealth)} de patrimonio.`, 'Que sea tu primera casa y vivas en ella.', 'Haber vivido en España los 2 últimos años.', `Firmar la hipoteca antes del ${C.icoGuarantee.until}.`],
+    requirements: [
+      `Tener ${C.icoGuarantee.age} años o menos al firmar, o hijos menores a cargo.`,
+      `Ingresos de hasta ${euros(C.icoGuarantee.incomePerPerson)} brutos al año por persona (en algunas comunidades, más).`,
+      `No tener más de ${euros(C.icoGuarantee.wealth)} de patrimonio.`,
+      'Que sea tu primera casa y vivas en ella.',
+      'Haber vivido en España los 2 últimos años.',
+      `Firmar la hipoteca antes del ${C.icoGuarantee.until}.`,
+    ],
     link: { text: 'ICO: avales para la primera vivienda', url: 'https://www.ico.es/' },
   },
   {

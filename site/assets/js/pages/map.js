@@ -11,13 +11,15 @@ const SMALL_REGIONS = new Set(['ceuta', 'melilla']);
 
 export function mapSvg() {
   const { canarias: k } = MAP;
-  const zones = REGIONS.filter((c) => SHAPES[c.id]).map((c) => {
-    const [x, y] = CENTRES[c.id];
-    // Ceuta and Melilla are tiny: a large circle is added so they can be tapped
-    const dot = SMALL_REGIONS.has(c.id) ? `<circle class="dot" cx="${x}" cy="${y}" r="16"/>` : '';
-    return `<g class="zone" data-region="${c.id}" tabindex="0" role="button" aria-pressed="false" aria-label="${esc(c.name)}">
+  const zones = REGIONS.filter((c) => SHAPES[c.id])
+    .map((c) => {
+      const [x, y] = CENTRES[c.id];
+      // Ceuta and Melilla are tiny: a large circle is added so they can be tapped
+      const dot = SMALL_REGIONS.has(c.id) ? `<circle class="dot" cx="${x}" cy="${y}" r="16"/>` : '';
+      return `<g class="zone" data-region="${c.id}" tabindex="0" role="button" aria-pressed="false" aria-label="${esc(c.name)}">
       <title>${esc(c.name)}</title><path d="${SHAPES[c.id]}"/>${dot}</g>`;
-  }).join('');
+    })
+    .join('');
   return `<svg class="map-svg" viewBox="0 0 ${MAP.width} ${MAP.height}" role="group" aria-label="Mapa de España por comunidades">
     <rect class="box" x="${k.x}" y="${k.y}" width="${k.w}" height="${k.h}" rx="8"/>
     ${zones}
@@ -37,7 +39,9 @@ function init() {
     select.value = id;
     box.querySelectorAll('.zone').forEach((z) => z.setAttribute('aria-pressed', String(z.dataset.region === id)));
     if (save) {
-      try { localStorage.setItem(REGION_KEY, id); } catch {}
+      try {
+        localStorage.setItem(REGION_KEY, id);
+      } catch {}
       history.replaceState(null, '', `#${id}`);
     }
     panel.innerHTML = regionPanel(id);
@@ -60,7 +64,9 @@ function init() {
 
   const initial = decodeURIComponent(location.hash.slice(1));
   let savedVoice = '';
-  try { savedVoice = localStorage.getItem(REGION_KEY) ?? ''; } catch {}
+  try {
+    savedVoice = localStorage.getItem(REGION_KEY) ?? '';
+  } catch {}
   if (MINIMUM_INCOME[initial]) choose(initial);
   else if (MINIMUM_INCOME[savedVoice]) choose(savedVoice, { save: false });
 }

@@ -46,7 +46,10 @@ async function openPage(routePath, options = {}, before) {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
-  await page.route((url) => !url.href.startsWith(base), (r) => r.abort());
+  await page.route(
+    (url) => !url.href.startsWith(base),
+    (r) => r.abort(),
+  );
   await page.goto(base + routePath);
   await page.waitForLoadState('networkidle');
   return { page, errors, context };
@@ -59,7 +62,16 @@ async function checkAccessible(page, where) {
   if (!AxeBuilder) return;
   await page.evaluate(() => document.querySelectorAll('details').forEach((d) => (d.open = true)));
   const { violations } = await new AxeBuilder({ page: page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
-  assert.deepEqual(violations.map((v) => `${where} ${v.id} (${v.impact}): ${v.nodes.map((n) => n.target.join(' ')).slice(0, 3).join(', ')}`), []);
+  assert.deepEqual(
+    violations.map(
+      (v) =>
+        `${where} ${v.id} (${v.impact}): ${v.nodes
+          .map((n) => n.target.join(' '))
+          .slice(0, 3)
+          .join(', ')}`,
+    ),
+    [],
+  );
 }
 
 async function noOverflow(page, where) {
@@ -67,7 +79,21 @@ async function noOverflow(page, where) {
   assert.ok(overflow <= 1, `${where}: the page overflows ${overflow} px to the right`);
 }
 
-for (const [routePath, name] of [['', 'home'], ['mayores/', 'seniors'], ['catalogo/', 'catalogue'], ['mapa/#galicia', 'map'], ['entidades/', 'organisations'], ['ayuda/imv/', 'IMV card'], ['comunidad/madrid/', 'Madrid page'], ['comunidad/', 'regions'], ['palabras/', 'glossary'], ['en/', 'English guide'], ['va/', 'Valencian guide'], ['eu/', 'Basque guide'], ['fuentes/', 'sources']]) {
+for (const [routePath, name] of [
+  ['', 'home'],
+  ['mayores/', 'seniors'],
+  ['catalogo/', 'catalogue'],
+  ['mapa/#galicia', 'map'],
+  ['entidades/', 'organisations'],
+  ['ayuda/imv/', 'IMV card'],
+  ['comunidad/madrid/', 'Madrid page'],
+  ['comunidad/', 'regions'],
+  ['palabras/', 'glossary'],
+  ['en/', 'English guide'],
+  ['va/', 'Valencian guide'],
+  ['eu/', 'Basque guide'],
+  ['fuentes/', 'sources'],
+]) {
   test(`${name}: no errors, no overflow and accessible on mobile, tablet and desktop`, async () => {
     for (const [variant, options] of VARIANTS) {
       const { page, errors, context } = await openPage(routePath, options);
@@ -100,7 +126,10 @@ test('home: an example shows benefits, where to start, documents and steps', asy
   assert.ok(begin[0].includes('Comida'), `urgent first: ${begin[0]}`);
   assert.ok((await page.locator('#list .benefit').count()) >= 5);
   assert.ok((await page.locator('#papers li').count()) >= 3);
-  await page.locator('#list details').first().evaluate((d) => (d.open = true));
+  await page
+    .locator('#list details')
+    .first()
+    .evaluate((d) => (d.open = true));
   assert.ok((await page.locator('#list details').first().locator('.procedure-steps li').count()) >= 1);
   await checkAccessible(page, 'home with results');
   assert.deepEqual(ownItems(errors), []);
@@ -114,8 +143,14 @@ test('seniors: answered by tapping buttons, and the benefits come up with their 
   for (const r of answers) await page.locator('.option-large', { hasText: r }).first().click();
   await page.waitForSelector('#result:not([hidden])');
   const cards = await page.locator('.senior-card h3').allTextContents();
-  assert.ok(cards.some((t) => t.includes('Complemento a mínimos')), cards.join(' | '));
-  assert.ok(cards.some((t) => t.includes('Teleasistencia')), cards.join(' | '));
+  assert.ok(
+    cards.some((t) => t.includes('Complemento a mínimos')),
+    cards.join(' | '),
+  );
+  assert.ok(
+    cards.some((t) => t.includes('Teleasistencia')),
+    cards.join(' | '),
+  );
   await noOverflow(page, 'seniors result');
   await checkAccessible(page, 'seniors result');
   assert.deepEqual(ownItems(errors), []);
@@ -193,18 +228,25 @@ test('difficult words: tapping one shows its meaning, and tapping again hides it
 test('embed.js: each type loads its page, with a title and in widget mode', async () => {
   const { page, context } = await openPage('');
   const types = { cuestionario: '', mayores: 'mayores/', mapa: 'mapa/', catalogo: 'catalogo/' };
-  await page.setContent(`${Object.keys(types).map((t) => `<div data-ayudas="${t}"></div>`).join('')}<script src="${base}embed.js"></script>`);
+  await page.setContent(
+    `${Object.keys(types)
+      .map((t) => `<div data-ayudas="${t}"></div>`)
+      .join('')}<script src="${base}embed.js"></script>`,
+  );
   const frames = await page.locator('iframe').evaluateAll((fs) => fs.map((f) => [f.src, f.title]));
-  assert.deepEqual(frames.map(([src]) => src), Object.values(types).map((p) => `${base}${p}?widget=1`));
+  assert.deepEqual(
+    frames.map(([src]) => src),
+    Object.values(types).map((p) => `${base}${p}?widget=1`),
+  );
   for (const [, title] of frames) assert.ok(title, 'every iframe has a title');
   await context.close();
 });
 
-test('sources: every report link opens a GitHub issue with its template', async () => {
+test('sources: every report link opens its GitHub issue form, filled in', async () => {
   const { page, context } = await openPage('fuentes/');
-  const links = await page.locator('a[data-notice]').evaluateAll((as) => as.map((a) => new URL(a.href).searchParams.get('title')));
-  assert.equal(links.length, 3);
-  for (const t of links) assert.ok(t, 'link has a title');
+  const links = await page.locator('a[data-notice]').evaluateAll((as) => as.map((a) => Object.fromEntries(new URL(a.href).searchParams)));
+  assert.deepEqual(links.map((l) => l.template).sort(), ['bug.yml', 'data.yml', 'missing.yml']);
+  for (const l of links) assert.ok(l.title && l.page, 'link has a title and the page');
   await context.close();
 });
 
@@ -214,4 +256,16 @@ test('home: the carer example fills in the person being cared for', async () => 
   assert.equal(await page.locator('[name="p1-relationship"]').inputValue(), 'padre');
   assert.equal(await page.locator('[name="p1-age"]').inputValue(), '84');
   await context.close();
+});
+
+test('every page has a Content-Security-Policy and breaks none of it', async () => {
+  for (const routePath of ['', 'mayores/', 'catalogo/', 'mapa/', 'entidades/', 'palabras/', 'fuentes/', 'ayuda/imv/', 'en/']) {
+    const { page, context } = await openPage(routePath, {}, () => {
+      window.__cspViolations = [];
+      document.addEventListener('securitypolicyviolation', (e) => window.__cspViolations.push(`${e.violatedDirective} ${e.blockedURI}`));
+    });
+    assert.match((await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content')) ?? '', /default-src 'self'/, routePath);
+    assert.deepEqual(await page.evaluate(() => window.__cspViolations), [], routePath);
+    await context.close();
+  }
 });

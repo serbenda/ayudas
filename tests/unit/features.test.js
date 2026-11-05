@@ -47,7 +47,10 @@ test('new benefits: self-employed, returnees, housing and health', () => {
 
 test('.ics reminders: valid, with the next date and only the relevant ones', () => {
   const today = new Date(2026, 10, 5);
-  assert.deepEqual(remindersFor([]).map((r) => r.id), ['revisar']);
+  assert.deepEqual(
+    remindersFor([]).map((r) => r.id),
+    ['revisar'],
+  );
   assert.ok(remindersFor(['pnc-jubilacion']).some((r) => r.id === 'pnc'));
   const ics = calendar(['pnc-jubilacion', 'bono-social'], today);
   assert.match(ics, /^BEGIN:VCALENDAR\r\n/);
@@ -60,8 +63,8 @@ test('.ics reminders: valid, with the next date and only the relevant ones', () 
 });
 
 test('answers link: round trip, and rejects anything odd', () => {
-  const data = { age: '72', region: 'galicia', widowed: true, 'contributedOneYear': 'si', empty: '', no: false };
-  assert.deepEqual(fromLink(toLink(data)), { age: '72', region: 'galicia', widowed: true, 'contributedOneYear': 'si' });
+  const data = { age: '72', region: 'galicia', widowed: true, contributedOneYear: 'si', empty: '', no: false };
+  assert.deepEqual(fromLink(toLink(data)), { age: '72', region: 'galicia', widowed: true, contributedOneYear: 'si' });
   assert.equal(fromLink('esto no es base64 ¿'), null);
   assert.equal(fromLink(toLink({ a: 1 }).slice(0, 3)), null);
   assert.deepEqual(fromLink(Buffer.from(JSON.stringify({ '<x>': 'y', ok: { a: 1 } })).toString('base64url')), {});
@@ -110,7 +113,11 @@ test('guides in other languages: complete and with the same sections', async () 
 test('voice: picks the most human one in each browser and reads sentence by sentence', async () => {
   const { bestVoice, sentences, score } = await import('../../site/assets/js/lib/voice.js');
   const v = (name, lang, extra = {}) => ({ name, lang, voiceURI: name, ...extra });
-  const edge = [v('Microsoft Helena - Spanish (Spain)', 'es-ES', { default: true }), v('Microsoft Elvira Online (Natural) - Spanish (Spain)', 'es-ES'), v('Microsoft Sonia Online (Natural) - English (United Kingdom)', 'en-GB')];
+  const edge = [
+    v('Microsoft Helena - Spanish (Spain)', 'es-ES', { default: true }),
+    v('Microsoft Elvira Online (Natural) - Spanish (Spain)', 'es-ES'),
+    v('Microsoft Sonia Online (Natural) - English (United Kingdom)', 'en-GB'),
+  ];
   assert.match(bestVoice(edge, 'es').name, /Elvira/);
   assert.match(bestVoice(edge, 'en').name, /Sonia/);
   const apple = [v('Eddy (Spanish (Spain))', 'es-ES'), v('Mónica', 'es-ES'), v('Mónica (Mejorada)', 'es-ES'), v('Jorge', 'es-ES')];
@@ -162,10 +169,43 @@ test('watchers: cards to review, calls and the minimum wage from the BOE', async
   assert.match(toReview(['xec-cangur'], new Date(2027, 5, 2))[0].reason, /toca mirar/);
   for (const id of Object.keys(CHECK_ON)) assert.ok(BY_ID[id], id);
   for (const [, , id] of WATCHLIST) assert.ok(BY_ID[id], id);
-  const resp = { content: [{ descripcion: 'Tarxeta Benvida 2027', nivel1: 'AUTONOMICA', nivel2: 'GALICIA' }, { descripcion: 'Otra', nivel2: 'ARAGÓN' }] };
+  const resp = {
+    content: [
+      { descripcion: 'Tarxeta Benvida 2027', nivel1: 'AUTONOMICA', nivel2: 'GALICIA' },
+      { descripcion: 'Otra', nivel2: 'ARAGÓN' },
+    ],
+  };
   assert.equal(inRegion(resp, 'GALICIA').length, 1);
   assert.equal(inRegion(resp, 'ARAGON').length, 1, 'without accents');
   assert.equal(inRegion({}, 'GALICIA').length, 0);
   assert.equal(smiFromText('el salario mínimo queda fijado en 1.260,50 euros/mes'), 1260.5);
   assert.equal(smiFromText('sin cifras'), null);
+});
+
+test('every regional benefit and every benefit with a call date is watched in the BDNS', async () => {
+  const { CHECK_ON } = await import('../../site/assets/js/data/review.js');
+  const { WATCHLIST, UNWATCHED } = await import('../../scripts/watch/calls.mjs');
+  const { REGIONAL_BENEFITS } = await import('../../site/assets/js/data/regional-benefits.js');
+  const watched = new Set(WATCHLIST.map(([, , id]) => id));
+  for (const id of new Set([...REGIONAL_BENEFITS.map((a) => a.id), ...Object.keys(CHECK_ON)])) {
+    assert.ok(watched.has(id) || UNWATCHED[id], `${id}: add it to WATCHLIST in scripts/watch/calls.mjs, or to UNWATCHED with the reason`);
+  }
+  for (const id of Object.keys(UNWATCHED)) assert.ok(BY_ID[id] && !watched.has(id), `UNWATCHED ${id}`);
+});
+
+test('every Action in the workflows is pinned to a commit with its version', async () => {
+  const { readdir, readFile } = await import('node:fs/promises');
+  const { pinnedActions, compareVersions } = await import('../../scripts/watch/actions.mjs');
+  const dir = new URL('../../.github/workflows/', import.meta.url);
+  for (const f of await readdir(dir)) {
+    const yaml = await readFile(new URL(f, dir), 'utf8');
+    const uses = [...yaml.matchAll(/^\s*-?\s*uses:/gm)].length;
+    assert.equal(pinnedActions(yaml).length, uses, `${f}: every uses: line is owner/repo@<sha> # vX`);
+  }
+  assert.deepEqual(pinnedActions('uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1'), [
+    { action: 'actions/checkout', repo: 'actions/checkout', sha: '3d3c42e5aac5ba805825da76410c181273ba90b1', version: 'v7.0.1' },
+  ]);
+  assert.ok(compareVersions('v5.0.1', 'v5.1.0') < 0);
+  assert.ok(compareVersions('v7', 'v7.0.0') === 0);
+  assert.ok(compareVersions('v10.0.0', 'v9.9.9') > 0);
 });

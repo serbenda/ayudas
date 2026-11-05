@@ -200,7 +200,7 @@ section + section { margin-top: 3.5rem; }
 
 .question { display: grid; gap: 0.45rem; }
 .question > label, .question > .label { font-weight: 600; }
-.question small, .field-help { font-weight: 400; color: var(--muted); font-size: 0.9rem; }
+.question small { font-weight: 400; color: var(--muted); font-size: 0.9rem; }
 .question input[type='text'], .question input[type='number'], .question select, .person select, .person input[type='text'], .person input[type='number'] {
   font: inherit;
   width: 100%;
@@ -399,14 +399,6 @@ section + section { margin-top: 3.5rem; }
 #easy[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: var(--paper); }
 @media (max-width: 40rem) { .bar { justify-content: stretch; } .bar .button { flex: 1 1 10rem; } }
 
-.seniors-notice {
-  display: flex; align-items: center; gap: 0.9rem; margin-top: 1.5rem; max-width: 46rem;
-  padding: 0.9rem 1.1rem; border: 2px solid var(--accent); border-radius: var(--radius);
-  background: var(--accent-soft); text-decoration: none; font-size: 1.05rem;
-}
-.seniors-notice:hover strong { text-decoration: underline; text-underline-offset: 4px; }
-.seniors-notice .badge { --size: 2.8rem; background: var(--surface); }
-
 .steps { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 
 /* ── Results: where to start, documents, phone numbers ───────────────── */
@@ -477,7 +469,7 @@ section + .start { margin-top: 1.75rem; }
 
 /* ── Print sheet ────────────────────────────────────────────────────── */
 @media print {
-  .bar, .seniors-notice, .chips, #figures, .track, .help-today .section-title p, .glossary, .benefit-footer a { display: none !important; }
+  .bar, .chips, #figures, .track, .help-today .section-title p, .glossary, .benefit-footer a { display: none !important; }
   .block { border: 0; padding: 0; }
   .call { border: 1px solid #999; break-inside: avoid; }
   .benefit { break-inside: avoid-page; }
@@ -655,7 +647,7 @@ section + .start { margin-top: 1.75rem; }
 [data-contrast] a { text-decoration: underline !important; text-underline-offset: 3px; }
 [data-contrast] .option span, [data-contrast] .topic, [data-contrast] .call, [data-contrast] .benefit, [data-contrast] .figure, [data-contrast] .confidence li { border-width: 2px; border-color: var(--ink); }
 [data-contrast] .benefit { border-bottom: 2px solid var(--ink); }
-[data-contrast] .muted, [data-contrast] small, [data-contrast] .note, [data-contrast] .lead { color: var(--ink); }
+[data-contrast] small, [data-contrast] .note, [data-contrast] .lead { color: var(--ink); }
 [data-contrast] .illustration { filter: grayscale(1) contrast(1.4); }
 
 /* ── Explaining better: why we ask, examples, thresholds and tables ── */

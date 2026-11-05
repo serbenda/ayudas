@@ -158,7 +158,7 @@ export function termsIn(text) {
  */
 const ORDER = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
 export function markTerms(html, used = new Set()) {
-  let parts = [html];
+  const parts = [html];
   for (const k of ORDER) {
     if (used.has(k)) continue;
     const re = PATTERNS[k];

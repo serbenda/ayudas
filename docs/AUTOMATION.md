@@ -11,7 +11,8 @@ This guide is for whoever maintains the site, now or in a year's time. It covers
 | [`publish.yml`](../.github/workflows/publish.yml) | Every PR to `main` | `build` | Tests and builds the site | — (the PR shows ✓ or ✗) |
 | [`publish.yml`](../.github/workflows/publish.yml) | Every push to `main` | `build` + `deploy` | Tests, builds and publishes to GitHub Pages | — |
 | [`publish.yml`](../.github/workflows/publish.yml) | Mondays 06:23 | `links` | Checks the official links and the week's BOE | "Enlaces oficiales rotos", "Novedades del BOE que pueden cambiar cifras" |
-| [`watch.yml`](../.github/workflows/watch.yml) | Mondays 06:41 | `weekly` | New calls in the BDNS, cards due for review | "Convocatorias nuevas de ayudas que recoge la web", "Fichas por revisar" |
+| [`watch.yml`](../.github/workflows/watch.yml) | Mondays 06:41 | `weekly` | New calls in the BDNS, cards due for review, new versions of the Actions | "Convocatorias nuevas de ayudas que recoge la web", "Fichas por revisar", "Actualizaciones de las Actions" |
+| Any scheduled job | When it fails | — | Reports that the check itself broke | "Ha fallado una comprobación automática" |
 | [`watch.yml`](../.github/workflows/watch.yml) | 2 January 07:17 | `january` | Checklist for the new year's figures | "Revisar las cifras de <year>" |
 
 Madrid time is UTC+1 in winter and UTC+2 in summer.
@@ -24,10 +25,11 @@ Issue titles and bodies are in Spanish. The workflows look for an open issue **b
 
 The `build` job runs these steps in order:
 
-1. **Unit tests.** `npm test` runs the rules, procedures, figures, watchers and voice tests in `tests/unit/`.
-2. **Font.** `npm run font` downloads Archivo once and copies it to `site/vendor/fonts/`, so the site serves its own font.
-3. **Build.** `npm run build` copies `site/` to `_site/` and generates `/ayuda/<id>/`, `/comunidad/<id>/`, the language guides and `sitemap.xml`. It also adds `?v=<commit>` to every CSS and JS reference, so nobody gets new HTML with old JS.
-4. **Browser tests.** `npm run test:e2e` runs Playwright and axe (WCAG 2.2 AA) on every page. It covers mobile, tablet and desktop, light and dark modes, high contrast and the main flows.
+1. **Lint.** `npm run lint` runs ESLint (correctness rules in `eslint.config.js`) and checks the JS formatting with Prettier. Run `npm run format` to fix the formatting.
+2. **Unit tests.** `npm test` runs the rules, procedures, figures, watchers and voice tests in `tests/unit/`.
+3. **Font.** `npm run font` downloads Archivo once and copies it to `site/vendor/fonts/`, so the site serves its own font.
+4. **Build.** `npm run build` copies `site/` to `_site/` and generates `/ayuda/<id>/`, `/comunidad/<id>/`, the language guides and `sitemap.xml`. It also adds `?v=<commit>` to every CSS and JS reference, so nobody gets new HTML with old JS, and a Content-Security-Policy to every page (see [SECURITY.md](../SECURITY.md)).
+5. **Browser tests.** `npm run test:e2e` runs Playwright and axe (WCAG 2.2 AA) on every page. It covers mobile, tablet and desktop, light and dark modes, high contrast and the main flows.
 
 The `deploy` job uploads `_site/` to GitHub Pages, but only on a push to `main` or a manual run. Pull requests are only tested.
 
@@ -77,7 +79,7 @@ Many matches will be false alarms (for example, a pension provision for a specif
 1. For each call, check whether it is really the benefit on the site.
 2. If it is, update the card in `site/assets/js/data/regional-benefits.js` (amount, requirements, how to apply) and its dates in `CHECK_ON` in `site/assets/js/data/review.js`.
 
-**When you add a new regional or city benefit,** add a line to `WATCHLIST` so its calls are watched too. The line has three parts: text to search, region as the BDNS writes it (upper case, no accents) and card id.
+**When you add a new regional or city benefit,** add a line to `WATCHLIST` so its calls are watched too. The line has three parts: text to search, region as the BDNS writes it (upper case, no accents) and card id. A unit test fails if a regional benefit, or any benefit with a `CHECK_ON` date, is missing from `WATCHLIST`. If a benefit is deliberately not searched, add it to `UNWATCHED` with the reason.
 
 If every search fails, the issue says so. If that repeats for several weeks, the BDNS API has probably changed: compare the request in `searchBdns()` with what the website at infosubvenciones.es sends.
 
@@ -99,7 +101,23 @@ If every search fails, the issue says so. If that repeats for several weeks, the
 
 The website shows "Revisado en …" on each card based on these dates, so keep them honest.
 
-## 6. New year's figures (`watch.yml` → `january`, 2 January)
+## 6. New versions of the Actions (`watch.yml` → `weekly`, Mondays)
+
+- **Script:** [`scripts/watch/actions.mjs`](../scripts/watch/actions.mjs), also `npm run watch:actions`.
+- **Why it exists:** the workflows pin every Action to a commit (`uses: owner/repo@<sha> # v1.2.3`), so nothing changes without a review. The downside is that nobody notices new versions. Dependabot would open pull requests and commit as a bot; this check only opens an issue, so every commit stays the maintainer's.
+- **What it does:** for every pinned Action, it asks the GitHub API for the latest release and the commit of its tag.
+- **Output:** `actions-updates.md`, with the exact `uses:` line to paste for each update.
+- **Issue:** "Actualizaciones de las Actions". It **closes itself** when everything is up to date.
+
+**What to do with the issue:** read the release notes of each Action, especially for a new major version. Then replace the `uses:` line in the files listed, on `development`, and open the PR. CI checks the change. A unit test makes sure every `uses:` line stays pinned to a commit with its version.
+
+## 7. Failed checks (every scheduled job)
+
+If a scheduled job fails because of the check itself (a script error, an API that has changed, GitHub having problems), its last step opens "Ha fallado una comprobación automática", or comments on it if it is already open. The issue links to the log of the run. This does not cover what the checks are meant to find, like a broken link, which has its own issue.
+
+**What to do with the issue:** open the log and run the same script locally. If it was a temporary outage, close the issue. If an external API has changed, fix the script.
+
+## 8. New year's figures (`watch.yml` → `january`, 2 January)
 
 - **Script:** [`scripts/watch/january.mjs`](../scripts/watch/january.mjs), also `npm run watch:january [days]`. It reads the last 60 days of BOE by default.
 - **Why it exists:** almost every figure changes in January, including IPREM, minimum wage, pensions, IMV and non-contributory pensions.
@@ -125,7 +143,7 @@ Some figures come out later: pensions in a Real Decreto, and the minimum wage so
 - **Delays.** GitHub can start scheduled runs minutes or even an hour late. That is normal.
 - **An external API changes.** The BOE and BDNS field names are used as-is in the scripts (`sumario`, `diario`, `seccion`, `codigo`, `titulo`, `descripcion`, `nivel1`…). If a watcher suddenly finds nothing for weeks, run it locally and inspect the raw response.
 - **Permissions.** The workflows only use the built-in `GITHUB_TOKEN`, with `issues: write`, `pages: write` and `contents: read`. No secrets need to be set up. The bot can open issues but never push code.
-- **Report files** (`broken-links.md`, `boe-news.md`, `new-calls.md`, `to-review.md`, `january.md`) are written to the repo root and git-ignored. They only exist during the run.
+- **Report files** (`broken-links.md`, `boe-news.md`, `new-calls.md`, `to-review.md`, `actions-updates.md`, `january.md`) are written to the repo root and git-ignored. They only exist during the run.
 
 ## Running everything locally
 
@@ -135,6 +153,7 @@ npm run watch:boe 14     # BOE of the last 14 days → boe-news.md
 npm run watch:calls 30   # BDNS calls of the last 30 days → new-calls.md
 npm run watch:review     # → to-review.md
 npm run watch:january    # → january.md
+npm run watch:actions    # → actions-updates.md (set GITHUB_TOKEN to avoid the rate limit)
 ```
 
 The scripts need Node 22 (see `.nvmrc`) and internet access. They have no dependencies.

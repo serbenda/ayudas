@@ -2,18 +2,68 @@
 // Created in the browser and downloaded; nothing is sent.
 
 const REMINDERS = [
-  { id: 'revisar', always: true, monthly: 1, day: 15, annual: true, title: 'Revisa tus ayudas: las cifras cambian en enero', text: 'Vuelve a contestar las preguntas en ayudas.bendi.dev: cada enero suben las cuantías y cambian los límites.' },
-  { id: 'pnc', forIds: ['pnc-jubilacion', 'pnc-invalidez', 'pnc-alquiler'], monthly: 3, day: 1, annual: true, title: 'Pensión no contributiva: declaración de ingresos', text: 'Hay que entregar la declaración anual de ingresos antes del 1 de abril. Si no, te pueden suspender la pensión.' },
-  { id: 'renta', forIds: ['deduccion-maternidad', 'deduccion-familia-numerosa', 'deduccion-monoparental', 'deduccion-discapacidad-cargo', 'minimo-discapacidad', 'deducciones-ccaa'], monthly: 4, day: 8, annual: true, title: 'Empieza la campaña de la renta', text: 'Revisa que en tu declaración salen las deducciones por familia o discapacidad.' },
-  { id: 'alquiler', forIds: ['alquiler-joven', 'alquiler-general'], monthly: 3, day: 1, annual: true, title: 'Mira si ha abierto la ayuda al alquiler', text: 'Las comunidades suelen abrir la convocatoria en primavera y se cierra al acabarse el dinero.' },
-  { id: 'imv', forIds: ['imv'], monthly: 3, day: 15, annual: true, title: 'IMV: avisa de los cambios en casa', text: 'Si ha cambiado quién vive en casa o lo que ganáis, comunícalo en 30 días a la Seguridad Social.' },
-  { id: 'bono', forIds: ['bono-social'], inMonths: 22, title: 'Bono social: mira cuándo se renueva', text: 'El bono social se renueva cada 2 años. Mira la fecha en tu factura de la luz y pide la renovación a tiempo.' },
+  {
+    id: 'revisar',
+    always: true,
+    monthly: 1,
+    day: 15,
+    annual: true,
+    title: 'Revisa tus ayudas: las cifras cambian en enero',
+    text: 'Vuelve a contestar las preguntas en ayudas.bendi.dev: cada enero suben las cuantías y cambian los límites.',
+  },
+  {
+    id: 'pnc',
+    forIds: ['pnc-jubilacion', 'pnc-invalidez', 'pnc-alquiler'],
+    monthly: 3,
+    day: 1,
+    annual: true,
+    title: 'Pensión no contributiva: declaración de ingresos',
+    text: 'Hay que entregar la declaración anual de ingresos antes del 1 de abril. Si no, te pueden suspender la pensión.',
+  },
+  {
+    id: 'renta',
+    forIds: ['deduccion-maternidad', 'deduccion-familia-numerosa', 'deduccion-monoparental', 'deduccion-discapacidad-cargo', 'minimo-discapacidad', 'deducciones-ccaa'],
+    monthly: 4,
+    day: 8,
+    annual: true,
+    title: 'Empieza la campaña de la renta',
+    text: 'Revisa que en tu declaración salen las deducciones por familia o discapacidad.',
+  },
+  {
+    id: 'alquiler',
+    forIds: ['alquiler-joven', 'alquiler-general'],
+    monthly: 3,
+    day: 1,
+    annual: true,
+    title: 'Mira si ha abierto la ayuda al alquiler',
+    text: 'Las comunidades suelen abrir la convocatoria en primavera y se cierra al acabarse el dinero.',
+  },
+  {
+    id: 'imv',
+    forIds: ['imv'],
+    monthly: 3,
+    day: 15,
+    annual: true,
+    title: 'IMV: avisa de los cambios en casa',
+    text: 'Si ha cambiado quién vive en casa o lo que ganáis, comunícalo en 30 días a la Seguridad Social.',
+  },
+  {
+    id: 'bono',
+    forIds: ['bono-social'],
+    inMonths: 22,
+    title: 'Bono social: mira cuándo se renueva',
+    text: 'El bono social se renueva cada 2 años. Mira la fecha en tu factura de la luz y pide la renovación a tiempo.',
+  },
 ];
 
 const twoDigits = (n) => String(n).padStart(2, '0');
 const date = (d) => `${d.getFullYear()}${twoDigits(d.getMonth() + 1)}${twoDigits(d.getDate())}`;
 // ICS text: escape commas, semicolons and backslashes; 75-character lines as the standard requires
-const icsText = (s) => s.replace(/\\/g, '\\\\').replace(/[,;]/g, (m) => `\\${m}`).replace(/\n/g, '\\n');
+const icsText = (s) =>
+  s
+    .replace(/\\/g, '\\\\')
+    .replace(/[,;]/g, (m) => `\\${m}`)
+    .replace(/\n/g, '\\n');
 function fold(line) {
   const chunks = [];
   let rest = line;
@@ -59,7 +109,10 @@ export function calendar(ids, today = new Date()) {
       'END:VEVENT',
     ];
   });
-  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ayudas.bendi.dev//Recordatorios//ES', 'CALSCALE:GREGORIAN', 'X-WR-CALNAME:Ayudas: fechas importantes', ...events.flat()].map(fold).join('\r\n') + '\r\nEND:VCALENDAR\r\n';
+  return (
+    ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ayudas.bendi.dev//Recordatorios//ES', 'CALSCALE:GREGORIAN', 'X-WR-CALNAME:Ayudas: fechas importantes', ...events.flat()].map(fold).join('\r\n') +
+    '\r\nEND:VCALENDAR\r\n'
+  );
 }
 
 /** Downloads the .ics in the browser*/

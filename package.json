@@ -7,6 +7,8 @@
     "test": "node --test tests/unit/*.test.js",
     "test:e2e": "node --test tests/e2e/*.e2e.mjs",
     "build": "node scripts/build/build.mjs",
+    "lint": "npx --yes eslint@10.1.0 . && npx --yes prettier@3.8.1 --check \"**/*.{js,mjs}\"",
+    "format": "npx --yes prettier@3.8.1 --write \"**/*.{js,mjs}\"",
     "dev": "npx --yes serve site",
     "font": "npm install --no-save --no-package-lock @fontsource-variable/archivo@5 && node scripts/build/vendor-font.mjs",
     "tools": "npm install --no-save --no-package-lock playwright@1 @axe-core/playwright@4",
@@ -14,7 +16,8 @@
     "watch:boe": "node scripts/watch/boe.mjs",
     "watch:calls": "node scripts/watch/calls.mjs",
     "watch:review": "node scripts/watch/review.mjs",
-    "watch:january": "node scripts/watch/january.mjs"
+    "watch:january": "node scripts/watch/january.mjs",
+    "watch:actions": "node scripts/watch/actions.mjs"
   },
   "engines": {
     "node": ">=22"

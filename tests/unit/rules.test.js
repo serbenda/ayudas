@@ -26,7 +26,10 @@ test("regionally managed benefits link to your region's website", () => {
 
 test('with no answers nothing comes up as certain', () => {
   const r = evaluate({});
-  assert.ok(r.every((x) => x.status !== 'si'), ids(r.filter((x) => x.status === 'si')).join());
+  assert.ok(
+    r.every((x) => x.status !== 'si'),
+    ids(r.filter((x) => x.status === 'si')).join(),
+  );
 });
 
 test('IMV guaranteed income by household', () => {
@@ -112,7 +115,8 @@ test('large family: deduction and direct social discount', () => {
 
 test('caring for a parent with dependency and disability', () => {
   const r = evaluate(profile({ age: 50, situation: 'cuenta-ajena', caredFor: [{ relationship: 'padre', age: 82, disability: '65', dependency: '2', livesWith: true, iCare: true }] }));
-  for (const id of ['dependencia-servicios', 'dependencia-prestacion', 'convenio-cuidadores', 'deduccion-discapacidad-cargo', 'ventajas-discapacidad', 'servicios-mayores']) assert.ok(ids(r).includes(id), `missing ${id}`);
+  for (const id of ['dependencia-servicios', 'dependencia-prestacion', 'convenio-cuidadores', 'deduccion-discapacidad-cargo', 'ventajas-discapacidad', 'servicios-mayores'])
+    assert.ok(ids(r).includes(id), `missing ${id}`);
   assert.equal(de(r, 'deduccion-discapacidad-cargo').payment.yearly, 1200);
 });
 
@@ -220,16 +224,48 @@ import { search } from '../../scripts/watch/boe.mjs';
 
 test('BOE: finds the pension increase and the minimum wage, with a single item or a list', () => {
   const summary = {
-    data: { sumario: { diario: [{ seccion: [
-      { codigo: '1', nombre: 'I. Disposiciones generales', departamento: [
-        { nombre: 'MINISTERIO DE INCLUSIÓN', epigrafe: [{ nombre: 'Pensiones', item: { identificador: 'BOE-A-2026-1', titulo: 'Real Decreto 1/2026, sobre revalorización de las pensiones', url_html: 'https://www.boe.es/1' } }] },
-        { nombre: 'MINISTERIO DE TRABAJO', epigrafe: [{ nombre: 'SMI', item: [{ identificador: 'BOE-A-2026-2', titulo: 'Real Decreto por el que se fija el salario mínimo interprofesional para 2027', url_html: 'https://www.boe.es/2' }] }] },
-      ] },
-      { codigo: '2B', nombre: 'Oposiciones', departamento: [{ nombre: 'X', epigrafe: [{ item: { identificador: 'BOE-A-2026-3', titulo: 'Pensiones: plazas de funcionario', url_html: '' } }] }] },
-    ] }] } },
+    data: {
+      sumario: {
+        diario: [
+          {
+            seccion: [
+              {
+                codigo: '1',
+                nombre: 'I. Disposiciones generales',
+                departamento: [
+                  {
+                    nombre: 'MINISTERIO DE INCLUSIÓN',
+                    epigrafe: [
+                      { nombre: 'Pensiones', item: { identificador: 'BOE-A-2026-1', titulo: 'Real Decreto 1/2026, sobre revalorización de las pensiones', url_html: 'https://www.boe.es/1' } },
+                    ],
+                  },
+                  {
+                    nombre: 'MINISTERIO DE TRABAJO',
+                    epigrafe: [
+                      {
+                        nombre: 'SMI',
+                        item: [{ identificador: 'BOE-A-2026-2', titulo: 'Real Decreto por el que se fija el salario mínimo interprofesional para 2027', url_html: 'https://www.boe.es/2' }],
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                codigo: '2B',
+                nombre: 'Oposiciones',
+                departamento: [{ nombre: 'X', epigrafe: [{ item: { identificador: 'BOE-A-2026-3', titulo: 'Pensiones: plazas de funcionario', url_html: '' } }] }],
+              },
+            ],
+          },
+        ],
+      },
+    },
   };
   const r = search(summary);
-  assert.deepEqual(r.map((x) => x.topic), ['Pensiones', 'Salario mínimo']);
+  assert.deepEqual(
+    r.map((x) => x.topic),
+    ['Pensiones', 'Salario mínimo'],
+  );
   assert.deepEqual(search({}), []);
 });
 

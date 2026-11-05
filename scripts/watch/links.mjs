@@ -38,7 +38,7 @@ async function check(url) {
       if ([401, 403, 405, 429].includes(r.status)) return { url, ok: true, doubtful: true, status: r.status };
       if (attempt === 2) return { url, ok: false, status: r.status };
     } catch (e) {
-      if (attempt === 2) return { url, ok: false, status: e.name === 'TimeoutError' ? 'sin respuesta en 20 s' : e.cause?.code ?? e.message };
+      if (attempt === 2) return { url, ok: false, status: e.name === 'TimeoutError' ? 'sin respuesta en 20 s' : (e.cause?.code ?? e.message) };
     }
     await new Promise((r) => setTimeout(r, 3000));
   }

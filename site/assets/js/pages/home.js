@@ -350,12 +350,18 @@ document.getElementById('change').addEventListener('click', () => goTo(1));
 document.getElementById('print').addEventListener('click', () => print());
 document.getElementById('share').addEventListener('click', () => {
   const p = readProfile();
-  const ids = whereToStart(evaluate(p), 99).concat(evaluate(p)).map((r) => r.id).filter((id, i, a) => a.indexOf(id) === i);
+  const ids = whereToStart(evaluate(p), 99)
+    .concat(evaluate(p))
+    .map((r) => r.id)
+    .filter((id, i, a) => a.indexOf(id) === i);
   if (ids.length) share(ids);
 });
 const resultIds = () => {
   const r = evaluate(readProfile());
-  return whereToStart(r, 99).concat(r).map((x) => x.id).filter((id, i, a) => a.indexOf(id) === i);
+  return whereToStart(r, 99)
+    .concat(r)
+    .map((x) => x.id)
+    .filter((id, i, a) => a.indexOf(id) === i);
 };
 document.getElementById('calendar').addEventListener('click', () => downloadCalendar(resultIds()));
 
@@ -459,13 +465,72 @@ remember.addEventListener('change', () => {
 
 // ── Examples ───────────────────────────────────────────────────────────
 const EXAMPLES = {
-  familia: { age: '29', region: 'madrid', madridCity: 'si', residence: 'si', situation: 'cuenta-ajena', partner: 'si', adults: '2', 'children-age3to5': '1', baby: true, householdIncome: '28.000', wealth: 'bajo', housing: 'alquiler' },
-  jubilada: { age: '74', region: 'madrid', madridCity: 'si', residence: 'si', 'u-soledad': true, situation: 'pensionista', partner: 'no', adults: '1', widowed: true, householdIncome: '10.500', wealth: 'bajo', housing: 'propia', pension: 'viudedad', pensionMonthly: '720', pensionSince2021: 'si', childrenBorn: '3' },
-  cuidador: {
-    age: '52', region: 'castilla-leon', residence: 'si', situation: 'cuenta-ajena', partner: 'si', adults: '3', 'children-age6to17': '1', householdIncome: '38.000', ownIncome: '21.000', housing: 'hipoteca',
-    caredForCount: '1', 'p1-relationship': 'padre', 'p1-age': '84', 'p1-disability': '65', 'p1-dependency': '2', 'p1-livesWith': true, 'p1-iCare': true,
+  familia: {
+    age: '29',
+    region: 'madrid',
+    madridCity: 'si',
+    residence: 'si',
+    situation: 'cuenta-ajena',
+    partner: 'si',
+    adults: '2',
+    'children-age3to5': '1',
+    baby: true,
+    householdIncome: '28.000',
+    wealth: 'bajo',
+    housing: 'alquiler',
   },
-  paro: { age: '55', region: 'valencia', residence: 'si', 'u-food': true, situation: 'paro-sin', partner: 'si', adults: '2', householdIncome: '9.000', ownIncome: '0', wealth: 'bajo', housing: 'alquiler', contributed15: 'si', contributedOneYear: 'no' },
+  jubilada: {
+    age: '74',
+    region: 'madrid',
+    madridCity: 'si',
+    residence: 'si',
+    'u-soledad': true,
+    situation: 'pensionista',
+    partner: 'no',
+    adults: '1',
+    widowed: true,
+    householdIncome: '10.500',
+    wealth: 'bajo',
+    housing: 'propia',
+    pension: 'viudedad',
+    pensionMonthly: '720',
+    pensionSince2021: 'si',
+    childrenBorn: '3',
+  },
+  cuidador: {
+    age: '52',
+    region: 'castilla-leon',
+    residence: 'si',
+    situation: 'cuenta-ajena',
+    partner: 'si',
+    adults: '3',
+    'children-age6to17': '1',
+    householdIncome: '38.000',
+    ownIncome: '21.000',
+    housing: 'hipoteca',
+    caredForCount: '1',
+    'p1-relationship': 'padre',
+    'p1-age': '84',
+    'p1-disability': '65',
+    'p1-dependency': '2',
+    'p1-livesWith': true,
+    'p1-iCare': true,
+  },
+  paro: {
+    age: '55',
+    region: 'valencia',
+    residence: 'si',
+    'u-food': true,
+    situation: 'paro-sin',
+    partner: 'si',
+    adults: '2',
+    householdIncome: '9.000',
+    ownIncome: '0',
+    wealth: 'bajo',
+    housing: 'alquiler',
+    contributed15: 'si',
+    contributedOneYear: 'no',
+  },
 };
 
 for (const b of document.querySelectorAll('[data-example]')) {

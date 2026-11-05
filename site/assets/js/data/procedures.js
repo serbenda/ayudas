@@ -10,7 +10,6 @@ import { REGIONAL_ASSESSMENT, REGION_INFO_PHONE, dependencySteps, disabilityStep
 import { MANAGED_BY_REGION } from './regions.js';
 import { REGIONAL_BENEFITS } from './regional-benefits.js';
 
-
 const NO_INTERNET = 'Si no te manejas con internet, pide ayuda en los servicios sociales de tu ayuntamiento. Te ayudan gratis.';
 const SS_CLAIM = 'Si te dicen que no y crees que sí te toca, presenta una «reclamación previa» en la Seguridad Social. Tienes 30 días.';
 const SS_APPOINTMENT = 'Para ir en persona, pide cita en la Seguridad Social: 91 541 25 30 (contesta una máquina, las 24 horas) o en sede.seg-social.gob.es.';
@@ -30,7 +29,11 @@ export const PROCEDURES = {
     documents: ['dni', 'residencia', 'padron', 'libroFamilia', 'iban'],
     deadline: 'Cuando quieras. Se cobra desde el mes siguiente a pedirlo.',
     response: `Tienen 6 meses para contestar. Si no contestan, es un «no» (silencio negativo). ${SS_CLAIM}`,
-    warnings: ['Pídelo antes que la renta mínima de tu comunidad: casi todas lo exigen.', 'Cada año tienes que hacer la declaración de la renta, aunque no te salga a pagar.', 'Al pedirlo, la Seguridad Social mira también el complemento por hijos.'],
+    warnings: [
+      'Pídelo antes que la renta mínima de tu comunidad: casi todas lo exigen.',
+      'Cada año tienes que hacer la declaración de la renta, aunque no te salga a pagar.',
+      'Al pedirlo, la Seguridad Social mira también el complemento por hijos.',
+    ],
   },
   capi: {
     easy: ['Es dinero cada mes por cada hijo menor de 18.', 'Para familias con ingresos bajos o medios.', 'No hace falta cobrar el IMV.'],
@@ -49,21 +52,87 @@ export const PROCEDURES = {
     easy: ['Tu comunidad tiene su propia ayuda para quien no tiene casi ingresos.', 'Se pide en los servicios sociales.'],
     steps: ['Pide cita en los servicios sociales de tu ayuntamiento.', 'Llévate los papeles de la lista.', 'La trabajadora social te ayuda a rellenar la solicitud.'],
     stepsByRegion: {
-      'aragon': ["En tu comunidad se llama Prestación Aragonesa Complementaria del IMV.", "Complementa al IMV: hay que cobrarlo o haberlo pedido.", "Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.", "Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.", "Se presenta en aragon.es (con certificado o Cl@ve) o en una oficina de registro."],
-      'asturias': ["En tu comunidad se llama Salario Social Básico.", "Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.", "Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.", "Se presenta en socialasturias.asturias.es o en los servicios sociales municipales."],
-      'baleares': ["En tu comunidad se llama Renta Social Garantizada.", "Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.", "Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.", "Se presenta en la sede del Govern (caib.es) o con ayuda de servicios sociales."],
-      'canarias': ["En tu comunidad se llama Renta Canaria de Ciudadanía (sustituye a la Prestación Canaria de Inserción).", "Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.", "Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.", "Se presenta en gobiernodecanarias.org o con ayuda de servicios sociales."],
-      'cantabria': ["En tu comunidad se llama Renta Social Básica.", "Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.", "Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.", "Se presenta en serviciossocialescantabria.org o en los servicios sociales de atención primaria."],
-      'castilla-mancha': ["En tu comunidad se llama Ingreso Mínimo de Solidaridad.", "En 2026 solo se renueva para quien ya la tenía (plazo hasta el 31 de diciembre de 2026): no hay altas nuevas.", "Si no la tenías, pide el Ingreso Mínimo Vital y pregunta en servicios sociales por ayudas de emergencia.", "Información y renovación en jccm.es."],
-      'castilla-leon': ["En tu comunidad se llama Renta Garantizada de Ciudadanía.", "Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.", "Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.", "Pide cita en tu CEAS (Centro de Acción Social). Se presenta en tramitacastillayleon.jcyl.es o en registro."],
-      'extremadura': ["En tu comunidad se llama Renta Extremeña Garantizada.", "Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.", "Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.", "Se presenta en juntaex.es o en registro. El plazo está abierto todo el año."],
-      'galicia': ["En tu comunidad se llama Renta de Inclusión Social de Galicia (RISGA).", "Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.", "Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.", "Se presenta en sede.xunta.gal o en los servicios sociales de tu concello."],
-      'murcia': ["En tu comunidad se llama Renta Básica de Inserción.", "Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.", "Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.", "Se presenta en sede.carm.es o con ayuda de servicios sociales."],
-      'navarra': ["En tu comunidad se llama Renta Garantizada.", "Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.", "Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.", "Se presenta en navarra.es o en los servicios sociales de base de tu zona."],
-      'pais-vasco': ["En tu comunidad se llama Renta de Garantía de Ingresos (RGI).", "La gestiona Lanbide, que también tramita el Ingreso Mínimo Vital en Euskadi.", "Pide cita en tu oficina de Lanbide o entra en lanbide.euskadi.eus.", "En servicios sociales de tu ayuntamiento te orientan."],
-      'rioja': ["En tu comunidad se llama Renta de Ciudadanía.", "Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.", "Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.", "Se presenta en la oficina electrónica de larioja.org o con ayuda de servicios sociales."],
-      'ceuta': ["Pregunta en los servicios sociales de la Ciudad de Ceuta por la renta de inserción.", "Pide antes el Ingreso Mínimo Vital."],
-      'melilla': ["Pregunta en los servicios sociales de la Ciudad de Melilla por el ingreso de integración.", "Pide antes el Ingreso Mínimo Vital."],
+      aragon: [
+        'En tu comunidad se llama Prestación Aragonesa Complementaria del IMV.',
+        'Complementa al IMV: hay que cobrarlo o haberlo pedido.',
+        'Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.',
+        'Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.',
+        'Se presenta en aragon.es (con certificado o Cl@ve) o en una oficina de registro.',
+      ],
+      asturias: [
+        'En tu comunidad se llama Salario Social Básico.',
+        'Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.',
+        'Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.',
+        'Se presenta en socialasturias.asturias.es o en los servicios sociales municipales.',
+      ],
+      baleares: [
+        'En tu comunidad se llama Renta Social Garantizada.',
+        'Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.',
+        'Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.',
+        'Se presenta en la sede del Govern (caib.es) o con ayuda de servicios sociales.',
+      ],
+      canarias: [
+        'En tu comunidad se llama Renta Canaria de Ciudadanía (sustituye a la Prestación Canaria de Inserción).',
+        'Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.',
+        'Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.',
+        'Se presenta en gobiernodecanarias.org o con ayuda de servicios sociales.',
+      ],
+      cantabria: [
+        'En tu comunidad se llama Renta Social Básica.',
+        'Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.',
+        'Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.',
+        'Se presenta en serviciossocialescantabria.org o en los servicios sociales de atención primaria.',
+      ],
+      'castilla-mancha': [
+        'En tu comunidad se llama Ingreso Mínimo de Solidaridad.',
+        'En 2026 solo se renueva para quien ya la tenía (plazo hasta el 31 de diciembre de 2026): no hay altas nuevas.',
+        'Si no la tenías, pide el Ingreso Mínimo Vital y pregunta en servicios sociales por ayudas de emergencia.',
+        'Información y renovación en jccm.es.',
+      ],
+      'castilla-leon': [
+        'En tu comunidad se llama Renta Garantizada de Ciudadanía.',
+        'Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.',
+        'Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.',
+        'Pide cita en tu CEAS (Centro de Acción Social). Se presenta en tramitacastillayleon.jcyl.es o en registro.',
+      ],
+      extremadura: [
+        'En tu comunidad se llama Renta Extremeña Garantizada.',
+        'Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.',
+        'Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.',
+        'Se presenta en juntaex.es o en registro. El plazo está abierto todo el año.',
+      ],
+      galicia: [
+        'En tu comunidad se llama Renta de Inclusión Social de Galicia (RISGA).',
+        'Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.',
+        'Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.',
+        'Se presenta en sede.xunta.gal o en los servicios sociales de tu concello.',
+      ],
+      murcia: [
+        'En tu comunidad se llama Renta Básica de Inserción.',
+        'Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.',
+        'Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.',
+        'Se presenta en sede.carm.es o con ayuda de servicios sociales.',
+      ],
+      navarra: [
+        'En tu comunidad se llama Renta Garantizada.',
+        'Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.',
+        'Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.',
+        'Se presenta en navarra.es o en los servicios sociales de base de tu zona.',
+      ],
+      'pais-vasco': [
+        'En tu comunidad se llama Renta de Garantía de Ingresos (RGI).',
+        'La gestiona Lanbide, que también tramita el Ingreso Mínimo Vital en Euskadi.',
+        'Pide cita en tu oficina de Lanbide o entra en lanbide.euskadi.eus.',
+        'En servicios sociales de tu ayuntamiento te orientan.',
+      ],
+      rioja: [
+        'En tu comunidad se llama Renta de Ciudadanía.',
+        'Pide antes el Ingreso Mínimo Vital: casi siempre lo exigen y la renta lo complementa.',
+        'Pide cita en los servicios sociales de tu ayuntamiento: te ayudan a pedirla.',
+        'Se presenta en la oficina electrónica de larioja.org o con ayuda de servicios sociales.',
+      ],
+      ceuta: ['Pregunta en los servicios sociales de la Ciudad de Ceuta por la renta de inserción.', 'Pide antes el Ingreso Mínimo Vital.'],
+      melilla: ['Pregunta en los servicios sociales de la Ciudad de Melilla por el ingreso de integración.', 'Pide antes el Ingreso Mínimo Vital.'],
       andalucia: [
         'En Andalucía se llama Renta Mínima de Inserción Social (RMISA).',
         'No se puede cobrar a la vez que el IMV, salvo urgencia social. En servicios sociales te dicen cuál te conviene.',
@@ -299,11 +368,7 @@ export const PROCEDURES = {
   },
   'complemento-minimos': {
     easy: ['Si tu pensión es muy baja, te la suben hasta la mínima.'],
-    steps: [
-      'Normalmente lo pone la Seguridad Social sola.',
-      'Si crees que te toca y no lo cobras, pídelo en la Sede de la Seguridad Social.',
-      SS_APPOINTMENT,
-    ],
+    steps: ['Normalmente lo pone la Seguridad Social sola.', 'Si crees que te toca y no lo cobras, pídelo en la Sede de la Seguridad Social.', SS_APPOINTMENT],
     phones: ['infoInss', 'citaInss'],
     documents: ['dni', 'cartaPension', 'ingresos'],
     deadline: 'Cuando quieras.',
@@ -312,11 +377,7 @@ export const PROCEDURES = {
   },
   'brecha-genero': {
     easy: ['Es un extra en la pensión por cada hijo que has tenido.', 'Son 36,90 € al mes por hijo.'],
-    steps: [
-      'Mira tu carta de la pensión: si ya sale «complemento brecha de género», ya lo cobras.',
-      'Si no sale, pídelo en la Sede de la Seguridad Social.',
-      SS_APPOINTMENT,
-    ],
+    steps: ['Mira tu carta de la pensión: si ya sale «complemento brecha de género», ya lo cobras.', 'Si no sale, pídelo en la Sede de la Seguridad Social.', SS_APPOINTMENT],
     phones: ['infoInss', 'citaInss'],
     documents: ['dni', 'libroFamilia', 'cartaPension'],
     deadline: 'Cuando quieras.',
@@ -345,7 +406,11 @@ export const PROCEDURES = {
   },
   'imserso-viajes': {
     easy: ['Son viajes y balnearios baratos para pensionistas.'],
-    steps: ['La solicitud se abre una vez al año (normalmente en primavera o verano).', 'Pídelo en la web del IMSERSO o con el formulario en papel por correo.', 'Si te dan plaza, te avisan y eliges el viaje en una agencia.'],
+    steps: [
+      'La solicitud se abre una vez al año (normalmente en primavera o verano).',
+      'Pídelo en la web del IMSERSO o con el formulario en papel por correo.',
+      'Si te dan plaza, te avisan y eliges el viaje en una agencia.',
+    ],
     documents: ['dni', 'cartaPension'],
     deadline: 'Una vez al año, en la convocatoria.',
     response: 'Las plazas se dan por puntos. Si no te toca, quedas en lista de espera.',
@@ -359,11 +424,7 @@ export const PROCEDURES = {
   },
   'teleasistencia-madrid': {
     easy: ['Un aparato con un botón para pedir ayuda las 24 horas.', 'Si tienes más de 65 y vives solo o sola, basta con llamar.'],
-    steps: [
-      'Llama al 900 111 065 (gratis, las 24 horas) o al 010.',
-      'Di que quieres la teleasistencia.',
-      'Te instalan el aparato en casa. Si se estropea, lo arreglan en 48 horas.',
-    ],
+    steps: ['Llama al 900 111 065 (gratis, las 24 horas) o al 010.', 'Di que quieres la teleasistencia.', 'Te instalan el aparato en casa. Si se estropea, lo arreglan en 48 horas.'],
     phones: ['mayoresMadrid', 'linea010'],
     documents: ['dni'],
     deadline: 'Cuando quieras.',
@@ -449,7 +510,11 @@ export const PROCEDURES = {
   },
   'ventajas-discapacidad': {
     easy: ['Pagas menos por el coche y el aparcamiento.'],
-    steps: ['Para el coche: pide el IVA reducido al comprarlo (con el certificado).', 'Para el impuesto de circulación: pídelo en tu ayuntamiento.', 'Para la tarjeta de aparcamiento: pídela en tu ayuntamiento.'],
+    steps: [
+      'Para el coche: pide el IVA reducido al comprarlo (con el certificado).',
+      'Para el impuesto de circulación: pídelo en tu ayuntamiento.',
+      'Para la tarjeta de aparcamiento: pídela en tu ayuntamiento.',
+    ],
     documents: ['dni', 'certDiscapacidad'],
     deadline: 'Cuando quieras.',
     response: 'Depende de cada trámite.',
@@ -466,12 +531,19 @@ export const PROCEDURES = {
     documents: ['dni', 'padron', 'libroFamilia', 'tituloFN', 'certDiscapacidad', 'facturaLuz'],
     deadline: 'Cuando quieras. Dura 2 años y se renueva.',
     response: 'Si te lo deniegan, reclama por escrito a la compañía. Si sigue el problema, ve a la oficina de consumo de tu ayuntamiento.',
-    warnings: ['Si lo tienes el 31 de diciembre, te llega solo el bono térmico al año siguiente.', 'Comercializadoras de referencia: Energía XXI, Curenergía, Comercializadora Regulada, Régsiti, Baser y otras.'],
+    warnings: [
+      'Si lo tienes el 31 de diciembre, te llega solo el bono térmico al año siguiente.',
+      'Comercializadoras de referencia: Energía XXI, Curenergía, Comercializadora Regulada, Régsiti, Baser y otras.',
+    ],
   },
   'bono-termico': {
     easy: ['Es un pago al año para la calefacción.', 'Llega solo si tienes el bono social de la luz.'],
     steps: ['No hay que pedirlo: si tienes el bono social de la luz el 31 de diciembre, te lo pagan en tu cuenta al año siguiente.', 'Comprueba que tu número de cuenta está bien.'],
-    madridSteps: ['No hay que pedirlo: llega solo si tenías el bono social de la luz el 31 de diciembre.', 'Para cambiar la cuenta: sede.comunidad.madrid («Bono social térmico»).', 'Si no te llega, escribe a bono_social_termico@madrid.org.'],
+    madridSteps: [
+      'No hay que pedirlo: llega solo si tenías el bono social de la luz el 31 de diciembre.',
+      'Para cambiar la cuenta: sede.comunidad.madrid («Bono social térmico»).',
+      'Si no te llega, escribe a bono_social_termico@madrid.org.',
+    ],
     documents: [],
     deadline: 'Automático.',
     response: 'Se paga una vez al año.',
@@ -504,7 +576,10 @@ export const PROCEDURES = {
   },
   'vivienda-social-madrid': {
     easy: ['Pisos de alquiler barato de la Comunidad de Madrid.', 'Hay lista de espera.'],
-    steps: ['Apúntate en la Agencia de Vivienda Social de la Comunidad de Madrid (sede.comunidad.madrid).', 'Si estás en una situación muy difícil, pide en servicios sociales que te ayuden a pedir una vivienda por «especial necesidad».'],
+    steps: [
+      'Apúntate en la Agencia de Vivienda Social de la Comunidad de Madrid (sede.comunidad.madrid).',
+      'Si estás en una situación muy difícil, pide en servicios sociales que te ayuden a pedir una vivienda por «especial necesidad».',
+    ],
     phones: ['madrid012'],
     documents: ['dni', 'padronHistorico', 'ingresos', 'informeSocial'],
     deadline: 'Cuando quieras.',
@@ -596,7 +671,11 @@ export const PROCEDURES = {
   },
   'copago-farmaceutico': {
     easy: ['Pagas menos (o nada) por las medicinas de la receta.'],
-    steps: ['Normalmente se aplica solo, según tus datos de la Seguridad Social.', 'Mira tu tarjeta sanitaria o pregunta en la farmacia cuánto pagas.', 'Si crees que pagas de más, pregúntalo en tu centro de salud.'],
+    steps: [
+      'Normalmente se aplica solo, según tus datos de la Seguridad Social.',
+      'Mira tu tarjeta sanitaria o pregunta en la farmacia cuánto pagas.',
+      'Si crees que pagas de más, pregúntalo en tu centro de salud.',
+    ],
     documents: ['dni'],
     deadline: 'Automático.',
     response: 'Si pagas de más en un mes, te lo devuelven.',
@@ -649,7 +728,11 @@ export const PROCEDURES = {
   },
   'sin-hogar': {
     easy: ['Si no tienes casa, hay albergues y comida.', 'Puedes empadronarte aunque no tengas casa.'],
-    steps: ['Ve a los servicios sociales de tu ayuntamiento o llama al 010 en Madrid capital.', 'Pide plaza en un albergue o centro de acogida.', 'Pide el empadronamiento «sin domicilio fijo»: con él puedes pedir otras ayudas y el médico.'],
+    steps: [
+      'Ve a los servicios sociales de tu ayuntamiento o llama al 010 en Madrid capital.',
+      'Pide plaza en un albergue o centro de acogida.',
+      'Pide el empadronamiento «sin domicilio fijo»: con él puedes pedir otras ayudas y el médico.',
+    ],
     phones: ['emergencias'],
     madridPhones: ['linea010'],
     documents: ['dni'],
@@ -667,7 +750,11 @@ export const PROCEDURES = {
   },
   'sanidad-sin-papeles': {
     easy: ['Aunque no tengas papeles, tienes derecho al médico.', 'Y a empadronarte.'],
-    steps: ['Empadrónate en tu ayuntamiento (no hace falta tener permiso de residencia).', 'Pide en tu centro de salud el documento para que te atiendan.', 'Pide orientación en servicios sociales o en una ONG (Cruz Roja, Cáritas, CEAR…).'],
+    steps: [
+      'Empadrónate en tu ayuntamiento (no hace falta tener permiso de residencia).',
+      'Pide en tu centro de salud el documento para que te atiendan.',
+      'Pide orientación en servicios sociales o en una ONG (Cruz Roja, Cáritas, CEAR…).',
+    ],
     documents: ['dni', 'padron'],
     deadline: 'Cuando quieras.',
     response: '—',
@@ -816,7 +903,10 @@ for (const a of REGIONAL_BENEFITS) PROCEDURES[a.id] = a.procedure;
 
 // Dependency and disability: each region's steps, from who assesses and where you start
 for (const [region, v] of Object.entries(REGIONAL_ASSESSMENT)) {
-  for (const [id, key, steps] of [['dependencia-valoracion', 'dependency', dependencySteps], ['certificado-discapacidad', 'disability', disabilitySteps]]) {
+  for (const [id, key, steps] of [
+    ['dependencia-valoracion', 'dependency', dependencySteps],
+    ['certificado-discapacidad', 'disability', disabilitySteps],
+  ]) {
     if (!v[key]) continue;
     const t = PROCEDURES[id];
     t.stepsByRegion ??= {};

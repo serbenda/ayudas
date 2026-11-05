@@ -15,7 +15,12 @@ export const REGIONAL_ASSESSMENT = {
     disability: { who: 'los centros de valoración de Oviedo, Gijón y Avilés', web: 'asturias.es' },
   },
   baleares: {
-    dependency: { starts: 'los servicios sociales de tu ayuntamiento o un punto de atención de la Dirección General de Dependencia (Mallorca, Menorca, Ibiza o Formentera)', who: 'la Dirección General de Atención a la Dependencia del Govern', web: 'caib.es', phone: 'balearesDependencia' },
+    dependency: {
+      starts: 'los servicios sociales de tu ayuntamiento o un punto de atención de la Dirección General de Dependencia (Mallorca, Menorca, Ibiza o Formentera)',
+      who: 'la Dirección General de Atención a la Dependencia del Govern',
+      web: 'caib.es',
+      phone: 'balearesDependencia',
+    },
     disability: { who: 'los centros de valoración de Palma, Inca, Manacor, Maó e Ibiza', web: 'caib.es', phone: 'balearesDependencia' },
   },
   canarias: {
@@ -36,7 +41,7 @@ export const REGIONAL_ASSESSMENT = {
   },
   cataluna: {
     dependency: { starts: 'los servicios sociales básicos de tu ayuntamiento', who: 'el Servei de Valoració de la Dependència (SEVAD) de la Generalitat', web: 'gencat.cat', phone: 'cataluna' },
-    disability: { who: 'los CAD (Centres d\'Atenció a Persones amb Discapacitat) de la Generalitat', web: 'gencat.cat', phone: 'cataluna' },
+    disability: { who: "los CAD (Centres d'Atenció a Persones amb Discapacitat) de la Generalitat", web: 'gencat.cat', phone: 'cataluna' },
   },
   valencia: {
     dependency: { starts: 'los servicios sociales de tu ayuntamiento', who: 'la Conselleria de Servicios Sociales', web: 'gva.es', phone: 'valencia' },
@@ -97,6 +102,12 @@ export function disabilitySteps(v) {
 
 // General information phone number of each region (only those checked on its official website)
 export const REGION_INFO_PHONE = {
-  andalucia: 'andalucia', cataluna: 'cataluna', valencia: 'valencia', madrid: 'madrid012',
-  baleares: 'baleares', galicia: 'galicia', 'castilla-mancha': 'castillaMancha', 'castilla-leon': 'castillaLeon',
+  andalucia: 'andalucia',
+  cataluna: 'cataluna',
+  valencia: 'valencia',
+  madrid: 'madrid012',
+  baleares: 'baleares',
+  galicia: 'galicia',
+  'castilla-mancha': 'castillaMancha',
+  'castilla-leon': 'castillaLeon',
 };

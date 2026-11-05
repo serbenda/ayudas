@@ -29,13 +29,24 @@ export const WATCHLIST = [
   ['partos o adopciones múltiples', 'ARAGON', 'partos-multiples-aragon'],
   ['Bono Infantil', 'RIOJA', 'bono-infantil-rioja'],
   ['natalidad', 'COMUNIDAD DE MADRID', 'madrid-natalidad'],
-  ['Fons d\'Infància', null, 'fons-infancia-barcelona'],
+  ["Fons d'Infància", null, 'fons-infancia-barcelona'],
   ['natalidad', 'VALENCIA', 'natalidad-valencia'],
   ['alquiler', null, 'alquiler-general'],
   ['bono alquiler joven', null, 'alquiler-joven'],
+  ['Nos cuidamos', 'MALAGA', 'nos-cuidamos-malaga'],
 ];
 
-const withoutAccents = (s) => String(s ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toUpperCase();
+// Benefits with a call date (CHECK_ON) or regional benefits that are deliberately not searched in the BDNS, and why.
+// A unit test fails if one of those benefits is neither here nor in WATCHLIST.
+export const UNWATCHED = {
+  'aval-ico-vivienda': 'Not a call: banks sign the ICO guarantee all year until the programme ends.',
+};
+
+const withoutAccents = (s) =>
+  String(s ?? '')
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toUpperCase();
 const ddmmyyyy = (d) => d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
 const API = 'https://www.infosubvenciones.es/bdnstrans/api/convocatorias/busqueda';
 
@@ -47,7 +58,17 @@ export function inRegion(response, region) {
 
 async function searchBdns(text, since, until) {
   const u = new URL(API);
-  Object.entries({ vpd: 'GE', page: 0, pageSize: 50, order: 'numeroConvocatoria', direccion: 'desc', descripcion: text, descripcionTipoBusqueda: 1, fechaDesde: ddmmyyyy(since), fechaHasta: ddmmyyyy(until) }).forEach(([k, v]) => u.searchParams.set(k, v));
+  Object.entries({
+    vpd: 'GE',
+    page: 0,
+    pageSize: 50,
+    order: 'numeroConvocatoria',
+    direccion: 'desc',
+    descripcion: text,
+    descripcionTipoBusqueda: 1,
+    fechaDesde: ddmmyyyy(since),
+    fechaHasta: ddmmyyyy(until),
+  }).forEach(([k, v]) => u.searchParams.set(k, v));
   const r = await fetch(u, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(30000) });
   if (!r.ok) throw new Error(`BDNS «${text}»: HTTP ${r.status}`);
   return r.json();
@@ -70,10 +91,15 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
       console.log(`::warning::${e.message}`);
     }
   }
-  const lines = [...found.values()].map((c) => `- [ ] **${c.descripcion ?? 'Convocatoria'}** — ${[c.nivel2, c.nivel3].filter(Boolean).join(', ')} (${c.fechaRecepcion ?? 's/f'}). Ficha: \`${c.card}\`. [Ver en la BDNS](https://www.infosubvenciones.es/bdnstrans/GE/es/convocatorias/${c.numeroConvocatoria ?? ''})`);
+  const lines = [...found.values()].map(
+    (c) =>
+      `- [ ] **${c.descripcion ?? 'Convocatoria'}** — ${[c.nivel2, c.nivel3].filter(Boolean).join(', ')} (${c.fechaRecepcion ?? 's/f'}). Ficha: \`${c.card}\`. [Ver en la BDNS](https://www.infosubvenciones.es/bdnstrans/GE/es/convocatorias/${c.numeroConvocatoria ?? ''})`,
+  );
   let text = '';
-  if (lines.length) text += `Se han publicado convocatorias en los últimos ${days} días que pueden cambiar fechas o cuantías de la web. Revisa cada una y actualiza la ficha y \`site/assets/js/data/review.js\`:\n\n${lines.join('\n')}\n`;
-  if (failures.length === WATCHLIST.length) text += `\nNo se ha podido consultar la BDNS (${failures[0]}). Si se repite varias semanas, puede que haya cambiado su API: revisa \`scripts/watch/calls.mjs\`.\n`;
+  if (lines.length)
+    text += `Se han publicado convocatorias en los últimos ${days} días que pueden cambiar fechas o cuantías de la web. Revisa cada una y actualiza la ficha y \`site/assets/js/data/review.js\`:\n\n${lines.join('\n')}\n`;
+  if (failures.length === WATCHLIST.length)
+    text += `\nNo se ha podido consultar la BDNS (${failures[0]}). Si se repite varias semanas, puede que haya cambiado su API: revisa \`scripts/watch/calls.mjs\`.\n`;
   await writeFile('new-calls.md', text);
   console.log(text || `No new calls in the last ${days} days.`);
 }
