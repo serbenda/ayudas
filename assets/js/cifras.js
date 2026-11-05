@@ -41,6 +41,10 @@ export const CIFRAS = {
   // Subsidio por desempleo (sobre el IPREM) y límite de rentas: 75 % del SMI sin pagas extra
   subsidio: { primeros6Meses: 570, siguientes6Meses: 540, resto: 480, mayores52: 480, limiteRentasMes: 915.75 },
 
+  // Autónomos: tarifa plana de cotización (Ley 31/2022) y avales ICO para la primera vivienda (RDL 42/2021, ampliado a 2027)
+  autonomos: { tarifaPlana: 80, meses: 12, mesesExtra: 12 },
+  avalIco: { edad: 35, ingresosPersona: 37800, patrimonio: 100000, aval: 20, avalEficiente: 25, hasta: '31 de diciembre de 2027' },
+
   // Nacimiento y cuidado de menor
   nacimiento: { semanas: 19, semanasMonoparental: 32, pagoUnico: 1000 },
 

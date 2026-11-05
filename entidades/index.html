@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Para servicios sociales y entidades · ayudas</title>
+  <meta name="description" content="Herramientas gratis para quien orienta sobre ayudas: modo profesional con notas, versión para insertar en vuestra web y fichas para imprimir.">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://ayudas.bendi.dev/entidades/">
+  <meta name="theme-color" content="#f3f1ec" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#12161e" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../vendor/fuentes/archivo.css">
+  <link rel="stylesheet" href="../assets/css/estilos.css">
+  <script>(function(){var d=document.documentElement.dataset,q=location.search;if(/[?&]widget=1/.test(q))d.widget='';try{if(localStorage.getItem('ayudas:facil')==='1')d.facil='';if(localStorage.getItem('ayudas:contraste')==='1')d.contraste='';if(/[?&]pro=1/.test(q))localStorage.setItem('ayudas:pro','1');if(/[?&]pro=0/.test(q))localStorage.removeItem('ayudas:pro');if(localStorage.getItem('ayudas:pro')==='1')d.pro=''}catch(e){}})()</script>
+</head>
+<body>
+  <header class="envoltorio cabecera">
+    <a class="marca" href="../" aria-label="ayudas, inicio">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <circle class="aro" cx="32" cy="32" r="19.5" fill="none" stroke-width="13"/>
+        <circle class="bandas" cx="32" cy="32" r="19.5" fill="none" stroke-width="13" stroke-dasharray="15.32 15.31" stroke-dashoffset="7.66"/>
+      </svg>
+      <span>ayudas</span>
+    </a>
+    <nav class="nav" aria-label="Secciones">
+      <a href="../"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z M5.6 5.6l3.6 3.6 M14.8 14.8l3.6 3.6 M18.4 5.6l-3.6 3.6 M9.2 14.8l-3.6 3.6"/></svg><span>Tus ayudas</span></a>
+      <a href="../mayores/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z M9 21l2-6 M11 15l1-6 3 3 M12 9l-3 3 M17 12v9 M17 12a1.5 1.5 0 0 0-3 0"/></svg><span>Mayores</span></a>
+      <a href="../catalogo/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6h12 M8 12h12 M8 18h12 M4 6h.01 M4 12h.01 M4 18h.01"/></svg><span>Todas las ayudas</span></a>
+      <a href="../mapa/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z M9 4v14 M15 6v14"/></svg><span>Mapa</span></a>
+      <a href="../fuentes/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2Z M4 20a2 2 0 0 0 2 2h13v-4"/></svg><span>Fuentes</span></a>
+    </nav>
+  </header>
+  <div class="envoltorio barra">
+    <a class="boton urgente" href="../#ayuda-hoy">Necesito ayuda hoy</a>
+    <button type="button" class="boton secundario" id="facil" aria-pressed="false">Letra grande y fácil</button>
+    <button type="button" class="boton secundario" id="contraste" aria-pressed="false">Alto contraste</button>
+  </div>
+
+  <main class="envoltorio">
+    <section aria-labelledby="titular">
+      <h1 class="titular" id="titular">Para servicios sociales y entidades.</h1>
+      <p class="entradilla">Si orientas a otras personas (en un ayuntamiento, una ONG, una asociación de mayores o una parroquia), ayudas es gratis para ti. Sin registro, sin anuncios y sin recoger datos.</p>
+      <ul class="entidades-opciones">
+        <li><h3>Modo profesional</h3><p>Añade una referencia del caso y notas que se imprimen con la orientación. Todo se queda en tu ordenador.</p><p><a class="boton" href="../?pro=1">Activar el modo profesional</a></p></li>
+        <li><h3>Ponlo en vuestra web</h3><p>Copia dos líneas y el cuestionario, la página de mayores o el mapa salen dentro de vuestra web.</p><p><a href="#insertar">Ver cómo</a></p></li>
+        <li><h3>Imprime y reparte</h3><p>Cada ayuda tiene su ficha con los pasos, los papeles y los teléfonos. Se imprime en una hoja.</p><p><a href="../catalogo/">Ver las fichas</a></p></li>
+        <li><h3>Avísanos de un cambio</h3><p>Si ves una cifra o un trámite que ha cambiado en tu comunidad, nos ayudas mucho contándolo.</p><p><a href="../fuentes/#t-error">Avisar de un error</a></p></li>
+      </ul>
+
+      <h2 class="seccion-titulo" id="insertar">Ponlo en vuestra web</h2>
+      <p>Pega este código donde quieras que salga. Cambia <code>cuestionario</code> por <code>mayores</code>, <code>mapa</code> o <code>catalogo</code>. En el mapa puedes dejar marcada vuestra comunidad con <code>data-comunidad="madrid"</code>.</p>
+      <pre class="codigo" tabindex="0" role="region" aria-label="Código para insertar"><code>&lt;div data-ayudas="cuestionario"&gt;&lt;/div&gt;
+&lt;script src="https://ayudas.bendi.dev/embed.js" async&gt;&lt;/script&gt;</code></pre>
+      <p><button type="button" class="boton secundario" id="copiar-codigo">Copiar el código</button> <span id="copiado" role="status"></span></p>
+      <p>Se ajusta solo al alto y al ancho, en el móvil y en el ordenador. Las respuestas de cada persona no salen de su aparato: ni vosotros ni nosotros las vemos.</p>
+      <h3>Así se ve</h3>
+      <iframe class="entidades-vista" src="../mapa/?widget=1#madrid" title="Ejemplo: el mapa insertado en otra web" loading="lazy"></iframe>
+    </section>
+  </main>
+
+  <footer class="envoltorio pie">
+    <div class="apoyo">
+      <span class="apoyo-corazon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 16 16"><path d="M8 14.2 6.9 13.2C3 9.7.5 7.4.5 4.6.5 2.3 2.3.5 4.6.5c1.3 0 2.5.6 3.4 1.6C8.9 1.1 10.1.5 11.4.5c2.3 0 4.1 1.8 4.1 4.1 0 2.8-2.5 5.1-6.4 8.6Z"/></svg></span>
+      <div class="apoyo-texto">
+        <p class="apoyo-titulo">¿Te sirve ayudas?</p>
+        <p>Es gratis, sin anuncios ni cookies. Si te es útil y quieres que siga creciendo, puedes apoyarla.</p>
+      </div>
+      <a class="apoyo-boton" href="https://github.com/sponsors/serbenda" rel="noopener">Apoyar en GitHub Sponsors</a>
+    </div>
+    <p>Web sin anuncios ni cookies, con datos oficiales. <a href="../fuentes/">Fuentes y condiciones</a>. <a href="../entidades/">Para servicios sociales y entidades</a>. <a href="../fuentes/#t-error">¿Ves un error o falta una ayuda?</a> Hermana de <a href="https://hucha.bendi.dev/">hucha</a> y <a href="https://bolsillo.bendi.dev/">bolsillo</a>.</p>
+  </footer>
+
+  <script type="module" src="../assets/js/entidades.js"></script>
+  <script type="module" src="../assets/js/comun.js"></script>
+</body>
+</html>

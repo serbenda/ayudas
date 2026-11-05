@@ -10,7 +10,8 @@
     "fuente": "npm install --no-save --no-package-lock @fontsource-variable/archivo@5 && node scripts/vendor.mjs",
     "e2e": "node --test tests/e2e/*.e2e.mjs",
     "herramientas": "npm install --no-save --no-package-lock playwright@1 @axe-core/playwright@4",
-    "boe": "node scripts/boe.mjs"
+    "boe": "node scripts/boe.mjs",
+    "paginas": "node scripts/paginas.mjs"
   },
   "engines": {
     "node": ">=20"

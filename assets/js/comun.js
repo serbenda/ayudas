@@ -92,3 +92,21 @@ if ('speechSynthesis' in window) {
 } else {
   document.documentElement.classList.add('sin-voz');
 }
+
+// Versión para insertar en otras webs (?widget=1): sin cabecera ni pie, enlaces en otra pestaña
+// y la altura se avisa a la página que la contiene para que no salga barra de desplazamiento.
+if ('widget' in document.documentElement.dataset) {
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href]');
+    if (a && !a.getAttribute('href').startsWith('#')) a.target = '_blank';
+  });
+  const pie = document.createElement('p');
+  pie.className = 'widget-pie';
+  pie.innerHTML = 'Con datos oficiales de <a href="https://ayudas.bendi.dev/" target="_blank" rel="noopener">ayudas.bendi.dev</a>. Tus respuestas no salen de este aparato.';
+  document.querySelector('main')?.append(pie);
+  if (parent !== window) {
+    const avisar = () => parent.postMessage({ ayudas: 'altura', altura: document.documentElement.scrollHeight }, '*');
+    new ResizeObserver(avisar).observe(document.body);
+    addEventListener('load', avisar);
+  }
+}
