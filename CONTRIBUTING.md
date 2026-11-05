@@ -6,6 +6,29 @@
 - Open a pull request from `development` to `main`. CI runs the unit tests, builds the site and runs the browser and accessibility tests; `main` is published to GitHub Pages when the PR is merged.
 - Scheduled Actions only open or update issues. They never commit or open pull requests: a person reviews every change. See [docs/AUTOMATION.md](docs/AUTOMATION.md).
 
+## Branch and tag rules
+
+The repository rules live in [`.github/rulesets/`](.github/rulesets/) so they are versioned with the code:
+
+- **`main.json`** (default branch):
+  - changes only arrive through a pull request;
+  - CI (`build`) must pass;
+  - no force pushes and no deletion.
+- **`development.json`**: no force pushes and no deletion.
+- **`release-tags.json`** (`v*`): release tags cannot be moved or deleted.
+
+To apply or update them, go to **Settings → Rules → Rulesets → New ruleset → Import a ruleset** and choose the file. If a ruleset with that name already exists, delete it first or edit it by hand.
+
+## Releases
+
+Releases follow [semantic versioning](https://semver.org/): `vMAJOR.MINOR.PATCH`.
+
+- **MAJOR** for changes that break saved answers, public URLs or the embed API.
+- **MINOR** for new benefits or features.
+- **PATCH** for fixes and figure updates.
+
+Create the release from **Releases → Draft a new release** on `main` once its PR has been merged.
+
 ## Layout
 
 | Folder | What goes there |
