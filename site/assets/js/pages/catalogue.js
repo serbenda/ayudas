@@ -5,11 +5,11 @@ import { PROCEDURES } from '../data/procedures.js';
 import { icon } from '../data/icons.js';
 import { benefitCard, esc } from '../ui/card.js';
 
-const list = document.getElementById('lista');
-const search = document.getElementById('buscar');
-const count = document.getElementById('cuantas');
-const regionSelect = document.getElementById('ccaa');
-const chips = document.getElementById('categorias');
+const list = document.getElementById('list');
+const search = document.getElementById('search');
+const count = document.getElementById('count');
+const regionSelect = document.getElementById('region-filter');
+const chips = document.getElementById('categories');
 const REGION_KEY = 'ayudas:ccaa';
 
 let topic = new URLSearchParams(location.search).get('tema') ?? 'todas';
@@ -35,12 +35,12 @@ const normal = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerC
 
 function renderSent() {
   const region = regionSelect.value || null;
-  document.getElementById('titular').textContent = 'Ayudas que te han enviado.';
-  document.querySelector('.entradilla').innerHTML = 'Alguien te ha mandado esta lista. Pulsa cada ayuda para ver <strong>cómo se pide, paso a paso</strong>. <a href="./">Ver todas las ayudas</a>.';
-  document.querySelector('.filtros .buscador').hidden = true;
+  document.getElementById('headline').textContent = 'Ayudas que te han enviado.';
+  document.querySelector('.lead').innerHTML = 'Alguien te ha mandado esta lista. Pulsa cada ayuda para ver <strong>cómo se pide, paso a paso</strong>. <a href="./">Ver todas las ayudas</a>.';
+  document.querySelector('.filters .search').hidden = true;
   chips.hidden = true;
   count.textContent = `${sent.length} ${sent.length === 1 ? 'ayuda' : 'ayudas'}`;
-  list.innerHTML = `<ul class="lista-ayudas">${sent.map((id) => benefitCard(id, { region })).join('')}</ul>`;
+  list.innerHTML = `<ul class="benefit-list">${sent.map((id) => benefitCard(id, { region })).join('')}</ul>`;
 }
 
 function render() {
@@ -53,12 +53,12 @@ function render() {
     ? CATEGORIES.map((c) => {
         const inGroup = filtered.filter((a) => a.category === c.id);
         if (!inGroup.length) return '';
-        return `<section class="grupo grupo-${c.id}" aria-labelledby="g-${c.id}">
-        <h2 class="grupo-titulo" id="g-${c.id}"><span class="insignia">${icon(c.icon)}</span>${esc(c.name)}</h2>
-        <ul class="lista-ayudas">${inGroup.map((a) => benefitCard(a.id, { region })).join('')}</ul>
+        return `<section class="group group-${c.id}" aria-labelledby="g-${c.id}">
+        <h2 class="group-title" id="g-${c.id}"><span class="badge">${icon(c.icon)}</span>${esc(c.name)}</h2>
+        <ul class="benefit-list">${inGroup.map((a) => benefitCard(a.id, { region })).join('')}</ul>
       </section>`;
       }).join('')
-    : '<p class="vacio">No hay ninguna ayuda con esa búsqueda. Prueba con otra palabra o <a href="../fuentes/#t-error">avísanos si falta alguna</a>.</p>';
+    : '<p class="empty">No hay ninguna ayuda con esa búsqueda. Prueba con otra palabra o <a href="../fuentes/#t-error">avísanos si falta alguna</a>.</p>';
 }
 
 search.addEventListener('input', render);

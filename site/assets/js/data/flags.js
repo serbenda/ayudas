@@ -1,7 +1,7 @@
 // Banderas sencillas (SVG) para la lista de idiomas. Son decorativas: el nombre del idioma va siempre escrito.
 // España, Cataluña (senyera), Comunitat Valenciana (senyera con franja azul), Galicia, Euskadi (ikurriña) e inglés (Reino Unido).
 
-const svg = (view, body) => `<svg class="bandera" viewBox="${view}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">${body}</svg>`;
+const svg = (view, body) => `<svg class="flag" viewBox="${view}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">${body}</svg>`;
 const stripes = [1, 3, 5, 7].map((i) => `<rect y="${((20 / 9) * i).toFixed(2)}" width="30" height="2.22" fill="#da121a"/>`).join('');
 
 export const FLAGS = {
@@ -27,7 +27,7 @@ const href = (base, c) => (c === 'es' ? base || './' : `${base}${c}/`);
 
 /** Lista de idiomas con bandera (pie). `base` es el prefijo de las rutas ('', '../' o '/'); `actual` el código de la página. */
 export function languageLinks(base, current = 'es') {
-  return `<ul class="idiomas-lista">${LANGUAGE_LIST.map(([c, lang, name]) => {
+  return `<ul class="languages-list">${LANGUAGE_LIST.map(([c, lang, name]) => {
     const here = c === current ? ' aria-current="page"' : '';
     return `<li><a href="${href(base, c)}" hreflang="${lang}" lang="${lang}"${here}>${FLAGS[c]}<span>${name}</span></a></li>`;
   }).join('')}</ul>`;
@@ -36,8 +36,8 @@ export function languageLinks(base, current = 'es') {
 /** Selector de idioma de la barra de arriba: botón con la bandera del idioma actual y menú con los demás */
 export function languageSelector(base, current = 'es', label = 'Idioma') {
   const [, , currentName] = LANGUAGE_LIST.find(([c]) => c === current) ?? LANGUAGE_LIST[0];
-  return `<details class="ajuste-idioma">
-      <summary class="boton secundario" aria-label="${label}: ${currentName}">${FLAGS[current]}<span>${currentName}</span></summary>
-      <ul class="ajuste-idioma-panel">${LANGUAGE_LIST.map(([c, lang, name]) => `<li><a href="${href(base, c)}" hreflang="${lang}" lang="${lang}"${c === current ? ' aria-current="page"' : ''}>${FLAGS[c]}<span>${name}</span></a></li>`).join('')}</ul>
+  return `<details class="language-setting">
+      <summary class="button secondary" aria-label="${label}: ${currentName}">${FLAGS[current]}<span>${currentName}</span></summary>
+      <ul class="language-setting-panel">${LANGUAGE_LIST.map(([c, lang, name]) => `<li><a href="${href(base, c)}" hreflang="${lang}" lang="${lang}"${c === current ? ' aria-current="page"' : ''}>${FLAGS[c]}<span>${name}</span></a></li>`).join('')}</ul>
     </details>`;
 }

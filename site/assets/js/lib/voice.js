@@ -95,7 +95,7 @@ let activeButton = null;
 function setPressed(button, isSpeaking) {
   if (!button) return;
   button.setAttribute('aria-pressed', String(isSpeaking));
-  button.classList.toggle('hablando', isSpeaking);
+  button.classList.toggle('speaking', isSpeaking);
 }
 
 export function stop() {
@@ -150,7 +150,7 @@ export function voiceLabel(v, recommended = false) {
 
 /** Rellena el ajuste de voz (si la página lo tiene): lista de voces del idioma, ritmo y «Probar» */
 export async function setupSettings() {
-  const box = document.getElementById('ajuste-voz');
+  const box = document.getElementById('voice-setting');
   if (!box) return;
   if (!available) {
     box.hidden = true;

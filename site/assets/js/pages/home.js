@@ -16,15 +16,15 @@ import { downloadCalendar } from '../lib/reminders.js';
 import { toLink, fromLink } from '../lib/answers-link.js';
 
 const form = document.getElementById('cuestionario');
-const steps = [...form.querySelectorAll('.paso')];
-const stepButtons = [...document.querySelectorAll('#pasos [data-ir]')];
-const back = document.getElementById('atras');
-const next = document.getElementById('siguiente');
-const skip = document.getElementById('saltar');
-const results = document.getElementById('resultados');
-const list = document.getElementById('lista');
-const remember = document.getElementById('recordar');
-const peopleBox = document.getElementById('personas');
+const steps = [...form.querySelectorAll('.step')];
+const stepButtons = [...document.querySelectorAll('#steps [data-go-to]')];
+const back = document.getElementById('back');
+const next = document.getElementById('next');
+const skip = document.getElementById('skip');
+const results = document.getElementById('results');
+const list = document.getElementById('list');
+const remember = document.getElementById('remember');
+const peopleBox = document.getElementById('people');
 const STORAGE_KEY = 'ayudas:respuestas';
 const TRACKING_KEY = 'ayudas:seguimiento';
 let tracking = {};
@@ -47,7 +47,7 @@ function goTo(n, { focus = true } = {}) {
   stepButtons.forEach((b, i) => {
     if (i + 1 === currentStep) b.setAttribute('aria-current', 'step');
     else b.removeAttribute('aria-current');
-    b.classList.toggle('hecho', visited.has(i + 1) && i + 1 !== currentStep);
+    b.classList.toggle('done', visited.has(i + 1) && i + 1 !== currentStep);
   });
   back.hidden = currentStep === 1;
   next.textContent = currentStep === steps.length ? 'Ver mis ayudas' : 'Siguiente';
@@ -59,7 +59,7 @@ function goTo(n, { focus = true } = {}) {
   }
 }
 
-stepButtons.forEach((b) => b.addEventListener('click', () => goTo(Number(b.dataset.ir))));
+stepButtons.forEach((b) => b.addEventListener('click', () => goTo(Number(b.dataset.goTo))));
 back.addEventListener('click', () => goTo(currentStep - 1));
 next.addEventListener('click', () => (currentStep === steps.length ? showResults() : goTo(currentStep + 1)));
 skip.addEventListener('click', showResults);
@@ -79,9 +79,9 @@ form.addEventListener('click', (e) => {
 function personTemplate(i) {
   const n = i + 1;
   return `
-  <div class="persona" data-persona="${n}">
+  <div class="person" data-person="${n}">
     <h3>Persona ${n}</h3>
-    <div class="persona-campos">
+    <div class="person-fields">
       <label>¿Quién es?
         <select name="p${n}-relationship">
           <option value="padre">Mi padre o mi madre</option>
@@ -91,7 +91,7 @@ function personTemplate(i) {
         </select>
       </label>
       <label>Edad
-        <input name="p${n}-age" type="number" inputmode="numeric" min="0" max="120" class="corto">
+        <input name="p${n}-age" type="number" inputmode="numeric" min="0" max="120" class="short">
       </label>
       <label>Discapacidad
         <select name="p${n}-disability">
@@ -113,8 +113,8 @@ function personTemplate(i) {
         </select>
       </label>
     </div>
-    <label class="casilla"><input type="checkbox" name="p${n}-livesWith" checked><span>Vive conmigo</span></label>
-    <label class="casilla"><input type="checkbox" name="p${n}-iCare" checked><span>La cuido yo (o alguien de la familia)</span></label>
+    <label class="checkbox"><input type="checkbox" name="p${n}-livesWith" checked><span>Vive conmigo</span></label>
+    <label class="checkbox"><input type="checkbox" name="p${n}-iCare" checked><span>La cuido yo (o alguien de la familia)</span></label>
   </div>`;
 }
 
@@ -206,7 +206,7 @@ function updateConditions() {
     'nothing-in-step-5': p.pension === 'no' && !unemployed && !asksContributions,
   };
   for (const el of form.querySelectorAll('[data-show-if]')) el.hidden = !rules[el.dataset.showIf];
-  if (CITIES[p.region]) document.getElementById('nombre-ciudad').textContent = `la ciudad de ${CITIES[p.region].name}`;
+  if (CITIES[p.region]) document.getElementById('city-name').textContent = `la ciudad de ${CITIES[p.region].name}`;
   // Una persona sola con hijos: casi siempre es monoparental (se puede desmarcar)
   if (rules['single-parent'] && !singleParentTouched && radio('partner') === 'no' && p.adults === 1) form.singleParent.checked = true;
 }
@@ -248,9 +248,9 @@ function render() {
   const all = evaluate(p).sort((x, y) => (x.status === y.status ? ORDER[x.id] - ORDER[y.id] : x.status === 'si' ? -1 : 1));
   const nYes = all.filter((r) => r.status === 'si').length;
   const nMaybe = all.length - nYes;
-  document.getElementById('n-si').firstChild.textContent = nYes;
-  document.getElementById('n-quizas').firstChild.textContent = nMaybe;
-  document.getElementById('resultados-texto').textContent = all.length
+  document.getElementById('n-yes').firstChild.textContent = nYes;
+  document.getElementById('n-maybe').firstChild.textContent = nMaybe;
+  document.getElementById('results-text').textContent = all.length
     ? `Con lo que has contestado salen ${all.length} ${all.length === 1 ? 'ayuda' : 'ayudas'}. Pulsa cada una para ver cómo se pide, paso a paso.`
     : 'Con lo que has contestado no sale ninguna ayuda. Prueba a completar más preguntas: los ingresos y quién vive contigo cambian mucho el resultado.';
 
@@ -259,9 +259,9 @@ function render() {
 
   // Por dónde empezar
   const first = whereToStart(all);
-  const begin = document.getElementById('empezar');
+  const begin = document.getElementById('start');
   begin.hidden = !first.length;
-  document.getElementById('empezar-lista').innerHTML = first
+  document.getElementById('start-list').innerHTML = first
     .map((r) => {
       const t = procedureOf(r.id, p.region);
       return `<li><a href="#ayuda-${r.id}" data-open-page="${r.id}"><strong>${esc(BY_ID[r.id].name)}</strong></a><span>${esc(t.steps[0])}</span></li>`;
@@ -270,30 +270,30 @@ function render() {
 
   // Papeles de todas las ayudas que salen
   const papeles = papersFor(all.map((r) => r.id));
-  document.getElementById('papeles-bloque').hidden = !papeles.length;
-  document.getElementById('papeles').innerHTML = papeles
+  document.getElementById('papers-block').hidden = !papeles.length;
+  document.getElementById('papers').innerHTML = papeles
     .map(({ doc, benefits }) => `<li><strong>${esc(DOCUMENTS[doc].name)}</strong>. ${esc(DOCUMENTS[doc].benefit)} <small>Para: ${benefits.map((id) => esc(BY_ID[id].name)).join(', ')}.</small></li>`)
     .join('');
 
   const visibleOnes = all.filter((r) => activeFilter === 'todas' || r.status === activeFilter);
   if (!visibleOnes.length) {
-    list.innerHTML = all.length ? '<p class="vacio">Nada con este filtro.</p>' : '';
+    list.innerHTML = all.length ? '<p class="empty">Nada con este filtro.</p>' : '';
     return;
   }
   list.innerHTML = CATEGORIES.map((c) => {
     const inGroup = visibleOnes.filter((r) => BY_ID[r.id].category === c.id);
     if (!inGroup.length) return '';
-    return `<section class="grupo grupo-${c.id}" aria-labelledby="g-${c.id}">
-      <h3 class="grupo-titulo" id="g-${c.id}"><span class="insignia">${icon(c.icon)}</span>${esc(c.name)}</h3>
-      <ul class="lista-ayudas">${inGroup.map((r) => benefitCard(r.id, { result: r, region: p.region, tracking: tracking[r.id] ?? '', profile: p })).join('')}</ul>
+    return `<section class="group group-${c.id}" aria-labelledby="g-${c.id}">
+      <h3 class="group-title" id="g-${c.id}"><span class="badge">${icon(c.icon)}</span>${esc(c.name)}</h3>
+      <ul class="benefit-list">${inGroup.map((r) => benefitCard(r.id, { result: r, region: p.region, tracking: tracking[r.id] ?? '', profile: p })).join('')}</ul>
     </section>`;
   }).join('');
 }
 
-const COLORS = ['var(--s-smi)', 'var(--s-pnc)', 'var(--s-imv)', 'var(--s-iprem)', 'var(--acento)', 'var(--calido-fuerte)', 'var(--quizas)', 'var(--tenue)'];
+const COLORS = ['var(--s-smi)', 'var(--s-pnc)', 'var(--s-imv)', 'var(--s-iprem)', 'var(--accent)', 'var(--warm-strong)', 'var(--maybe)', 'var(--muted)'];
 
 function renderMoney(p, all) {
-  const box = document.getElementById('dinero');
+  const box = document.getElementById('money');
   const d = estimatedMoney(all);
   if (!d.monthly && !d.yearly) {
     box.hidden = true;
@@ -303,24 +303,24 @@ function renderMoney(p, all) {
   const now = p.householdIncome != null ? Math.round(p.householdIncome / 12) : 0;
   const total = now + d.monthly;
   const chunks = [
-    ...(now && d.monthly ? [{ name: 'Lo que ya entra', figure: now, color: 'var(--linea)', already: true }] : []),
+    ...(now && d.monthly ? [{ name: 'Lo que ya entra', figure: now, color: 'var(--line)', already: true }] : []),
     ...d.parts.map((x, i) => ({ name: BY_ID[x.id].name, figure: x.monthly, color: COLORS[i % COLORS.length] })),
   ];
-  document.getElementById('dinero-total').innerHTML = d.monthly
+  document.getElementById('money-total').innerHTML = d.monthly
     ? `Hasta <strong>${euros(d.monthly)} más al mes</strong>${now ? `: de ${euros(now)} a unos ${euros(total)}` : ''}${d.yearly ? `, y <strong>${euros(d.yearly)} al año</strong> en pagos y deducciones` : ''}.`
     : `<strong>${euros(d.yearly)} al año</strong> en pagos y deducciones.`;
-  const bar = document.getElementById('dinero-barra');
+  const bar = document.getElementById('money-bar');
   bar.hidden = !d.monthly;
   bar.setAttribute('aria-label', chunks.map((t) => `${t.name}: ${euros(t.figure)} al mes`).join('. '));
-  bar.innerHTML = chunks.map((t) => `<span style="flex:${t.figure} 1 0;background:${t.color}"${t.already ? ' class="ya"' : ''}></span>`).join('');
-  document.getElementById('dinero-leyenda').innerHTML = [
+  bar.innerHTML = chunks.map((t) => `<span style="flex:${t.figure} 1 0;background:${t.color}"${t.already ? ' class="already"' : ''}></span>`).join('');
+  document.getElementById('money-legend').innerHTML = [
     ...chunks.map((t) => `<li><i style="background:${t.color}"></i>${esc(t.name)} <strong>${euros(t.figure)}</strong><small>al mes</small></li>`),
-    ...d.perYear.map((x) => `<li><i class="anual"></i>${esc(BY_ID[x.id].name)} <strong>${euros(x.yearly)}</strong><small>al año</small></li>`),
+    ...d.perYear.map((x) => `<li><i class="annual"></i>${esc(BY_ID[x.id].name)} <strong>${euros(x.yearly)}</strong><small>al año</small></li>`),
   ].join('');
 }
 
 // Abrir una ayuda desde «Por dónde empezar»
-document.getElementById('empezar-lista').addEventListener('click', (e) => {
+document.getElementById('start-list').addEventListener('click', (e) => {
   const a = e.target.closest('[data-open-page]');
   if (!a) return;
   const d = document.querySelector(`#ayuda-${a.dataset.openPage} details`);
@@ -346,9 +346,9 @@ for (const b of document.querySelectorAll('[data-active-filter]')) {
   });
 }
 
-document.getElementById('cambiar').addEventListener('click', () => goTo(1));
-document.getElementById('imprimir').addEventListener('click', () => print());
-document.getElementById('compartir').addEventListener('click', () => {
+document.getElementById('change').addEventListener('click', () => goTo(1));
+document.getElementById('print').addEventListener('click', () => print());
+document.getElementById('share').addEventListener('click', () => {
   const p = readProfile();
   const ids = whereToStart(evaluate(p), 99).concat(evaluate(p)).map((r) => r.id).filter((id, i, a) => a.indexOf(id) === i);
   if (ids.length) share(ids);
@@ -357,11 +357,11 @@ const resultIds = () => {
   const r = evaluate(readProfile());
   return whereToStart(r, 99).concat(r).map((x) => x.id).filter((id, i, a) => a.indexOf(id) === i);
 };
-document.getElementById('calendario').addEventListener('click', () => downloadCalendar(resultIds()));
+document.getElementById('calendar').addEventListener('click', () => downloadCalendar(resultIds()));
 
 // Guardar en un enlace: las respuestas van dentro del enlace (después de #), que no llega a ningún servidor
-const linkStatus = document.getElementById('enlace-estado');
-document.getElementById('enlace-respuestas').addEventListener('click', async () => {
+const linkStatus = document.getElementById('link-status');
+document.getElementById('answers-link').addEventListener('click', async () => {
   const url = `${location.origin}${location.pathname}#r=${toLink(answers())}`;
   try {
     await navigator.clipboard.writeText(url);
@@ -378,16 +378,16 @@ if (PRO) {
   box.hidden = false;
   const header = () => {
     const ref = document.getElementById('pro-ref').value.trim();
-    document.getElementById('pro-cabecera').textContent = `Orientación sobre ayudas · ${new Date().toLocaleDateString('es-ES')}${ref ? ` · Caso ${ref}` : ''} · ayudas.bendi.dev`;
+    document.getElementById('pro-header').textContent = `Orientación sobre ayudas · ${new Date().toLocaleDateString('es-ES')}${ref ? ` · Caso ${ref}` : ''} · ayudas.bendi.dev`;
   };
   document.getElementById('pro-ref').addEventListener('input', header);
   header();
 }
 
-document.getElementById('borrar').addEventListener('click', () => {
+document.getElementById('clear').addEventListener('click', () => {
   if (PRO) {
     document.getElementById('pro-ref').value = '';
-    document.getElementById('pro-notas').value = '';
+    document.getElementById('pro-notes').value = '';
   }
   linkStatus.textContent = '';
   form.reset();
@@ -481,7 +481,7 @@ for (const b of document.querySelectorAll('[data-example]')) {
 function renderPhones() {
   const madrid = form.region.value === 'madrid';
   const keys = ['emergencias', 'violencia', 'crisis', 'cruzRoja', ...(madrid ? ['madrid012', 'linea010', 'mayoresMadrid'] : []), 'imv'];
-  document.getElementById('telefonos-hoy').innerHTML = keys.map(phoneButton).join('');
+  document.getElementById('phones-today').innerHTML = keys.map(phoneButton).join('');
 }
 form.region.addEventListener('change', renderPhones);
 
@@ -502,8 +502,8 @@ if (fromLinkAnswers) {
 }
 updateConditions();
 renderPhones();
-renderHistory(document.getElementById('evolucion'));
-document.getElementById('n-ayudas').textContent = BENEFITS.length;
+renderHistory(document.getElementById('evolution'));
+document.getElementById('n-benefits').textContent = BENEFITS.length;
 for (const el of document.querySelectorAll('[data-icon]')) el.innerHTML = icon(el.dataset.icon);
 goTo(1, { focus: false });
 if (fromLinkAnswers) {

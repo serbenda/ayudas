@@ -10,8 +10,8 @@ import { phoneButton, esc, exampleBox } from '../ui/card.js';
 import { speak, canSpeak } from '../lib/voice.js';
 import { share } from '../ui/share.js';
 
-const box = document.getElementById('asistente');
-const result = document.getElementById('resultado');
+const box = document.getElementById('assistant');
+const result = document.getElementById('result');
 const answers = {};
 let registerHistory = [];
 
@@ -78,7 +78,7 @@ const activeQuestions = () => QUESTIONS.filter((q) => !q.si || q.si(answers));
 function read(text) {
   speak(text, { lang: 'es' });
 }
-const listenButton = (id) => (canSpeak ? `<button type="button" class="escuchar" data-listen="${id}">${icon('altavoz')} Escuchar</button>` : '');
+const listenButton = (id) => (canSpeak ? `<button type="button" class="listen" data-listen="${id}">${icon('altavoz')} Escuchar</button>` : '');
 
 // ── Pintar una pregunta ─────────────────────────────────────────────────
 function showQuestion(i) {
@@ -88,24 +88,24 @@ function showQuestion(i) {
   const n = i + 1;
   const total = list.length;
   const options = q.type === 'lista'
-    ? `<div class="opciones-grandes">${REGIONS.filter((c) => c.id !== 'madrid').map((c) => `<button type="button" class="opcion-grande" data-field-value="${c.id}">${esc(c.name)}</button>`).join('')}</div>`
-    : `<div class="opciones-grandes">${q.options.map(([t, v], k) => `<button type="button" class="opcion-grande" data-position="${k}">${esc(t)}</button>`).join('')}</div>`;
+    ? `<div class="options-large">${REGIONS.filter((c) => c.id !== 'madrid').map((c) => `<button type="button" class="option-large" data-field-value="${c.id}">${esc(c.name)}</button>`).join('')}</div>`
+    : `<div class="options-large">${q.options.map(([t, v], k) => `<button type="button" class="option-large" data-position="${k}">${esc(t)}</button>`).join('')}</div>`;
   box.innerHTML = `
-    <div class="progreso" role="progressbar" aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${n}" aria-label="Pregunta ${n} de ${total}">
+    <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${n}" aria-label="Pregunta ${n} de ${total}">
       <span>Pregunta ${n} de ${total}</span>
-      <div class="progreso-barra"><i style="width:${Math.round((n / total) * 100)}%"></i></div>
+      <div class="progress-bar"><i style="width:${Math.round((n / total) * 100)}%"></i></div>
     </div>
-    <h2 class="pregunta-grande" id="pregunta" tabindex="-1">${esc(q.text)}</h2>
-    ${q.benefit ? `<p class="pregunta-ayuda">${esc(q.benefit)}</p>` : ''}
+    <h2 class="question-large" id="question" tabindex="-1">${esc(q.text)}</h2>
+    ${q.benefit ? `<p class="question-help">${esc(q.benefit)}</p>` : ''}
     ${listenButton('pregunta')}
     ${options}
-    <div class="navegar">
-      ${i > 0 ? '<button type="button" class="boton secundario grande" data-volver>← Volver</button>' : ''}
-      <button type="button" class="boton texto" data-saltar>No quiero contestar</button>
+    <div class="browse">
+      ${i > 0 ? '<button type="button" class="button secondary large" data-back>← Volver</button>' : ''}
+      <button type="button" class="button text" data-skip>No quiero contestar</button>
     </div>`;
   box.dataset.position = i;
   box.dataset.text = [q.text, q.benefit ?? '', ...(q.options ?? []).map(([t]) => t)].join('. ');
-  document.getElementById('pregunta').focus({ preventScroll: false });
+  document.getElementById('question').focus({ preventScroll: false });
 }
 
 box.addEventListener('click', (e) => {
@@ -168,18 +168,18 @@ function seniorCard(r, region, number) {
   const used = new Set();
   const ex = (text) => markTerms(esc(text), used);
   return `
-  <article class="ficha-mayores${r.urgente ? ' urgente' : ''}" id="m-${r.id}">
-    <h3><span class="numero">${number}</span>${esc(a.name)}</h3>
-    ${r.payment?.text ? `<p class="cuanto">${esc(r.payment.text)}</p>` : ''}
-    <ul class="frases">${t.easy.map((f) => `<li>${ex(f)}</li>`).join('')}</ul>
-    ${r.status === 'quizas' && r.check.length ? `<p class="comprobar-mayores"><strong>Hay que comprobar:</strong> ${ex(r.check[0])}</p>` : ''}
+  <article class="senior-card${r.urgente ? ' urgent' : ''}" id="m-${r.id}">
+    <h3><span class="number">${number}</span>${esc(a.name)}</h3>
+    ${r.payment?.text ? `<p class="how-much">${esc(r.payment.text)}</p>` : ''}
+    <ul class="sentences">${t.easy.map((f) => `<li>${ex(f)}</li>`).join('')}</ul>
+    ${r.status === 'quizas' && r.check.length ? `<p class="seniors-check"><strong>Hay que comprobar:</strong> ${ex(r.check[0])}</p>` : ''}
     ${listenButton(r.id)}
-    <details class="como-mayores">
+    <details class="seniors-how">
       <summary>Qué tengo que hacer</summary>
       ${exampleBox(r.id)}
       <ol>${t.steps.map((p) => `<li>${ex(p)}</li>`).join('')}</ol>
-      ${t.phones.length ? `<h4>Llama a</h4><div class="llamadas">${t.phones.map(phoneButton).join('')}</div>` : ''}
-      ${t.documents.length ? `<h4>Lleva estos papeles</h4><ul class="papeles">${t.documents.map((d) => `<li>${esc(DOCUMENTS[d].name)}</li>`).join('')}</ul>` : ''}
+      ${t.phones.length ? `<h4>Llama a</h4><div class="calls">${t.phones.map(phoneButton).join('')}</div>` : ''}
+      ${t.documents.length ? `<h4>Lleva estos papeles</h4><ul class="papers">${t.documents.map((d) => `<li>${esc(DOCUMENTS[d].name)}</li>`).join('')}</ul>` : ''}
       <p><strong>Cuándo:</strong> ${ex(t.deadline)}</p>
     </details>
   </article>`;
@@ -198,22 +198,22 @@ function showResult() {
   box.hidden = true;
   result.hidden = false;
   result.innerHTML = `
-    <h2 class="pregunta-grande" id="t-resultado" tabindex="-1">${order.length ? `Puedes pedir ${order.length === 1 ? 'esta ayuda' : `estas ${order.length} ayudas`}` : 'No sale ninguna ayuda'}</h2>
-    <p class="pregunta-ayuda">${order.length ? 'Empieza por la primera. Pulsa «Qué tengo que hacer» para ver los pasos.' : 'Con tus respuestas no sale ninguna. Llama a los servicios sociales de tu ayuntamiento: te orientan gratis.'}</p>
-    <p class="consejo">${icon('cuidados')} Puedes pedir ayuda a un familiar, a un vecino o a los servicios sociales para hacer los trámites.</p>
-    <div class="fichas-mayores">${order.map((r, i) => seniorCard(r, p.region, i + 1)).join('')}</div>
-    ${papeles.length ? `<section class="bloque-mayores"><h3>${icon('papeles')} Papeles que conviene tener a mano</h3><ul class="papeles">${papeles.map(({ doc }) => `<li><strong>${esc(DOCUMENTS[doc].name)}</strong>. ${esc(DOCUMENTS[doc].benefit)}</li>`).join('')}</ul></section>` : ''}
-    <section class="bloque-mayores"><h3>${icon('telefono')} Teléfonos que te pueden ayudar</h3>
-      <div class="llamadas">${[...(madrid ? ['mayoresMadrid', 'madrid012', 'linea010'] : []), 'cruzRoja', 'infoInss', 'emergencias'].map(phoneButton).join('')}</div>
+    <h2 class="question-large" id="t-result" tabindex="-1">${order.length ? `Puedes pedir ${order.length === 1 ? 'esta ayuda' : `estas ${order.length} ayudas`}` : 'No sale ninguna ayuda'}</h2>
+    <p class="question-help">${order.length ? 'Empieza por la primera. Pulsa «Qué tengo que hacer» para ver los pasos.' : 'Con tus respuestas no sale ninguna. Llama a los servicios sociales de tu ayuntamiento: te orientan gratis.'}</p>
+    <p class="tip">${icon('cuidados')} Puedes pedir ayuda a un familiar, a un vecino o a los servicios sociales para hacer los trámites.</p>
+    <div class="senior-cards">${order.map((r, i) => seniorCard(r, p.region, i + 1)).join('')}</div>
+    ${papeles.length ? `<section class="seniors-block"><h3>${icon('papeles')} Papeles que conviene tener a mano</h3><ul class="papers">${papeles.map(({ doc }) => `<li><strong>${esc(DOCUMENTS[doc].name)}</strong>. ${esc(DOCUMENTS[doc].benefit)}</li>`).join('')}</ul></section>` : ''}
+    <section class="seniors-block"><h3>${icon('telefono')} Teléfonos que te pueden ayudar</h3>
+      <div class="calls">${[...(madrid ? ['mayoresMadrid', 'madrid012', 'linea010'] : []), 'cruzRoja', 'infoInss', 'emergencias'].map(phoneButton).join('')}</div>
     </section>
-    <div class="navegar">
-      <button type="button" class="boton grande" data-compartir>Enviar a un familiar</button>
-      <button type="button" class="boton secundario grande" data-imprimir>Imprimir para llevar</button>
-      <button type="button" class="boton secundario grande" data-cambiar>Cambiar respuestas</button>
-      <a class="boton texto" href="../">Ver la versión completa</a>
+    <div class="browse">
+      <button type="button" class="button large" data-share>Enviar a un familiar</button>
+      <button type="button" class="button secondary large" data-print>Imprimir para llevar</button>
+      <button type="button" class="button secondary large" data-change>Cambiar respuestas</button>
+      <a class="button text" href="../">Ver la versión completa</a>
     </div>
-    <p class="nota">Es una orientación. Quien decide es el organismo que da cada ayuda. Cifras de 2026.</p>`;
-  document.getElementById('t-resultado').focus();
+    <p class="note">Es una orientación. Quien decide es el organismo que da cada ayuda. Cifras de 2026.</p>`;
+  document.getElementById('t-result').focus();
 }
 
 result.addEventListener('click', (e) => {
@@ -222,10 +222,10 @@ result.addEventListener('click', (e) => {
   if (b.dataset.listen) {
     const card = document.getElementById(`m-${b.dataset.listen}`);
     const t = procedureOf(b.dataset.listen, profile().region);
-    return read([BY_ID[b.dataset.listen].name, card.querySelector('.cuanto')?.textContent ?? '', ...t.easy, 'Qué tengo que hacer.', ...t.steps].join('. '));
+    return read([BY_ID[b.dataset.listen].name, card.querySelector('.how-much')?.textContent ?? '', ...t.easy, 'Qué tengo que hacer.', ...t.steps].join('. '));
   }
   if ('compartir' in b.dataset) {
-    const ids = [...result.querySelectorAll('.ficha-mayores')].map((f) => f.id.replace(/^m-/, ''));
+    const ids = [...result.querySelectorAll('.senior-card')].map((f) => f.id.replace(/^m-/, ''));
     return share(ids);
   }
   if ('imprimir' in b.dataset) {
@@ -241,10 +241,10 @@ result.addEventListener('click', (e) => {
 });
 
 // ── Arranque ────────────────────────────────────────────────────────────
-document.getElementById('empezar').addEventListener('click', () => {
-  document.getElementById('bienvenida').hidden = true;
+document.getElementById('start').addEventListener('click', () => {
+  document.getElementById('welcome').hidden = true;
   box.hidden = false;
   showQuestion(0);
 });
-document.querySelector('[data-listen="bienvenida"]')?.addEventListener('click', () => read(document.getElementById('bienvenida').innerText));
+document.querySelector('[data-listen="bienvenida"]')?.addEventListener('click', () => read(document.getElementById('welcome').innerText));
 if (!canSpeak) document.querySelector('[data-listen="bienvenida"]')?.remove();

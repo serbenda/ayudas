@@ -95,13 +95,13 @@ test('alto contraste y letra grande también son accesibles', async () => {
 test('portada: un ejemplo enseña ayudas, por dónde empezar, papeles y pasos', async () => {
   const { page, errors, context } = await openPage('', { ...MOBILE, colorScheme: 'light' });
   await page.click('[data-example=paro]');
-  await page.waitForSelector('#resultados:not([hidden])');
-  const begin = await page.locator('#empezar-lista li').allTextContents();
+  await page.waitForSelector('#results:not([hidden])');
+  const begin = await page.locator('#start-list li').allTextContents();
   assert.ok(begin[0].includes('Comida'), `lo urgente primero: ${begin[0]}`);
-  assert.ok((await page.locator('#lista .ayuda').count()) >= 5);
-  assert.ok((await page.locator('#papeles li').count()) >= 3);
-  await page.locator('#lista details').first().evaluate((d) => (d.open = true));
-  assert.ok((await page.locator('#lista details').first().locator('.pasos-tramite li').count()) >= 1);
+  assert.ok((await page.locator('#list .benefit').count()) >= 5);
+  assert.ok((await page.locator('#papers li').count()) >= 3);
+  await page.locator('#list details').first().evaluate((d) => (d.open = true));
+  assert.ok((await page.locator('#list details').first().locator('.procedure-steps li').count()) >= 1);
   await checkAccessible(page, 'portada con resultados');
   assert.deepEqual(ownItems(errors), []);
   await context.close();
@@ -109,11 +109,11 @@ test('portada: un ejemplo enseña ayudas, por dónde empezar, papeles y pasos', 
 
 test('mayores: se contesta pulsando botones y salen las ayudas con sus pasos', async () => {
   const { page, errors, context } = await openPage('mayores/', { ...MOBILE, colorScheme: 'light' });
-  await page.click('#empezar');
+  await page.click('#start');
   const answers = ['De 65 a 79', 'En la ciudad de Madrid', 'Vivo solo o sola', 'Sí, de viudedad', 'Menos de 700 €', 'Sí', '3', 'Sí, pero no lo he pedido', 'No', 'No', 'No, es mía', 'Justo', 'Sí'];
-  for (const r of answers) await page.locator('.opcion-grande', { hasText: r }).first().click();
-  await page.waitForSelector('#resultado:not([hidden])');
-  const cards = await page.locator('.ficha-mayores h3').allTextContents();
+  for (const r of answers) await page.locator('.option-large', { hasText: r }).first().click();
+  await page.waitForSelector('#result:not([hidden])');
+  const cards = await page.locator('.senior-card h3').allTextContents();
   assert.ok(cards.some((t) => t.includes('Complemento a mínimos')), cards.join(' | '));
   assert.ok(cards.some((t) => t.includes('Teleasistencia')), cards.join(' | '));
   await noOverflow(page, 'mayores resultado');
@@ -124,33 +124,33 @@ test('mayores: se contesta pulsando botones y salen las ayudas con sus pasos', a
 
 test('lista enviada a un familiar: solo esas ayudas, con sus pasos', async () => {
   const { page, errors, context } = await openPage('catalogo/?ver=imv,bono-social', { ...MOBILE, colorScheme: 'light' });
-  assert.equal(await page.locator('#lista .ayuda').count(), 2);
-  assert.match(await page.textContent('#titular'), /te han enviado/);
+  assert.equal(await page.locator('#list .benefit').count(), 2);
+  assert.match(await page.textContent('#headline'), /te han enviado/);
   assert.deepEqual(ownItems(errors), []);
   await context.close();
 });
 
 test('mapa: al pulsar una comunidad salen su renta mínima y sus ayudas', async () => {
   const { page, errors, context } = await openPage('mapa/', { ...MOBILE, colorScheme: 'light' });
-  await page.locator('.zona[data-region="pais-vasco"] path').click({ force: true });
-  await page.waitForSelector('#panel-ccaa:not([hidden])');
-  assert.match(await page.textContent('#panel-ccaa'), /Renta de Garantía de Ingresos/);
-  assert.equal(await page.getAttribute('.zona[data-region="pais-vasco"]', 'aria-pressed'), 'true');
+  await page.locator('.zone[data-region="pais-vasco"] path').click({ force: true });
+  await page.waitForSelector('#region-panel:not([hidden])');
+  assert.match(await page.textContent('#region-panel'), /Renta de Garantía de Ingresos/);
+  assert.equal(await page.getAttribute('.zone[data-region="pais-vasco"]', 'aria-pressed'), 'true');
   // Con teclado y con la lista también
-  await page.focus('.zona[data-region="ceuta"]');
+  await page.focus('.zone[data-region="ceuta"]');
   await page.keyboard.press('Enter');
-  assert.match(await page.textContent('.panel-titulo'), /Ceuta/);
-  await page.selectOption('#mapa-ccaa', 'madrid');
-  assert.ok((await page.locator('#panel-ccaa .ayuda').count()) >= 10);
-  assert.match(await page.textContent('#panel-ccaa'), /Si vives en la ciudad de Madrid/);
+  assert.match(await page.textContent('.panel-title'), /Ceuta/);
+  await page.selectOption('#region-map', 'madrid');
+  assert.ok((await page.locator('#region-panel .benefit').count()) >= 10);
+  assert.match(await page.textContent('#region-panel'), /Si vives en la ciudad de Madrid/);
   assert.deepEqual(ownItems(errors), []);
   await context.close();
 });
 
 test('insertado en otra web: sin cabecera ni pie', async () => {
   const { page, errors, context } = await openPage('?widget=1', { ...MOBILE, colorScheme: 'light' });
-  assert.equal(await page.locator('.cabecera').isVisible(), false);
-  assert.equal(await page.locator('.widget-pie').count(), 1);
+  assert.equal(await page.locator('.header').isVisible(), false);
+  assert.equal(await page.locator('.widget-footer').count(), 1);
   assert.deepEqual(ownItems(errors), []);
   await context.close();
 });
@@ -158,20 +158,20 @@ test('insertado en otra web: sin cabecera ni pie', async () => {
 test('guardar en un enlace y modo profesional', async () => {
   const { page, errors, context } = await openPage('?pro=1', { ...DESKTOP, colorScheme: 'light', permissions: ['clipboard-read', 'clipboard-write'] });
   await page.click('[data-example=jubilada]');
-  await page.waitForSelector('#resultados:not([hidden])');
+  await page.waitForSelector('#results:not([hidden])');
   assert.equal(await page.locator('#pro').isVisible(), true);
-  const n = await page.locator('#lista .ayuda').count();
-  await page.click('#enlace-respuestas');
+  const n = await page.locator('#list .benefit').count();
+  await page.click('#answers-link');
   const link = await page.evaluate(() => navigator.clipboard.readText());
   assert.match(link, /#r=/);
   await checkAccessible(page, 'portada en modo profesional');
   const other = await context.newPage();
   await other.goto(link);
-  await other.waitForSelector('#resultados:not([hidden])');
-  assert.equal(await other.locator('#lista .ayuda').count(), n);
+  await other.waitForSelector('#results:not([hidden])');
+  assert.equal(await other.locator('#list .benefit').count(), n);
   assert.ok(!other.url().includes('#r='), 'las respuestas se quitan de la barra de direcciones');
   const downloadEvent = other.waitForEvent('download');
-  await other.click('#calendario');
+  await other.click('#calendar');
   assert.equal((await downloadEvent).suggestedFilename(), 'ayudas-recordatorios.ics');
   assert.deepEqual(ownItems(errors), []);
   await context.close();
@@ -179,13 +179,13 @@ test('guardar en un enlace y modo profesional', async () => {
 
 test('palabras difíciles: al pulsar una sale qué significa, y se esconde al volver a pulsar', async () => {
   const { page, errors, context } = await openPage('ayuda/imv/', { ...MOBILE, colorScheme: 'light' });
-  const word = page.locator('button.termino').first();
+  const word = page.locator('button.term').first();
   await word.click();
   assert.equal(await word.getAttribute('aria-expanded'), 'true');
-  assert.ok((await page.textContent('.definicion')).length > 20);
+  assert.ok((await page.textContent('.definition')).length > 20);
   await checkAccessible(page, 'ficha con una palabra abierta');
   await word.click();
-  assert.equal(await page.locator('.definicion').count(), 0);
+  assert.equal(await page.locator('.definition').count(), 0);
   assert.deepEqual(ownItems(errors), []);
   await context.close();
 });

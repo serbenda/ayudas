@@ -12,11 +12,11 @@ const r2 = (n) => Math.round(n * 100) / 100;
 export const EXAMPLES = {
   imv() {
     const rg = guaranteedIncome(p({ children: { age3to5: 1 }, singleParent: true }));
-    const cobra = r2(rg - 400);
+    const amount = r2(rg - 400);
     return {
       who: 'Lucía vive sola con su hijo de 4 años. Gana 400 € al mes limpiando casas.',
-      accounts: [`Su renta garantizada (madre sola con un hijo) es ${euros(rg)} al mes.`, `Le faltan ${euros(rg)} − 400 € = ${euros(cobra)}.`],
-      result: `Cobraría unos ${euros(cobra)} al mes de IMV, y además ${euros(C.capi.age3to6)} al mes por su hijo.`,
+      accounts: [`Su renta garantizada (madre sola con un hijo) es ${euros(rg)} al mes.`, `Le faltan ${euros(rg)} − 400 € = ${euros(amount)}.`],
+      result: `Cobraría unos ${euros(amount)} al mes de IMV, y además ${euros(C.capi.age3to6)} al mes por su hijo.`,
     };
   },
   capi() {
@@ -29,11 +29,11 @@ export const EXAMPLES = {
   },
   'pnc-jubilacion'() {
     const others = 2400;
-    const cobra = r2((C.pnc.annual - others) / 14);
+    const amount = r2((C.pnc.annual - others) / 14);
     return {
       who: 'Carmen tiene 70 años. Nunca cotizó. Alquila una plaza de garaje por 200 € al mes.',
       accounts: [`La pensión no contributiva entera son ${euros(C.pnc.annual)} al año.`, `Se le resta lo que ya cobra: 2.400 € al año.`, `Queda ${euros(C.pnc.annual - others)}, en 14 pagas.`],
-      result: `Cobraría unos ${euros(cobra)} al mes.`,
+      result: `Cobraría unos ${euros(amount)} al mes.`,
     };
   },
   'complemento-minimos'() {

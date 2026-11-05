@@ -18,5 +18,5 @@ export const ICONS = {
 
 export function icon(name) {
   const d = ICONS[name];
-  return d ? `<svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${d}"/></svg>` : '';
+  return d ? `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${d}"/></svg>` : '';
 }

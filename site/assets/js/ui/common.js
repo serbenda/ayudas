@@ -45,7 +45,7 @@ for (const a of document.querySelectorAll('a[data-notice]')) {
 }
 
 // Letra grande y lectura fácil: se recuerda en este navegador (no es un dato personal)
-const easyButton = document.getElementById('facil');
+const easyButton = document.getElementById('easy');
 if (easyButton) {
   const renderEasy = () => easyButton.setAttribute('aria-pressed', String('facil' in document.documentElement.dataset));
   renderEasy();
@@ -61,7 +61,7 @@ if (easyButton) {
 }
 
 // Alto contraste: negro sobre blanco (o al revés en modo oscuro), bordes gruesos y enlaces subrayados
-const contrastButton = document.getElementById('contraste');
+const contrastButton = document.getElementById('contrast');
 if (contrastButton) {
   const render = () => contrastButton.setAttribute('aria-pressed', String('contraste' in document.documentElement.dataset));
   render();
@@ -95,8 +95,8 @@ if (canSpeak) {
   });
   setupSettings();
 } else {
-  document.documentElement.classList.add('sin-voz');
-  const setting = document.getElementById('ajuste-voz');
+  document.documentElement.classList.add('no-voice');
+  const setting = document.getElementById('voice-setting');
   if (setting) setting.hidden = true;
 }
 addEventListener('pagehide', stop);
@@ -109,7 +109,7 @@ if ('widget' in document.documentElement.dataset) {
     if (a && !a.getAttribute('href').startsWith('#')) a.target = '_blank';
   });
   const footer = document.createElement('p');
-  footer.className = 'widget-pie';
+  footer.className = 'widget-footer';
   footer.innerHTML = 'Con datos oficiales de <a href="https://ayudas.bendi.dev/" target="_blank" rel="noopener">ayudas.bendi.dev</a>. Tus respuestas no salen de este aparato.';
   document.querySelector('main')?.append(footer);
   if (parent !== window) {
@@ -120,7 +120,7 @@ if ('widget' in document.documentElement.dataset) {
 }
 
 // Menús de la barra (Voz e Idioma): solo uno abierto, y se cierran al pulsar fuera o con Escape
-const menus = [...document.querySelectorAll('.ajuste-voz, .ajuste-idioma')];
+const menus = [...document.querySelectorAll('.voice-setting, .language-setting')];
 for (const m of menus) m.addEventListener('toggle', () => m.open && menus.forEach((o) => o !== m && (o.open = false)));
 document.addEventListener('click', (e) => menus.forEach((m) => m.open && !m.contains(e.target) && (m.open = false)));
 document.addEventListener('keydown', (e) => {
@@ -136,11 +136,11 @@ document.addEventListener('keydown', (e) => {
 {
   let n = 0;
   document.addEventListener('click', (e) => {
-    const b = e.target.closest('button.termino');
+    const b = e.target.closest('button.term');
     if (!b) return;
     e.preventDefault();
     const isOpen = b.getAttribute('aria-expanded') === 'true';
-    document.querySelectorAll('button.termino[aria-expanded="true"]').forEach((o) => {
+    document.querySelectorAll('button.term[aria-expanded="true"]').forEach((o) => {
       o.setAttribute('aria-expanded', 'false');
       document.getElementById(o.getAttribute('aria-controls'))?.remove();
     });
@@ -149,7 +149,7 @@ document.addEventListener('keydown', (e) => {
     if (!definition) return;
     const id = `def-${++n}`;
     const box = document.createElement('span');
-    box.className = 'definicion';
+    box.className = 'definition';
     box.id = id;
     box.setAttribute('role', 'note');
     box.innerHTML = `<strong></strong> <span></span> <a href="/palabras/#${encodeURIComponent(b.dataset.term)}">Más palabras</a>`;
@@ -162,7 +162,7 @@ document.addEventListener('keydown', (e) => {
   });
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    const b = document.querySelector('button.termino[aria-expanded="true"]');
+    const b = document.querySelector('button.term[aria-expanded="true"]');
     if (b) b.click();
   });
 }

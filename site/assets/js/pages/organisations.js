@@ -1,8 +1,8 @@
 // Página para entidades: copiar el código para insertar
-const button = document.getElementById('copiar-codigo');
+const button = document.getElementById('copy-code');
 button?.addEventListener('click', async () => {
-  const text = document.querySelector('.codigo code').textContent;
-  const status = document.getElementById('copiado');
+  const text = document.querySelector('.code code').textContent;
+  const status = document.getElementById('copied');
   try {
     await navigator.clipboard.writeText(text);
     status.textContent = 'Copiado.';

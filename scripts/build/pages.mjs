@@ -24,7 +24,7 @@ function page({ routePath, title, descripcion, body, data }) {
     .replace(/<title>.*?<\/title>/, `<title>${esc(title)} · ayudas</title>`)
     .replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${esc(descripcion)}">`)
     .replace(/<link rel="canonical" href=".*?">/, `<link rel="canonical" href="${SITE_URL}${routePath}">\n  <script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`)
-    .replace(/<main class="envoltorio">[\s\S]*?<\/main>/, `<main class="envoltorio">\n${body}\n  </main>`);
+    .replace(/<main class="wrapper">[\s\S]*?<\/main>/, `<main class="wrapper">\n${body}\n  </main>`);
   const folder = join(OUTPUT, routePath);
   mkdirSync(folder, { recursive: true });
   writeFileSync(join(folder, 'index.html'), html);
@@ -35,7 +35,7 @@ const questions = (list) => ({
   '@type': 'FAQPage',
   mainEntity: list.filter(([, r]) => r).map(([q, r]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: r } })),
 });
-const breadcrumbs = (steps) => `<nav class="migas" aria-label="Estás en"><ol>${steps.map(([t, u]) => (u ? `<li><a href="${u}">${esc(t)}</a></li>` : `<li aria-current="page">${esc(t)}</li>`)).join('')}</ol></nav>`;
+const breadcrumbs = (steps) => `<nav class="breadcrumbs" aria-label="Estás en"><ol>${steps.map(([t, u]) => (u ? `<li><a href="${u}">${esc(t)}</a></li>` : `<li aria-current="page">${esc(t)}</li>`)).join('')}</ol></nav>`;
 
 const routes = ['/', '/mayores/', '/catalogo/', '/mapa/', '/entidades/', '/palabras/', '/fuentes/', '/comunidad/', ...Object.keys(LANGUAGES).map((c) => `/${c}/`)];
 
@@ -54,12 +54,12 @@ for (const a of BENEFITS) {
       [`¿Quién puede pedir ${a.name}?`, a.requirements.join(' ')],
       [`¿Cómo se pide ${a.name}?`, t.steps.join(' ')],
     ]),
-    body: `    <section aria-labelledby="titular">
+    body: `    <section aria-labelledby="headline">
       ${breadcrumbs([['Inicio', '/'], ['Todas las ayudas', '/catalogo/'], [topic?.name ?? 'Ayudas', `/catalogo/?tema=${a.category}`], [a.name]])}
-      <h1 class="titular titular-ficha" id="titular">${esc(a.name)}</h1>
-      <p class="entradilla">${esc(a.summary)} <strong>${esc(a.scope)}</strong> · ${esc(a.agency)}.</p>
-      <p class="ficha-acciones"><a class="boton" href="/">¿Me toca? Contesta unas preguntas</a> <a class="boton secundario" href="/mapa/">Ver cómo se pide en mi comunidad</a></p>
-      <ul class="lista-ayudas ficha">${benefitCard(a.id, { isOpen: true })}</ul>
+      <h1 class="headline card-headline" id="headline">${esc(a.name)}</h1>
+      <p class="lead">${esc(a.summary)} <strong>${esc(a.scope)}</strong> · ${esc(a.agency)}.</p>
+      <p class="card-actions"><a class="button" href="/">¿Me toca? Contesta unas preguntas</a> <a class="button secondary" href="/mapa/">Ver cómo se pide en mi comunidad</a></p>
+      <ul class="benefit-list card">${benefitCard(a.id, { isOpen: true })}</ul>
     </section>`,
   });
 }
@@ -77,11 +77,11 @@ for (const c of REGIONS) {
       [`¿Cómo se llama la renta mínima en ${c.name}?`, `${r.name}. ${r.note ?? ''}`.trim()],
       [`¿Dónde se piden las ayudas de ${c.name}?`, `En la web oficial (${r.website}) o con ayuda de los servicios sociales de tu ayuntamiento.`],
     ]),
-    body: `    <section aria-labelledby="titular">
+    body: `    <section aria-labelledby="headline">
       ${breadcrumbs([['Inicio', '/'], ['Mapa', `/mapa/#${c.id}`], [c.name]])}
-      <h1 class="titular titular-ficha" id="titular">Ayudas en ${esc(c.name)}.</h1>
-      <p class="entradilla">Las ayudas que se piden en ${esc(c.name)} y cómo se piden aquí. <a href="/mapa/#${c.id}">Verla en el mapa</a>.</p>
-      <div class="panel-ccaa">${regionPanel(c.id, { title: false })}</div>
+      <h1 class="headline card-headline" id="headline">Ayudas en ${esc(c.name)}.</h1>
+      <p class="lead">Las ayudas que se piden en ${esc(c.name)} y cómo se piden aquí. <a href="/mapa/#${c.id}">Verla en el mapa</a>.</p>
+      <div class="region-panel">${regionPanel(c.id, { title: false })}</div>
     </section>`,
   });
 }
@@ -92,10 +92,10 @@ page({
   title: 'Ayudas por comunidad autónoma',
   descripcion: 'Elige tu comunidad autónoma y mira qué ayudas se piden allí y cómo.',
   data: { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Ayudas por comunidad autónoma' },
-  body: `    <section aria-labelledby="titular">
-      <h1 class="titular" id="titular">Ayudas por comunidad.</h1>
-      <p class="entradilla">Elige dónde vives. También puedes <a href="/mapa/">pulsar en el mapa</a>.</p>
-      <ul class="lista-comunidades">${REGIONS.filter((c) => MINIMUM_INCOME[c.id]).map((c) => `<li><a href="/comunidad/${c.id}/">${esc(c.name)}</a><span>${esc(MINIMUM_INCOME[c.id].name)}</span></li>`).join('')}</ul>
+  body: `    <section aria-labelledby="headline">
+      <h1 class="headline" id="headline">Ayudas por comunidad.</h1>
+      <p class="lead">Elige dónde vives. También puedes <a href="/mapa/">pulsar en el mapa</a>.</p>
+      <ul class="region-list">${REGIONS.filter((c) => MINIMUM_INCOME[c.id]).map((c) => `<li><a href="/comunidad/${c.id}/">${esc(c.name)}</a><span>${esc(MINIMUM_INCOME[c.id].name)}</span></li>`).join('')}</ul>
     </section>`,
 });
 
@@ -113,29 +113,29 @@ for (const [code, t] of Object.entries(LANGUAGES)) {
     .replace('<span>Todas las ayudas</span>', `<span>${esc(t.nav.catalogo)}</span>`)
     .replace('<span>Mapa</span>', `<span>${esc(t.nav.mapa)}</span>`)
     .replace('<span>Fuentes</span>', `<span>${esc(t.nav.sources)}</span>`)
-    .replace(/<div class="envoltorio barra">[\s\S]*?\n  <\/div>\n/, `<div class="envoltorio barra barra-guia">\n    ${languageSelector('/', code, t.language)}\n  </div>\n`)
-    .replace(/<footer class="envoltorio pie">[\s\S]*?<\/footer>/, `<footer class="envoltorio pie" lang="${t.lang}">
+    .replace(/<div class="wrapper bar">[\s\S]*?\n  <\/div>\n/, `<div class="wrapper bar guide-bar">\n    ${languageSelector('/', code, t.language)}\n  </div>\n`)
+    .replace(/<footer class="wrapper footer">[\s\S]*?<\/footer>/, `<footer class="wrapper footer" lang="${t.lang}">
     <p>${esc(t.note)} <a href="/fuentes/#t-error">${esc(t.notice)}</a>.</p>
-    <nav class="idiomas-pie" aria-label="${esc(t.others)}"><p>${esc(t.others)}</p>${languageLinks('/', code)}</nav>
+    <nav class="languages-footer" aria-label="${esc(t.others)}"><p>${esc(t.others)}</p>${languageLinks('/', code)}</nav>
   </footer>`)
-    .replace(/<main class="envoltorio">[\s\S]*?<\/main>/, `<main class="envoltorio guia-idioma">
-    <section aria-labelledby="titular">
-      <h1 class="titular titular-ficha" id="titular">${esc(t.title)}</h1>
-      <p class="entradilla">${esc(t.intro)}</p>
-      <p><button type="button" class="escuchar" data-read="${esc([t.title, t.intro, t.stepsTitle, ...t.steps, t.benefitsTitle, ...t.benefits.map(([n, x]) => `${n}. ${x}`)].join(' '))}">${icon('altavoz')} ${esc(t.listen)}</button></p>
-      <section class="ayuda-hoy" aria-labelledby="t-hoy">
-        <h2 id="t-hoy">${esc(t.today)}</h2>
-        <div class="llamadas">${TODAY_PHONES.map(([n, k]) => `<a class="llamar" href="tel:${n.replace(/\s/g, '')}"><span class="llamar-icono">${icon('telefono')}</span><span><strong dir="ltr">${n}</strong><small>${esc(t.tel[k])}</small></span></a>`).join('')}</div>
+    .replace(/<main class="wrapper">[\s\S]*?<\/main>/, `<main class="wrapper language-guide">
+    <section aria-labelledby="headline">
+      <h1 class="headline card-headline" id="headline">${esc(t.title)}</h1>
+      <p class="lead">${esc(t.intro)}</p>
+      <p><button type="button" class="listen" data-read="${esc([t.title, t.intro, t.stepsTitle, ...t.steps, t.benefitsTitle, ...t.benefits.map(([n, x]) => `${n}. ${x}`)].join(' '))}">${icon('altavoz')} ${esc(t.listen)}</button></p>
+      <section class="help-today" aria-labelledby="t-today">
+        <h2 id="t-today">${esc(t.today)}</h2>
+        <div class="calls">${TODAY_PHONES.map(([n, k]) => `<a class="call" href="tel:${n.replace(/\s/g, '')}"><span class="call-icon">${icon('telefono')}</span><span><strong dir="ltr">${n}</strong><small>${esc(t.tel[k])}</small></span></a>`).join('')}</div>
       </section>
-      <h2 class="seccion-titulo">${esc(t.stepsTitle)}</h2>
-      <ol class="pasos-tramite">${t.steps.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
-      <h2 class="seccion-titulo">${esc(t.benefitsTitle)}</h2>
-      <dl class="guia-ayudas">${t.benefits.map(([n, x]) => `<div><dt lang="es" dir="ltr">${esc(n)}</dt><dd>${esc(x)}</dd></div>`).join('')}</dl>
-      <h2 class="seccion-titulo">${esc(t.sentence)}</h2>
-      <p class="frase-ventanilla" lang="es" dir="ltr">${esc(COUNTER_SENTENCE)}</p>
-      <p><button type="button" class="escuchar" data-lang="es" data-read="${esc(COUNTER_SENTENCE)}">${icon('altavoz')} ${esc(t.listenSentence)}</button></p>
+      <h2 class="section-title">${esc(t.stepsTitle)}</h2>
+      <ol class="procedure-steps">${t.steps.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
+      <h2 class="section-title">${esc(t.benefitsTitle)}</h2>
+      <dl class="benefits-guide">${t.benefits.map(([n, x]) => `<div><dt lang="es" dir="ltr">${esc(n)}</dt><dd>${esc(x)}</dd></div>`).join('')}</dl>
+      <h2 class="section-title">${esc(t.sentence)}</h2>
+      <p class="counter-sentence" lang="es" dir="ltr">${esc(COUNTER_SENTENCE)}</p>
+      <p><button type="button" class="listen" data-lang="es" data-read="${esc(COUNTER_SENTENCE)}">${icon('altavoz')} ${esc(t.listenSentence)}</button></p>
       <p>${esc(t.use)}</p>
-      <p class="ficha-acciones"><a class="boton" href="/" hreflang="es">${esc(t.button)}</a> <a class="boton secundario" href="/mapa/" hreflang="es">${esc(t.mapa)}</a></p>
+      <p class="card-actions"><a class="button" href="/" hreflang="es">${esc(t.button)}</a> <a class="button secondary" href="/mapa/" hreflang="es">${esc(t.mapa)}</a></p>
     </section>
   </main>`);
   const folder = join(OUTPUT, code);

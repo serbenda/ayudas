@@ -168,7 +168,7 @@ export function markTerms(html, used = new Set()) {
     const m = parts[i].match(re);
     const before = parts[i].slice(0, m.index);
     const after = parts[i].slice(m.index + m[0].length);
-    parts.splice(i, 1, before, `<button type="button" class="termino" data-term="${k}" aria-expanded="false">${m[0]}</button>`, after);
+    parts.splice(i, 1, before, `<button type="button" class="term" data-term="${k}" aria-expanded="false">${m[0]}</button>`, after);
   }
   return parts.join('');
 }

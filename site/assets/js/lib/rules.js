@@ -138,9 +138,9 @@ const RULES = {
       return { status: 'quizas', reasons, check: ['Depende de los ingresos de tu hogar, que no has puesto.', ...check], payment: { monthly: rg, text: `Hasta ${monthly(rg)}` } };
     }
     if (p.householdIncome >= annual) return null;
-    const cobro = round2(rg - p.householdIncome / 12);
+    const amount = round2(rg - p.householdIncome / 12);
     reasons.push(`Vuestros ingresos (${yearly(p.householdIncome)}) no llegan a esa cifra.`);
-    return { status: 'si', reasons, check, payment: { monthly: cobro, text: `≈ ${monthly(cobro)}` } };
+    return { status: 'si', reasons, check, payment: { monthly: amount, text: `≈ ${monthly(amount)}` } };
   },
 
   capi(p) {
@@ -408,12 +408,12 @@ const RULES = {
     if (!children.length) return null;
     const { childWith33, adultWith65, adultWith75 } = FIGURES.dependentChild;
     let total = 0;
-    let soloSeguro = true;
+    let onlyCertain = true;
     const reasons = [];
     for (const h of children) {
       if ((h.age ?? 0) < 18) {
         total += childWith33;
-        soloSeguro = false;
+        onlyCertain = false;
         reasons.push(`Hijo o hija menor de 18 con discapacidad del ${h.disability} % o más: ${yearly(childWith33)}.`);
       } else if (h.disability === '75') {
         total += adultWith75;
@@ -424,9 +424,9 @@ const RULES = {
       }
     }
     if (!total) return null;
-    const check = soloSeguro ? [] : ['Para hijos menores hay un límite de ingresos del hogar.'];
+    const check = onlyCertain ? [] : ['Para hijos menores hay un límite de ingresos del hogar.'];
     if (children.some((h) => h.disability === '75')) check.push('La cuantía más alta (75 %) pide también necesitar ayuda de otra persona.');
-    return { status: soloSeguro ? 'si' : 'quizas', reasons, check, payment: { yearly: total, text: yearly(total) } };
+    return { status: onlyCertain ? 'si' : 'quizas', reasons, check, payment: { yearly: total, text: yearly(total) } };
   },
 
   'ventajas-discapacidad'(p) {
