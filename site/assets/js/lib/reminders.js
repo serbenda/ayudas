@@ -1,5 +1,5 @@
-// Recordatorios para el calendario del móvil (.ics): fechas que no hay que dejar pasar.
-// Se crea en el navegador y se descarga; no se envía nada.
+// Reminders for the phone calendar (.ics): dates not to miss.
+// Created in the browser and downloaded; nothing is sent.
 
 const REMINDERS = [
   { id: 'revisar', always: true, monthly: 1, day: 15, annual: true, title: 'Revisa tus ayudas: las cifras cambian en enero', text: 'Vuelve a contestar las preguntas en ayudas.bendi.dev: cada enero suben las cuantías y cambian los límites.' },
@@ -12,7 +12,7 @@ const REMINDERS = [
 
 const twoDigits = (n) => String(n).padStart(2, '0');
 const date = (d) => `${d.getFullYear()}${twoDigits(d.getMonth() + 1)}${twoDigits(d.getDate())}`;
-// Texto ICS: escapar comas, punto y coma y barras; líneas de 75 caracteres como pide la norma
+// ICS text: escape commas, semicolons and backslashes; 75-character lines as the standard requires
 const icsText = (s) => s.replace(/\\/g, '\\\\').replace(/[,;]/g, (m) => `\\${m}`).replace(/\n/g, '\\n');
 function fold(line) {
   const chunks = [];
@@ -25,13 +25,13 @@ function fold(line) {
   return chunks.join('\r\n');
 }
 
-/** Recordatorios que tocan para estas ayudas */
+/** Reminders that apply to these benefits*/
 export function remindersFor(ids) {
   const hasIt = new Set(ids);
   return REMINDERS.filter((r) => r.always || r.forIds.some((id) => hasIt.has(id)));
 }
 
-/** Calendario .ics con los recordatorios que tocan. `hoy` se puede pasar para probarlo. */
+/** .ics calendar with the reminders that apply. `today` can be passed for testing.*/
 export function calendar(ids, today = new Date()) {
   const stamp = `${date(today)}T000000Z`;
   const events = remindersFor(ids).map((r) => {
@@ -62,7 +62,7 @@ export function calendar(ids, today = new Date()) {
   return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ayudas.bendi.dev//Recordatorios//ES', 'CALSCALE:GREGORIAN', 'X-WR-CALNAME:Ayudas: fechas importantes', ...events.flat()].map(fold).join('\r\n') + '\r\nEND:VCALENDAR\r\n';
 }
 
-/** Descarga el .ics en el navegador */
+/** Downloads the .ics in the browser*/
 export function downloadCalendar(ids) {
   const blob = new Blob([calendar(ids)], { type: 'text/calendar;charset=utf-8' });
   const a = document.createElement('a');

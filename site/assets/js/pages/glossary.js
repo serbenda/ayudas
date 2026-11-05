@@ -1,4 +1,4 @@
-// Página de palabras difíciles: todas, por orden alfabético, con buscador (sin tildes ni mayúsculas)
+// Difficult words page: all of them, in alphabetical order, with search (ignoring accents and case)
 import { GLOSSARY } from '../data/guide.js';
 import { esc } from '../ui/card.js';
 

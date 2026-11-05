@@ -1,4 +1,4 @@
-// Lo que se ve al elegir una comunidad: en el mapa y en la página propia de cada comunidad
+// What you see when choosing a region: on the map and on each region's own page
 
 import { REGIONS } from '../data/benefits.js';
 import { MINIMUM_INCOME, benefitsOf, minimumIncomeAmount } from '../data/regions.js';

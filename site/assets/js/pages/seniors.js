@@ -1,5 +1,5 @@
-// Página para personas mayores: una pregunta cada vez, botones grandes, frases cortas y lectura en voz alta.
-// Usa las mismas reglas que el resto de la web. Nada sale del navegador.
+// Page for older people: one question at a time, big buttons, short sentences and reading aloud.
+// Uses the same rules as the rest of the site. Nothing leaves the browser.
 
 import { evaluate, emptyProfile, whereToStart } from '../lib/rules.js';
 import { BY_ID, REGIONS } from '../data/benefits.js';
@@ -15,8 +15,8 @@ const result = document.getElementById('result');
 const answers = {};
 let registerHistory = [];
 
-// ── Las preguntas ───────────────────────────────────────────────────────
-// Cada una: texto, ayuda (opcional), opciones [texto, valor] y cuándo se hace (si)
+// ── The questions ──────────────────────────────────────────────────────
+// Each one: text, help (optional), options [text, value] and when it is asked (showIf)
 const QUESTIONS = [
   { id: 'age', text: '¿Cuántos años tienes?', options: [['Menos de 60', 55], ['De 60 a 64', 62], ['De 65 a 79', 72], ['80 o más', 85]] },
   {
@@ -74,13 +74,13 @@ const QUESTIONS = [
 
 const activeQuestions = () => QUESTIONS.filter((q) => !q.showIf || q.showIf(answers));
 
-// ── Leer en voz alta ────────────────────────────────────────────────────
+// ── Reading aloud ──────────────────────────────────────────────────────
 function read(text) {
   speak(text, { lang: 'es' });
 }
 const listenButton = (id) => (canSpeak ? `<button type="button" class="listen" data-listen="${id}">${icon('altavoz')} Escuchar</button>` : '');
 
-// ── Pintar una pregunta ─────────────────────────────────────────────────
+// ── Drawing a question ─────────────────────────────────────────────────
 function showQuestion(i) {
   const list = activeQuestions();
   const q = list[i];
@@ -126,14 +126,14 @@ box.addEventListener('click', (e) => {
     answers[q.id] = q.options[Number(b.dataset.position)][1];
   } else return;
   registerHistory.push(i);
-  // Las preguntas que ya no tocan se borran (por ejemplo, si cambias la pensión)
+  // Questions that no longer apply are cleared (for example, if you change the pension)
   const ids = new Set(activeQuestions().map((x) => x.id));
   for (const k of Object.keys(answers)) if (!ids.has(k)) delete answers[k];
   const next = activeQuestions().findIndex((x) => x.id === q.id) + 1;
   showQuestion(next);
 });
 
-// ── De las respuestas al perfil de las reglas ───────────────────────────
+// ── From the answers to the rules profile ──────────────────────────────
 function profile() {
   const r = answers;
   const p = emptyProfile();
@@ -161,7 +161,7 @@ function profile() {
   return p;
 }
 
-// ── Resultado ───────────────────────────────────────────────────────────
+// ── Result ─────────────────────────────────────────────────────────────
 function seniorCard(r, region, number) {
   const a = BY_ID[r.id];
   const t = procedureOf(r.id, region);
@@ -240,7 +240,7 @@ result.addEventListener('click', (e) => {
   }
 });
 
-// ── Arranque ────────────────────────────────────────────────────────────
+// ── Start-up ───────────────────────────────────────────────────────────
 document.getElementById('start').addEventListener('click', () => {
   document.getElementById('welcome').hidden = true;
   box.hidden = false;

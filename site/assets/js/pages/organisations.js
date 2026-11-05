@@ -1,4 +1,4 @@
-// Página para entidades: copiar el código para insertar
+// Page for organisations: copy the embed code
 const button = document.getElementById('copy-code');
 button?.addEventListener('click', async () => {
   const text = document.querySelector('.code code').textContent;

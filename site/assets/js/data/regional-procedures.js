@@ -1,6 +1,6 @@
-// Quién valora la dependencia y la discapacidad en cada comunidad y dónde se empieza.
-// Revisado en las webs de cada comunidad y en el directorio de centros de valoración del SID (INICO, Universidad de Salamanca), noviembre de 2026.
-// Madrid y Andalucía tienen sus pasos escritos a mano en tramites.js.
+// Who assesses dependency and disability in each region, and where to start.
+// Reviewed on each region's website and in the SID directory of assessment centres (INICO, University of Salamanca), November 2026.
+// Madrid and Andalusia have their steps written by hand in procedures.js.
 
 export const REGIONAL_ASSESSMENT = {
   andalucia: {
@@ -95,7 +95,7 @@ export function disabilitySteps(v) {
   ];
 }
 
-// Teléfono de información general de cada comunidad (solo los comprobados en su web oficial)
+// General information phone number of each region (only those checked on its official website)
 export const REGION_INFO_PHONE = {
   andalucia: 'andalucia', cataluna: 'cataluna', valencia: 'valencia', madrid: 'madrid012',
   baleares: 'baleares', galicia: 'galicia', 'castilla-mancha': 'castillaMancha', 'castilla-leon': 'castillaLeon',

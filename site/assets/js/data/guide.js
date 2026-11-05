@@ -1,7 +1,7 @@
-// Lo que hace falta para pedir las ayudas: papeles, teléfonos y palabras difíciles explicadas.
-// Teléfonos comprobados en fuentes oficiales en noviembre de 2026.
+// What you need to apply: documents, phone numbers and difficult words explained.
+// Phone numbers checked against official sources in November 2026.
 
-/** Papeles que se piden. Cada ayuda dice cuáles necesita (por su id). */
+/** Documents that are requested. Each benefit says which ones it needs (by id).*/
 export const DOCUMENTS = {
   dni: { name: 'DNI o NIE', benefit: 'Tuyo y de las personas que viven contigo.' },
   residencia: { name: 'Tarjeta de residencia (TIE)', benefit: 'Solo si no tienes nacionalidad española.' },
@@ -27,7 +27,7 @@ export const DOCUMENTS = {
   ordenProteccion: { name: 'Orden de protección o informe', benefit: 'O un informe de servicios sociales o del centro de la mujer. No hace falta denuncia para todo.' },
 };
 
-/** Teléfonos. «gratis» solo cuando la fuente oficial lo dice. */
+/** Phone numbers. `free` only when the official source says so.*/
 export const PHONES = {
   emergencias: { number: '112', text: 'Emergencias', when: 'Si hay peligro ahora mismo.', free: true },
   violencia: { number: '016', text: 'Violencia contra las mujeres', when: 'Las 24 horas. No sale en la factura del teléfono. También por WhatsApp: 600 000 016.', free: true },
@@ -55,12 +55,12 @@ export const PHONES = {
   mayoresMadrid: { number: '900 111 065', text: 'Línea para mayores de 65 (Ayuntamiento de Madrid)', when: 'Gratis, las 24 horas. Información y trámites sin salir de casa.', free: true },
 };
 
-/** Palabras difíciles explicadas en una frase */
-// Palabras difíciles, explicadas con frases cortas. Se marcan solas en el texto de cada ficha (se pulsan para ver qué significan)
-// y están todas juntas en /palabras/. La clave es como aparece en el texto (no importan mayúsculas ni tildes del principio).
+/** Difficult words explained in one sentence*/
+// Difficult words, explained in short sentences. They are marked automatically in each card's text (tap to see what they mean)
+// and all listed together at /palabras/. The key is how it appears in the text (case and leading accents do not matter).
 export const GLOSSARY = {
   subrayadas: 'Así: cuando una palabra sale con puntos debajo, púlsala y te dice qué significa.',
-  // Dinero y límites
+  // Money and limits
   IPREM: 'Una cifra que usa el Gobierno para poner límites de ingresos a las ayudas. En 2026 son 600 € al mes (8.400 € al año, en 14 pagas).',
   SMI: 'El salario mínimo: lo menos que se puede pagar por un trabajo a jornada completa. En 2026, 1.221 € al mes en 14 pagas.',
   'salario mínimo': 'Lo menos que se puede pagar por un trabajo a jornada completa. En 2026, 1.221 € al mes en 14 pagas.',
@@ -71,7 +71,7 @@ export const GLOSSARY = {
   'unidad familiar': 'Para Hacienda: tú, tu pareja y los hijos menores que viven con vosotros.',
   monoparental: 'Familia con una sola persona adulta que cuida de los hijos.',
   'familia numerosa': 'Familia con tres hijos o más (o dos, si hay discapacidad o es monoparental, entre otros casos). Se acredita con un título.',
-  // Ayudas y organismos
+  // Benefits and agencies
   IMV: 'Ingreso Mínimo Vital: dinero cada mes del Estado para hogares con pocos ingresos. Lo paga la Seguridad Social.',
   PNC: 'Pensión no contributiva: para quien no ha cotizado lo suficiente y tiene pocos ingresos, por edad (65 años o más) o por discapacidad.',
   'pensión no contributiva': 'Pensión para quien no ha cotizado lo suficiente y tiene pocos ingresos, por edad (65 años o más) o por discapacidad.',
@@ -94,7 +94,7 @@ export const GLOSSARY = {
   cotizar: 'Pagar a la Seguridad Social mientras trabajas. Cuenta para el paro y la pensión.',
   'base reguladora': 'La media de lo que has cotizado en un tiempo. Con ella se calcula lo que cobras.',
   cuota: 'Lo que paga cada mes un autónomo a la Seguridad Social.',
-  // Dependencia y discapacidad
+  // Dependency and disability
   dependencia: 'Necesitar ayuda de otra persona para cosas del día a día: asearse, vestirse, comer, moverse por casa.',
   'grado de dependencia': 'Cuánta ayuda necesitas: grado I (moderada), grado II (severa) o grado III (gran dependencia).',
   PIA: 'Programa Individual de Atención: el plan que dice qué ayuda de la dependencia vas a recibir.',
@@ -103,7 +103,7 @@ export const GLOSSARY = {
   'informe social': 'Un escrito de la trabajadora social que explica tu situación. Lo piden muchas ayudas.',
   'informe de salud': 'Un escrito de tu médico sobre tus problemas de salud.',
   ortopedia: 'Tienda de sillas de ruedas, muletas, plantillas y otros productos para la salud.',
-  // Papeles y trámites
+  // Documents and procedures
   padrón: 'La lista del ayuntamiento de quién vive en cada casa. Empadronarse es apuntarse. Se puede hacer sin papeles.',
   empadronado: 'Estar apuntado en el padrón del ayuntamiento donde vives.',
   'Cl@ve': 'Una forma de identificarte en internet con tu DNI y tu móvil. Se pide en clave.gob.es o en una oficina.',
@@ -127,7 +127,7 @@ export const GLOSSARY = {
   acogimiento: 'Cuidar en tu casa a un menor que no es tu hijo, por decisión de la Administración.',
   aval: 'Una garantía: si no pagas, quien avala responde por una parte de la deuda.',
   apostilla: 'Un sello que hace válido en España un documento de otro país.',
-  // Impuestos
+  // Taxes
   IRPF: 'El impuesto de la renta. Se paga por lo que ganas cada año.',
   'declaración de la renta': 'El trámite de cada primavera en el que dices a Hacienda lo que has ganado en el año. Ahí se aplican las deducciones.',
   deducción: 'Un dinero que te quitan de lo que pagas en la declaración de la renta. A veces te lo devuelven aunque no pagues.',
@@ -136,15 +136,15 @@ export const GLOSSARY = {
   'base liquidable': 'La base imponible después de restar algunas reducciones, como lo que pones en un plan de pensiones.',
   'tributación conjunta': 'Hacer una sola declaración de la renta para toda la familia, en vez de una por persona.',
   'régimen foral': 'Navarra y el País Vasco cobran sus propios impuestos con sus propias reglas.',
-  // Luz
+  // Electricity
   PVPC: 'La tarifa de luz regulada por el Gobierno. Es la única que tiene bono social.',
   'comercializadora de referencia': 'Las compañías de luz que ofrecen la tarifa regulada: Energía XXI, Curenergía, Comercializadora Regulada, Régsiti y otras.',
   'bono social': 'Un descuento en la factura de la luz para hogares vulnerables. Solo con la tarifa regulada (PVPC).',
 };
 
-/** Busca qué palabras del glosario salen en un texto */
-// Busca una palabra entera (no dentro de otra), sin importar mayúsculas
-// (ni dentro de una dirección web como imv.seg-social.es)
+/** Finds which glossary words appear in a text*/
+// Matches a whole word (not inside another one), ignoring case
+// (nor inside a web address such as imv.seg-social.es)
 const pattern = (k) => new RegExp(`(?<![\\p{L}\\p{N}@./-])${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\p{L}\\p{N}]|[.\\-/@][\\p{L}\\p{N}])`, 'iu');
 const PATTERNS = Object.fromEntries(Object.keys(GLOSSARY).map((k) => [k, pattern(k)]));
 
@@ -153,8 +153,8 @@ export function termsIn(text) {
 }
 
 /**
- * Marca las palabras difíciles en un texto ya escapado: la primera vez que sale cada una (según `usados`),
- * se convierte en un botón que, al pulsarlo, enseña qué significa. Los términos largos van antes que los cortos.
+ * Marks the difficult words in already escaped text: the first time each one appears (according to `used`),
+ * it becomes a button that shows what it means when tapped. Longer terms go before shorter ones.
  */
 const ORDER = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
 export function markTerms(html, used = new Set()) {
@@ -173,5 +173,5 @@ export function markTerms(html, used = new Set()) {
   return parts.join('');
 }
 
-/** Enlace tel: a partir del número escrito con espacios */
+/** tel: link from a number written with spaces*/
 export const tel = (number) => `tel:${number.replace(/\s/g, '')}`;

@@ -1,4 +1,4 @@
-// Todas las ayudas, con buscador y filtro por tema
+// Every benefit, with search and a filter by topic
 
 import { BENEFITS, CATEGORIES, REGIONS } from '../data/benefits.js';
 import { PROCEDURES } from '../data/procedures.js';
@@ -13,7 +13,7 @@ const chips = document.getElementById('categories');
 const REGION_KEY = 'ayudas:ccaa';
 
 let topic = new URLSearchParams(location.search).get('tema') ?? 'todas';
-// Lista enviada por alguien («Enviar a un familiar»): solo esas ayudas, en ese orden
+// List sent by someone («Enviar a un familiar»): only those benefits, in that order
 const sent = (new URLSearchParams(location.search).get('ver') ?? '').split(',').filter((id) => BENEFITS.some((a) => a.id === id));
 
 for (const c of REGIONS) regionSelect.add(new Option(c.name, c.id));
@@ -30,7 +30,7 @@ chips.addEventListener('click', (e) => {
   render();
 });
 
-// Busca sin tildes ni mayúsculas
+// Search ignoring accents and case
 const normal = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 
 function renderSent() {
@@ -71,7 +71,7 @@ regionSelect.addEventListener('change', () => {
 
 render();
 
-// Si se llega con #id-de-ayuda, se abre esa ficha
+// Arriving with #benefit-id opens that card
 if (location.hash) {
   const id = decodeURIComponent(location.hash.slice(1)).replace(/^ayuda-/, '');
   const d = document.getElementById(`ayuda-${id}`)?.querySelector('details');

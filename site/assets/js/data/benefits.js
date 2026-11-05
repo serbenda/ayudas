@@ -1,5 +1,5 @@
-// Catálogo de ayudas. Qué es cada una, cuánto da en 2026, qué pide y dónde se pide.
-// Las reglas que deciden si te puede corresponder están en reglas.js (con el mismo id).
+// Benefit catalogue. What each one is, how much it pays in 2026, what it requires and where to apply.
+// The rules that decide whether you may qualify are in lib/rules.js (with the same id).
 
 import { FIGURES as C } from './figures.js';
 import { euros, percent } from '../lib/format.js';
@@ -30,7 +30,7 @@ const REGION_LINK = { region: true };
 const rg = C.imv.base;
 
 export const BENEFITS = [
-  // ── Ingresos y prestaciones ───────────────────────────────────────────
+  // ── Income and benefits ───────────────────────────────────────────────
   {
     id: 'imv',
     name: 'Ingreso Mínimo Vital',
@@ -116,7 +116,7 @@ export const BENEFITS = [
     link: SEPE,
   },
 
-  // ── Hijos y familia ───────────────────────────────────────────────────
+  // ── Children and family ───────────────────────────────────────────────
   {
     id: 'nacimiento',
     name: 'Prestación por nacimiento y cuidado de menor',
@@ -199,7 +199,7 @@ export const BENEFITS = [
     link: REGION_LINK,
   },
 
-  // ── Mayores y pensiones ───────────────────────────────────────────────
+  // ── Older people and pensions ─────────────────────────────────────────
   {
     id: 'pnc-jubilacion',
     name: 'Pensión no contributiva de jubilación',
@@ -311,7 +311,7 @@ export const BENEFITS = [
     link: REGION_LINK,
   },
 
-  // ── Discapacidad y dependencia ────────────────────────────────────────
+  // ── Disability and dependency ─────────────────────────────────────────
   {
     id: 'dependencia-valoracion',
     name: 'Reconocimiento de la dependencia',
@@ -390,7 +390,7 @@ export const BENEFITS = [
     link: AEAT,
   },
 
-  // ── Vivienda y suministros ────────────────────────────────────────────
+  // ── Housing and utilities ─────────────────────────────────────────────
   {
     id: 'bono-social',
     name: 'Bono social de la luz',
@@ -436,7 +436,7 @@ export const BENEFITS = [
     link: HOUSING_LINK,
   },
 
-  // ── Deducciones en la renta ───────────────────────────────────────────
+  // ── Income tax deductions ─────────────────────────────────────────────
   {
     id: 'deduccion-maternidad',
     name: 'Deducción por maternidad',
@@ -504,7 +504,7 @@ export const BENEFITS = [
     link: AEAT,
   },
 
-  // ── Trabajo, estudios y otras ─────────────────────────────────────────
+  // ── Work, studies and others ──────────────────────────────────────────
   {
     id: 'becas',
     name: 'Becas para estudiar',
@@ -527,7 +527,7 @@ export const BENEFITS = [
     requirements: ['Ingresos del hogar por debajo de 2 veces el IPREM (2,5 o 3 veces según el número de miembros).', 'Pedirlo en el Colegio de Abogados de tu zona.'],
     link: LEGAL_AID_LINK,
   },
-  // ── Si lo necesitas ya ────────────────────────────────────────────────
+  // ── If you need it now ────────────────────────────────────────────────
   {
     id: 'emergencia-social',
     name: 'Ayudas de emergencia de servicios sociales',
@@ -606,7 +606,7 @@ export const BENEFITS = [
     link: REGION_LINK,
   },
 
-  // ── Comunidad y Ayuntamiento de Madrid ────────────────────────────────
+  // ── Community and City of Madrid ──────────────────────────────────────
   {
     id: 'rmi-madrid',
     name: 'Renta Mínima de Inserción (Comunidad de Madrid)',
@@ -740,7 +740,7 @@ export const BENEFITS = [
     link: { text: 'Consorcio de Transportes', url: 'https://www.crtm.es/' },
   },
 
-  // ── Otras estatales ───────────────────────────────────────────────────
+  // ── Other national benefits ───────────────────────────────────────────
   {
     id: 'copago-farmaceutico',
     name: 'Medicinas gratis o más baratas',
@@ -820,12 +820,12 @@ export const BENEFITS = [
   },
 ];
 
-// Ayudas propias de cada comunidad (ayudas-ccaa.js): se añaden al catálogo con su ficha
+// Each region's own benefits (regional-benefits.js): added to the catalogue with their card
 for (const { rule, procedure, region, ...card } of REGIONAL_BENEFITS) BENEFITS.push(card);
 
 export const BY_ID = Object.fromEntries(BENEFITS.map((a) => [a.id, a]));
 
-// Webs oficiales de cada comunidad, para las ayudas que gestionan ellas
+// Official website of each region, for the benefits they manage
 export const REGIONS = [
   { id: 'andalucia', name: 'Andalucía', url: 'https://www.juntadeandalucia.es/' },
   { id: 'aragon', name: 'Aragón', url: 'https://www.aragon.es/' },
@@ -848,7 +848,7 @@ export const REGIONS = [
   { id: 'melilla', name: 'Melilla', url: 'https://www.melilla.es/' },
 ];
 
-/** El enlace de una ayuda, usando la web de tu comunidad cuando la gestiona ella */
+/** The link for a benefit, using your region's website when the region manages it*/
 export function linkOf(benefit, region) {
   if (!benefit.link.region) return benefit.link;
   const c = REGIONS.find((x) => x.id === region);

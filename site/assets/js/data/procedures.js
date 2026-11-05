@@ -1,11 +1,11 @@
-// Cómo se pide cada ayuda, explicado paso a paso y en frases cortas.
-// facil:    lo esencial para leerlo de un vistazo (modo fácil y página de mayores)
-// pasos:    qué hacer, en orden. pasosMadrid sustituye a pasos si vives en la Comunidad de Madrid.
-// telefonos/telefonosMadrid: claves de TELEFONOS (guia.js)
-// documentos: claves de DOCUMENTOS (guia.js)
-// plazo:    cuándo se pide · respuesta: cuánto tardan y qué hacer si dicen que no
-// ojo:      avisos importantes (orden, compatibilidades)
-// Revisado en noviembre de 2026 con las sedes oficiales (Seguridad Social, SEPE, Comunidad y Ayuntamiento de Madrid).
+// How to apply for each benefit, step by step and in short sentences.
+// easy:     the essentials at a glance (easy mode and the seniors page)
+// steps:    what to do, in order. madridSteps replaces steps if you live in the Community of Madrid.
+// phones/madridPhones: keys of PHONES (guide.js)
+// documents: keys of DOCUMENTS (guide.js)
+// deadline: when to apply · response: how long it takes and what to do if they say no
+// warnings: important notes (order, compatibility)
+// Reviewed in November 2026 against the official websites (Social Security, SEPE, Community and City of Madrid).
 import { REGIONAL_ASSESSMENT, REGION_INFO_PHONE, dependencySteps, disabilitySteps } from './regional-procedures.js';
 import { MANAGED_BY_REGION } from './regions.js';
 import { REGIONAL_BENEFITS } from './regional-benefits.js';
@@ -810,11 +810,11 @@ export const PROCEDURES = {
   },
 };
 
-/** El trámite de una ayuda para tu comunidad (en Madrid, los pasos y teléfonos de Madrid si los hay) */
-// Ayudas propias de cada comunidad: su trámite viene con la ficha
+/** The procedure of a benefit for your region (in Madrid, Madrid's steps and phone numbers if there are any)*/
+// Each region's own benefits: their procedure comes with the card
 for (const a of REGIONAL_BENEFITS) PROCEDURES[a.id] = a.procedure;
 
-// Dependencia y discapacidad: pasos de cada comunidad a partir de quién valora y dónde se empieza
+// Dependency and disability: each region's steps, from who assesses and where you start
 for (const [region, v] of Object.entries(REGIONAL_ASSESSMENT)) {
   for (const [id, key, steps] of [['dependencia-valoracion', 'dependency', dependencySteps], ['certificado-discapacidad', 'disability', disabilitySteps]]) {
     if (!v[key]) continue;
@@ -828,7 +828,7 @@ for (const [region, v] of Object.entries(REGIONAL_ASSESSMENT)) {
   }
 }
 
-// En las ayudas que tramita la comunidad, su teléfono de información va primero
+// For benefits processed by the region, its information phone number goes first
 const REGION_MANAGED = new Set(MANAGED_BY_REGION);
 function phonesOf(id, t, region) {
   const ownItems = t.phonesByRegion?.[region] || (region === 'madrid' && t.madridPhones) || t.phones || [];
@@ -849,7 +849,7 @@ export function procedureOf(id, region) {
   };
 }
 
-/** Todos los papeles que hacen falta para un conjunto de ayudas, con las ayudas que los piden */
+/** Every document needed for a set of benefits, with the benefits that ask for it*/
 export function papersFor(ids) {
   const papers = new Map();
   for (const id of ids) {

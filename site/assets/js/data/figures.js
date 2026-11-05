@@ -1,60 +1,60 @@
-// Cifras oficiales de 2026 que usan las reglas. Cada bloque dice de dónde sale.
-// Cuando cambie una cifra (revalorización de pensiones, SMI, IPREM…), se cambia aquí y en ningún otro sitio.
+// Official 2026 figures used by the rules. Each block says where it comes from.
+// When a figure changes (pension increase, minimum wage, IPREM…), change it here and nowhere else.
 
 export const FIGURES = {
   yearly: 2026,
   reviewed: '2026-11-05',
 
-  // IPREM: congelado desde 2023 porque siguen prorrogados los Presupuestos
+  // IPREM: frozen since 2023 because the State Budget is still extended
   iprem: { perMonth: 600, annual12: 7200, annual14: 8400 },
 
-  // Salario mínimo 2026 (Real Decreto 126/2026)
+  // Minimum wage 2026 (Real Decreto 126/2026)
   smi: { perMonth: 1221, annual: 17094 },
 
-  // Ingreso Mínimo Vital 2026: renta garantizada de un adulto solo; +30 % por cada persona más (hasta el 220 %)
-  // y +22 % de la base si el hogar es monoparental o hay discapacidad ≥ 65 % o dependencia de grado III
+  // Minimum Living Income 2026: guaranteed income for a single adult; +30 % for each extra person (up to 220 %)
+  // and +22 % of the base if the household is single-parent or has a disability ≥ 65 % or grade III dependency
   imv: { base: 733.6, perPerson: 0.3, maximum: 2.2, supplement: 0.22 },
 
-  // Complemento de ayuda para la infancia (CAPI), por hijo y mes, según la edad
+  // Child support supplement (CAPI), per child and month, by age
   capi: { under3: 115, age3to6: 80.5, age6to18: 57.5, incomeTimesLimit: 3 },
 
-  // Pensiones no contributivas (jubilación e invalidez), 14 pagas, y complemento por alquiler
+  // Non-contributory pensions (retirement and disability), 14 payments, and rent supplement
   pnc: { annual: 8803.2, perMonth: 628.8, annualRent: 525 },
 
-  // Pensiones mínimas 2026, en euros al mes (14 pagas)
+  // Minimum pensions 2026, in euros per month (14 payments)
   minimums: {
     retirement65: { withSpouse: 1256.6, withoutSpouse: 936.2, nonDependentSpouse: 888.7 },
     retirementUnder65: { withSpouse: 1256.6, withoutSpouse: 875.9, nonDependentSpouse: 827.9 },
     viudedad: { withDependants: 1256.6, from65: 936.2, age60to64: 875.9, under60: 709.4 },
     orfandad: 286.5,
-    // Ingresos al año (sin contar la pensión) por encima de los cuales no hay complemento a mínimos
+    // Yearly income (not counting the pension) above which there is no minimum supplement
     incomeLimit: { withoutSpouse: 9442, withSpouse: 11013 },
   },
   maxPension: 3359.6,
 
-  // Complemento para reducir la brecha de género, por hijo y mes (hasta 4 hijos)
+  // Gender gap supplement, per child and month (up to 4 children)
   gap: 36.9,
 
-  // Asignación por hijo a cargo con discapacidad, al año
+  // Allowance per dependent child with a disability, per year
   dependentChild: { childWith33: 1000, adultWith65: 5962.8, adultWith75: 8942.4 },
 
-  // Subsidio por desempleo (sobre el IPREM) y límite de rentas: 75 % del SMI sin pagas extra
+  // Unemployment allowance (based on the IPREM) and income limit: 75 % of the minimum wage without extra payments
   allowance: { first6Months: 570, next6Months: 540, rest: 480, over52: 480, monthlyIncomeLimit: 915.75 },
 
-  // Autónomos: tarifa plana de cotización (Ley 31/2022) y avales ICO para la primera vivienda (RDL 42/2021, ampliado a 2027)
+  // Self-employed: flat contribution rate (Ley 31/2022) and ICO guarantees for a first home (RDL 42/2021, extended to 2027)
   selfEmployed: { flatRate: 80, months: 12, extraMonths: 12 },
   icoGuarantee: { age: 35, incomePerPerson: 37800, wealth: 100000, aval: 20, efficientGuarantee: 25, until: '31 de diciembre de 2027' },
 
-  // Nacimiento y cuidado de menor
+  // Birth and childcare
   nacimiento: { weeks: 19, weeksSingleParent: 32, oneOffPayment: 1000 },
 
-  // Bono social eléctrico: descuentos en 2026 (vuelven al 35 % y 50 % en 2027 si no se prorrogan)
+  // Electricity social discount: 2026 discounts (back to 35 % and 50 % in 2027 unless extended)
   socialDiscount: { vulnerable: 0.425, severe: 0.575, thermalMinimum: 50 },
 
-  // Ayudas al alquiler: Plan Estatal de Vivienda 2026-2030
+  // Rent support: State Housing Plan 2026-2030
   rent: { young: 300, youngRoom: 200, youngAge: 35, ipremLimitYoung: 5, ipremLimitGeneral: 3 },
 
-  // Deducciones en el IRPF (al año)
+  // Income tax deductions (per year)
   irpf: {
     maternity: 1200,
     nursery: 1000,
@@ -67,14 +67,14 @@ export const FIGURES = {
     disabilityMinimum65: 9000,
   },
 
-  // Jubilación ordinaria en 2026
+  // Ordinary retirement in 2026
   jubilacion: { age: '66 años y 10 meses', longAge: 65, longContribution: '38 años y 3 meses' },
 
-  // Comunidad de Madrid: ayuda a la natalidad para madres de 30 años o menos
+  // Community of Madrid: birth grant for mothers aged 30 or under
   madrid: { birthMonthly: 500, birthTotal: 14500, maxAge: 30, individualIncome: 30000, jointIncome: 36200 },
 };
 
-// Fuentes de las cifras (se enseñan en la página de fuentes)
+// Sources of the figures (shown on the sources page)
 export const FIGURE_SOURCES = [
   { topic: 'IPREM 2026', fieldValue: '600 €/mes · 8.400 €/año (14 pagas)', source: 'Prorrogado desde la Ley de Presupuestos de 2023', url: 'https://www.boe.es/' },
   { topic: 'Salario mínimo 2026', fieldValue: '1.221 €/mes · 17.094 €/año', source: 'Real Decreto 126/2026 (BOE)', url: 'https://www.boe.es/eli/es/rd/2026/02/18/126/con' },
@@ -95,8 +95,8 @@ export const FIGURE_SOURCES = [
   { topic: 'Deducciones familiares', fieldValue: '1.200 € por hijo menor de 3, familia numerosa, discapacidad…', source: 'Agencia Tributaria', url: 'https://sede.agenciatributaria.gob.es/' },
 ];
 
-// Cómo han cambiado, en euros al mes. Fuentes: IMSERSO (informes y fichas de PNC), BOE (reales decretos del SMI),
-// Seguridad Social (IMV: la renta garantizada de un adulto es la PNC anual entre 12) y leyes de Presupuestos (IPREM).
+// How they have changed, in euros per month. Sources: IMSERSO (PNC reports and sheets), BOE (minimum wage royal decrees),
+// Social Security (IMV: a single adult's guaranteed income is the yearly PNC divided by 12) and Budget laws (IPREM).
 export const HISTORY = {
   years: [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
   series: [

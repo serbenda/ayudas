@@ -1,7 +1,7 @@
-// Ayudas propias de cada comunidad autónoma (las de Madrid y las de grandes ciudades van en ayudas.js).
-// Revisado en noviembre de 2026 en las webs y boletines oficiales de cada comunidad, o en prensa que cita la convocatoria.
-// Cada ayuda lleva su ficha, la regla que dice cuándo te puede tocar y cómo se pide.
-// Muchas son convocatorias que se abren una vez al año: la ficha lo dice y el plazo se comprueba en la web oficial.
+// Each region's own benefits (Madrid's and those of large cities are in benefits.js).
+// Reviewed in November 2026 on each region's official websites and bulletins, or in press that cites the call.
+// Each benefit has its card, the rule that says when you may qualify, and how to apply.
+// Many are calls that open once a year: the card says so and the deadline is checked on the official website.
 
 const children = (p) => p.children.under3 + p.children.age3to5 + p.children.age6to17;
 const hasSmallChildren = (p) => p.baby || p.children.under3 > 0;

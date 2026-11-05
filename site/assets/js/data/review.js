@@ -1,38 +1,38 @@
-// Cuándo se revisó cada ficha y hasta cuándo vale su convocatoria.
-// La Action semanal (scripts/caducidad.mjs) avisa cuando una ficha lleva más de un año sin revisar
-// o cuando llega la fecha de mirar su convocatoria (MIRAR_EN).
+// When each card was reviewed and until when its call is valid.
+// The weekly Action (scripts/watch/review.mjs) warns when a card has gone more than a year without review
+// or when the date to check its call arrives (CHECK_ON).
 
 export const DEFAULT_REVIEWED = '2026-11';
 
-// Fichas revisadas en otra fecha (año-mes)
+// Cards reviewed on another date (year-month)
 export const REVIEWED = {};
 
-// Fecha en la que toca mirar la convocatoria (año-mes-día): cuando acaba el plazo abierto,
-// o cuando suele salir la del año siguiente si la de este año ya se cerró.
+// Date to check the call (year-month-day): when the open period ends,
+// or when next year's usually comes out if this year's has already closed.
 export const CHECK_ON = {
-  'concilia-asturias': '2027-07-15', // 2026: del 8 de agosto al 15 de septiembre
-  'natalidad-rural-extremadura': '2027-07-15', // 2026: del 7 de agosto al 30 de septiembre
-  'familias-especiales-murcia': '2027-09-15', // 2026: del 1 al 15 de octubre
-  'fons-infancia-barcelona': '2027-04-15', // 2026: del 13 de mayo al 22 de junio
-  'nos-cuidamos-malaga': '2027-05-15', // 2026: desde el 11 de junio
-  'xec-cangur': '2027-06-01', // 2026: julio, septiembre-octubre y octubre
-  'natalidad-valencia': '2027-03-01', // convocatoria de 2026: hasta el 1 de marzo de 2027
-  'familias-numerosas-clm': '2026-12-31', // convocatoria abierta todo 2026
-  'ayuda-hijos-euskadi': '2026-12-31', // pidiéndola antes, se cobra desde enero de 2026
-  'aval-ico-vivienda': '2027-12-31', // se puede firmar hasta esta fecha
-  'renta-minima': '2026-12-31', // Castilla-La Mancha: solo renovaciones hasta esta fecha
+  'concilia-asturias': '2027-07-15', // 2026: from 8 August to 15 September
+  'natalidad-rural-extremadura': '2027-07-15', // 2026: from 7 August to 30 September
+  'familias-especiales-murcia': '2027-09-15', // 2026: from 1 to 15 October
+  'fons-infancia-barcelona': '2027-04-15', // 2026: from 13 May to 22 June
+  'nos-cuidamos-malaga': '2027-05-15', // 2026: from 11 June
+  'xec-cangur': '2027-06-01', // 2026: July, September-October and October
+  'natalidad-valencia': '2027-03-01', // 2026 call: until 1 March 2027
+  'familias-numerosas-clm': '2026-12-31', // call open all of 2026
+  'ayuda-hijos-euskadi': '2026-12-31', // applying earlier, it is paid from January 2026
+  'aval-ico-vivienda': '2027-12-31', // can be signed until this date
+  'renta-minima': '2026-12-31', // Castilla-La Mancha: renewals only until this date
 };
 
 export const reviewedOf = (id) => REVIEWED[id] ?? DEFAULT_REVIEWED;
 
 const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-/** «noviembre de 2026» */
+/** «noviembre de 2026»*/
 export function reviewedText(id) {
   const [a, m] = reviewedOf(id).split('-').map(Number);
   return `${MONTHS[m - 1]} de ${a}`;
 }
 
-/** Fichas que hay que revisar hoy: más de un año sin revisar o plazo pasado */
+/** Cards to review today: more than a year without review or deadline passed*/
 export function toReview(ids, today = new Date()) {
   const notices = [];
   for (const id of ids) {

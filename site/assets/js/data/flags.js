@@ -1,5 +1,5 @@
-// Banderas sencillas (SVG) para la lista de idiomas. Son decorativas: el nombre del idioma va siempre escrito.
-// España, Cataluña (senyera), Comunitat Valenciana (senyera con franja azul), Galicia, Euskadi (ikurriña) e inglés (Reino Unido).
+// Simple flags (SVG) for the language list. They are decorative: the language name is always written.
+// Spain, Catalonia (senyera), Valencian Community (senyera with a blue stripe), Galicia, Basque Country (ikurriña) and English (United Kingdom).
 
 const svg = (view, body) => `<svg class="flag" viewBox="${view}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">${body}</svg>`;
 const stripes = [1, 3, 5, 7].map((i) => `<rect y="${((20 / 9) * i).toFixed(2)}" width="30" height="2.22" fill="#da121a"/>`).join('');
@@ -13,7 +13,7 @@ export const FLAGS = {
   en: svg('0 0 60 40', '<rect width="60" height="40" fill="#012169"/><path d="M0 0 60 40M60 0 0 40" stroke="#fff" stroke-width="8"/><path d="M0 0 60 40M60 0 0 40" stroke="#c8102e" stroke-width="3"/><path d="M30 0v40M0 20h60" stroke="#fff" stroke-width="12"/><path d="M30 0v40M0 20h60" stroke="#c8102e" stroke-width="7"/>'),
 };
 
-// code de la página, lang del enlace y nombre en su propia lengua
+// page code, link lang and name in its own language
 export const LANGUAGE_LIST = [
   ['es', 'es', 'Español'],
   ['ca', 'ca', 'Català'],
@@ -25,7 +25,7 @@ export const LANGUAGE_LIST = [
 
 const href = (base, c) => (c === 'es' ? base || './' : `${base}${c}/`);
 
-/** Lista de idiomas con bandera (pie). `base` es el prefijo de las rutas ('', '../' o '/'); `actual` el código de la página. */
+/** Language list with flags (footer). `base` is the route prefix ('', '../' or '/'); `current` is the page's code.*/
 export function languageLinks(base, current = 'es') {
   return `<ul class="languages-list">${LANGUAGE_LIST.map(([c, lang, name]) => {
     const here = c === current ? ' aria-current="page"' : '';
@@ -33,7 +33,7 @@ export function languageLinks(base, current = 'es') {
   }).join('')}</ul>`;
 }
 
-/** Selector de idioma de la barra de arriba: botón con la bandera del idioma actual y menú con los demás */
+/** Language selector in the top bar: a button with the current language's flag and a menu with the others*/
 export function languageSelector(base, current = 'es', label = 'Idioma') {
   const [, , currentName] = LANGUAGE_LIST.find(([c]) => c === current) ?? LANGUAGE_LIST[0];
   return `<details class="language-setting">

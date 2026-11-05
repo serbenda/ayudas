@@ -1,4 +1,4 @@
-// Mapa de España: pulsas tu comunidad y salen sus ayudas, con cómo se piden allí
+// Map of Spain: tap your region and its benefits appear, with how to apply there
 
 import { MAP, SHAPES, CENTRES } from '../data/map-shapes.js';
 import { REGIONS } from '../data/benefits.js';
@@ -13,7 +13,7 @@ export function mapSvg() {
   const { canarias: k } = MAP;
   const zones = REGIONS.filter((c) => SHAPES[c.id]).map((c) => {
     const [x, y] = CENTRES[c.id];
-    // Ceuta y Melilla son diminutas: se añade un círculo grande para poder pulsarlas
+    // Ceuta and Melilla are tiny: a large circle is added so they can be tapped
     const dot = SMALL_REGIONS.has(c.id) ? `<circle class="dot" cx="${x}" cy="${y}" r="16"/>` : '';
     return `<g class="zone" data-region="${c.id}" tabindex="0" role="button" aria-pressed="false" aria-label="${esc(c.name)}">
       <title>${esc(c.name)}</title><path d="${SHAPES[c.id]}"/>${dot}</g>`;

@@ -1,13 +1,13 @@
-// Vigila las convocatorias nuevas de las ayudas autonómicas y municipales que recoge la web.
-// Consulta la API pública de la Base de Datos Nacional de Subvenciones (BDNS, infosubvenciones.es), donde se publican las convocatorias
-// de todas las administraciones (Estado, comunidades y ayuntamientos), y busca por el nombre de cada ayuda.
-// Escribe convocatorias-novedades.md; la Action abre o actualiza un issue.
-// Uso: node scripts/convocatorias.mjs [días]   (por defecto, los últimos 8)
+// Watches for new calls for the regional and municipal benefits on the site.
+// Queries the public API of the National Grants Database (BDNS, infosubvenciones.es), where calls from every
+// administration (State, regions and city councils) are published, and searches by the name of each benefit.
+// Writes new-calls.md; the Action opens or updates an issue.
+// Usage: node scripts/watch/calls.mjs [days]   (the last 8 by default)
 
 import { writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
-// [texto que buscar, región en la BDNS (sin tildes, en mayúsculas) o null para cualquiera, id de la ficha]
+// [text to search, region in the BDNS (no accents, upper case) or null for any, benefit id]
 export const WATCHLIST = [
   ['Tarxeta Benvida', 'GALICIA', 'tarxeta-benvida'],
   ['renta de inclusión social', 'GALICIA', 'renta-minima'],
@@ -39,7 +39,7 @@ const withoutAccents = (s) => String(s ?? '').normalize('NFD').replace(/\p{Diacr
 const ddmmyyyy = (d) => d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
 const API = 'https://www.infosubvenciones.es/bdnstrans/api/convocatorias/busqueda';
 
-/** Filtra las convocatorias de la respuesta de la BDNS que son de la región buscada */
+/** Keeps the calls in the BDNS response that belong to the region searched for*/
 export function inRegion(response, region) {
   const list = Array.isArray(response?.content) ? response.content : [];
   return list.filter((c) => !region || [c.nivel1, c.nivel2, c.nivel3].some((n) => withoutAccents(n).includes(region)));
@@ -72,8 +72,8 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   }
   const lines = [...found.values()].map((c) => `- [ ] **${c.descripcion ?? 'Convocatoria'}** — ${[c.nivel2, c.nivel3].filter(Boolean).join(', ')} (${c.fechaRecepcion ?? 's/f'}). Ficha: \`${c.card}\`. [Ver en la BDNS](https://www.infosubvenciones.es/bdnstrans/GE/es/convocatorias/${c.numeroConvocatoria ?? ''})`);
   let text = '';
-  if (lines.length) text += `Se han publicado convocatorias en los últimos ${days} días que pueden cambiar fechas o cuantías de la web. Revisa cada una y actualiza la ficha y \`assets/js/data/review.js\`:\n\n${lines.join('\n')}\n`;
-  if (failures.length === WATCHLIST.length) text += `\nNo se ha podido consultar la BDNS (${failures[0]}). Si se repite varias semanas, puede que haya cambiado su API: revisa \`scripts/convocatorias.mjs\`.\n`;
-  await writeFile('convocatorias-novedades.md', text);
-  console.log(text || `Sin convocatorias nuevas en los últimos ${days} días.`);
+  if (lines.length) text += `Se han publicado convocatorias en los últimos ${days} días que pueden cambiar fechas o cuantías de la web. Revisa cada una y actualiza la ficha y \`site/assets/js/data/review.js\`:\n\n${lines.join('\n')}\n`;
+  if (failures.length === WATCHLIST.length) text += `\nNo se ha podido consultar la BDNS (${failures[0]}). Si se repite varias semanas, puede que haya cambiado su API: revisa \`scripts/watch/calls.mjs\`.\n`;
+  await writeFile('new-calls.md', text);
+  console.log(text || `No new calls in the last ${days} days.`);
 }

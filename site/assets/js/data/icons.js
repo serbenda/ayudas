@@ -1,4 +1,4 @@
-// Iconos de trazo (24×24) que toman el color del texto
+// Stroke icons (24×24) that take the text colour
 
 export const ICONS = {
   monedas: 'M4 7c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3Z M4 7v5c0 1.7 3.6 3 8 3s8-1.3 8-3V7 M4 12v5c0 1.7 3.6 3 8 3s8-1.3 8-3v-5',

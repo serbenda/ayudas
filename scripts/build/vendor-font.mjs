@@ -1,8 +1,8 @@
-// Copia la fuente Archivo desde node_modules a vendor/fonts/,
-// para servirla desde la propia web y no depender de Google Fonts ni de CDN.
-// Uso (lo hace la Action):
+// Copies the Archivo font from node_modules to vendor/fonts/,
+// so the site serves it itself and does not depend on Google Fonts or a CDN.
+// Usage (the Action does it):
 //   npm install --no-save --no-package-lock @fontsource-variable/archivo@5
-//   node scripts/vendor.mjs
+//185
 
 import { cp, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 
@@ -21,9 +21,9 @@ const SUBSETS = {
 
 let css = '';
 for (const [sub, range] of Object.entries(SUBSETS)) {
-  // Preferimos el fichero con todos los ejes (anchura y peso)
+  // Prefer the file with every axis (width and weight)
   const file = ['full', 'wdth', 'wght'].map((axis) => `archivo-${sub}-${axis}-normal.woff2`).find((n) => files.includes(n));
-  if (!file) throw new Error(`No encuentro la fuente Archivo para ${sub}. Ficheros: ${files.join(', ')}`);
+  if (!file) throw new Error(`Archivo font not found for ${sub}. Files: ${files.join(', ')}`);
   await cp(new URL(file, sourcePage), new URL(file, target));
   css += `@font-face {
   font-family: 'Archivo';
@@ -35,7 +35,7 @@ for (const [sub, range] of Object.entries(SUBSETS)) {
   unicode-range: ${range};
 }
 `;
-  console.log(`Fuente ${sub}: ${file}`);
+  console.log(`Font ${sub}: ${file}`);
 }
 await writeFile(new URL('archivo.css', target), css);
-console.log('vendor/ listo');
+console.log('vendor/ ready');

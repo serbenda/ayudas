@@ -1,26 +1,26 @@
-// Leer en voz alta con la voz más humana que tenga cada aparato.
-// No hay servidor: se usan las voces del navegador o del sistema, que en muchos aparatos son muy buenas
-// si se eligen bien (Edge: voces «Natural» de Microsoft; iPhone y Mac: «mejoradas» o «premium»; Chrome y Android: Google).
-// Se lee frase a frase: suena con pausas más naturales y evita que Chrome se corte en los textos largos.
+// Read aloud with the most human voice each device has.
+// There is no server: it uses the browser's or the system's voices, which on many devices are very good
+// if chosen well (Edge: Microsoft «Natural» voices; iPhone and Mac: «enhanced» or «premium»; Chrome and Android: Google).
+// It reads sentence by sentence: pauses sound more natural and Chrome does not cut off long texts.
 
 const ACCENT = { es: 'es-ES', en: 'en-GB', ca: 'ca-ES', gl: 'gl-ES', eu: 'eu-ES' };
-// Si no hay voz en gallego, catalán o euskera, se lee con una voz en castellano
+// If there is no Galician, Catalan or Basque voice, it reads with a Spanish voice
 const FALLBACK = { ca: 'es', gl: 'es', eu: 'es' };
-// Voces de mala calidad o de broma (macOS, eSpeak…)
+// Low-quality or novelty voices (macOS, eSpeak…)
 const BAD_VOICES = /espeak|compact|eloquence|novelty|zarvox|albert|bad news|bells|bubbles|cellos|fred|jester|organ|superstar|trinoids|whisper|wobble|grandma|grandpa|rocko|shelley|eddy|flo|reed|sandy|bahh|boing|deranged|hysterical|pipe organ/i;
 
 const language = (lang) => (lang ?? 'es').toLowerCase().split('-')[0];
 
-/** Puntúa una voz para un idioma: más alta, más humana. Exportada para los tests. */
+/** Scores a voice for a language: higher means more human. Exported for the tests.*/
 export function score(voice, lang) {
   const base = language(lang);
   const its = language(voice.lang);
   if (its !== base) return -Infinity;
   let p = 0;
   const name = voice.name ?? '';
-  if (/natural|neural/i.test(name)) p += 100; // Edge y Windows 11
+  if (/natural|neural/i.test(name)) p += 100; // Edge and Windows 11
   if (/premium|mejorada|enhanced|siri/i.test(name)) p += 80; // Apple
-  if (/google/i.test(name)) p += 60; // Chrome y Android
+  if (/google/i.test(name)) p += 60; // Chrome and Android
   if (/online/i.test(name)) p += 20;
   if (BAD_VOICES.test(name)) p -= 200;
   if ((voice.lang ?? '').toLowerCase().replace('_', '-') === (ACCENT[base] ?? '').toLowerCase()) p += 15;
@@ -28,7 +28,7 @@ export function score(voice, lang) {
   return p;
 }
 
-/** La mejor voz de la lista para un idioma, o null */
+/** The best voice in the list for a language, or null*/
 export function bestVoice(voices, lang) {
   let best = null;
   let maximum = -Infinity;
@@ -39,7 +39,7 @@ export function bestVoice(voices, lang) {
   return best;
 }
 
-/** Parte un texto en frases cortas para leerlas con pausas */
+/** Splits a text into short sentences to read them with pauses*/
 export function sentences(text) {
   return String(text)
     .replace(/\s+/g, ' ')
@@ -49,14 +49,14 @@ export function sentences(text) {
     .filter(Boolean);
 }
 
-// ── En el navegador ─────────────────────────────────────────────────────
+// ── In the browser ─────────────────────────────────────────────────────
 const available = typeof window !== 'undefined' && 'speechSynthesis' in window;
 const STORAGE_KEY = (lang) => `ayudas:voz:${language(lang)}`;
 const PACE_KEY = 'ayudas:voz:ritmo';
 
 export const canSpeak = available;
 
-/** Las voces tardan en cargar en Chrome: se espera a que lleguen (máximo 1,5 s) */
+/** Voices take a while to load in Chrome: wait for them (1.5 s at most)*/
 export function voices() {
   if (!available) return Promise.resolve([]);
   const already = speechSynthesis.getVoices();
@@ -76,7 +76,7 @@ function readSaved(key) {
   }
 }
 
-/** Voz que se usará para un idioma: la elegida por la persona o la mejor del aparato (con reserva) */
+/** Voice to use for a language: the one the person chose or the device's best (with a fallback)*/
 export async function voiceFor(lang) {
   const list = await voices();
   const chosen = readSaved(STORAGE_KEY(lang));
@@ -108,7 +108,7 @@ export function stop() {
 
 export const isSpeaking = () => available && (speechSynthesis.speaking || speechSynthesis.pending);
 
-/** Lee un texto en voz alta. `boton` se marca mientras habla. */
+/** Reads a text aloud. `button` is marked while it speaks.*/
 export async function speak(text, { lang = 'es', button = null } = {}) {
   if (!available || !text) return;
   stop();
@@ -129,7 +129,7 @@ export async function speak(text, { lang = 'es', button = null } = {}) {
   });
 }
 
-// Nombre corto y claro: «Mónica · España ★ recomendada» en vez de «Mónica (español (España))»
+// Short, clear name: «Mónica · España ★ recomendada» instead of «Mónica (español (España))»
 const COUNTRIES = typeof Intl !== 'undefined' && Intl.DisplayNames ? new Intl.DisplayNames(['es'], { type: 'region' }) : null;
 export function voiceLabel(v, recommended = false) {
   const name = v.name
@@ -148,7 +148,7 @@ export function voiceLabel(v, recommended = false) {
   return `${finalName}${natural}${country ? ` · ${country}` : ''}${recommended ? ' ★ recomendada' : ''}`.replace(/</g, '&lt;');
 }
 
-/** Rellena el ajuste de voz (si la página lo tiene): lista de voces del idioma, ritmo y «Probar» */
+/** Fills in the voice setting (if the page has one): the language's voices, pace and «Probar»*/
 export async function setupSettings() {
   const box = document.getElementById('voice-setting');
   if (!box) return;
@@ -159,7 +159,7 @@ export async function setupSettings() {
   const lang = document.documentElement.lang || 'es';
   const select = box.querySelector('select[name="voice"]');
   const allOf = (await voices()).filter((v) => language(v.lang) === language(lang)).sort((a, b) => score(b, lang) - score(a, lang));
-  // Fuera las voces de broma o robóticas (Grandma, Rocko, eSpeak…), salvo que no haya otras
+  // Leave out novelty or robotic voices (Grandma, Rocko, eSpeak…), unless there are no others
   const good = allOf.filter((v) => !BAD_VOICES.test(v.name));
   const list = good.length ? good : allOf;
   const current = await voiceFor(lang);

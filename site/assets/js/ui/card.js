@@ -1,5 +1,5 @@
-// La ficha de una ayuda, igual en todas las páginas: qué es, por qué te sale, cómo se pide paso a paso,
-// papeles, teléfonos, plazos y qué hacer si te dicen que no.
+// A benefit's card, the same on every page: what it is, why it came up, how to apply step by step,
+// documents, phone numbers, deadlines and what to do if they say no.
 
 import { BY_ID, REGIONS, linkOf } from '../data/benefits.js';
 import { procedureOf } from '../data/procedures.js';
@@ -21,14 +21,14 @@ export const TRACKING_STATES = [
   ['denegada', 'Me la han denegado'],
 ];
 
-/** Botón de llamar para un teléfono */
+/** Call button for a phone number*/
 export function phoneButton(key) {
   const t = PHONES[key];
   if (!t) return '';
   return `<a class="call" href="${tel(t.number)}"><span class="call-icon">${icon('telefono')}</span><span><strong>${esc(t.number)}</strong> ${esc(t.text)}${t.free ? ' <em>(gratis)</em>' : ''}<small>${esc(t.when)}</small></span></a>`;
 }
 
-/** Barra «tu cifra frente al límite» */
+/** «Your figure against the limit» bar*/
 export function thresholdBar(u) {
   if (!u) return '';
   const max = Math.max(u.yours, u.limit) * 1.15 || 1;
@@ -49,7 +49,7 @@ export function thresholdBar(u) {
   </figure>`;
 }
 
-/** Barras «cuánto según tu caso» */
+/** «How much for your case» bars*/
 export function tableBars(table, highlight = -1) {
   if (!table) return '';
   const max = Math.max(...table.rows.map((f) => f.figure));
@@ -62,7 +62,7 @@ export function tableBars(table, highlight = -1) {
   </figure>`;
 }
 
-/** Un ejemplo con persona y cuentas */
+/** An example with a person and the sums*/
 export function exampleBox(id) {
   const e = EXAMPLES[id]?.();
   if (!e) return '';
@@ -71,9 +71,9 @@ export function exampleBox(id) {
 
 /**
  * @param {string} id
- * @param {{ resultado?: object, ccaa?: string|null, seguimiento?: string, abierta?: boolean, perfil?: object }} op
+ * @param {{ result?: object, region?: string|null, tracking?: string, isOpen?: boolean, profile?: object }} options
  */
-// Deducciones de la comunidad elegida: las cantidades que tenemos comprobadas y el resto, por su nombre
+// Deductions of the chosen region: the amounts we have checked and the rest, by name
 function deductionsBlock(region) {
   const d = deductionsOf(region);
   if (!d) return '';
@@ -93,7 +93,7 @@ export function benefitCard(id, { result = null, region = null, tracking, isOpen
   const label = r ? (r.status === 'si' ? 'Cumples lo principal' : 'Mira si cumples') : '';
   const fullText = [a.summary, a.amount, ...a.requirements, ...t.steps, t.deadline, t.response, ...(t.warnings ?? [])].join(' ');
   const terms = termsIn(fullText);
-  // Palabras difíciles: se pueden pulsar para ver qué significan (la primera vez que salen en la ficha)
+  // Difficult words: they can be tapped to see what they mean (the first time they appear in the card)
   const used = new Set();
   const ex = (text) => markTerms(esc(text), used);
   const track = tracking !== undefined

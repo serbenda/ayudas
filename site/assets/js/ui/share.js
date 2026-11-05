@@ -1,5 +1,5 @@
-// Enviar el resultado a un familiar: solo la lista de ayudas y un enlace para ver cómo se pide cada una.
-// Nunca se envían las respuestas (ni edad, ni ingresos, ni salud).
+// Send the result to a relative: only the list of benefits and a link to see how to apply for each.
+// The answers are never sent (no age, income or health).
 
 import { BY_ID } from '../data/benefits.js';
 
@@ -10,7 +10,7 @@ export function shareText(ids) {
   return { title: 'Ayudas que me pueden corresponder', text: `Ayudas que me pueden corresponder:\n${list}\n\nCómo se pide cada una, paso a paso:`, link };
 }
 
-/** Comparte con el menú del móvil; si no hay, abre WhatsApp */
+/** Shares with the phone's share menu; if there is none, opens WhatsApp*/
 export async function share(ids) {
   const { title, text, link } = shareText(ids);
   if (navigator.share) {

@@ -1,7 +1,7 @@
-// Insertar ayudas en otra web. Pon donde quieras que salga:
-//   <div data-ayudas="cuestionario"></div>   (también: mayores, mapa, catalogo)
+// Embed ayudas in another website. Put this wherever you want it to show:
+//   <div data-ayudas="cuestionario"></div>   (also: mayores, mapa, catalogo)
 //   <script src="https://ayudas.bendi.dev/embed.js" async></script>
-// No usa cookies ni recoge datos: las respuestas se quedan en el aparato de quien contesta.
+// No cookies and no data collection: answers stay on the device of whoever answers.
 (function () {
   var scriptTag = document.currentScript;
   var base = scriptTag ? new URL('./', scriptTag.src).href : 'https://ayudas.bendi.dev/';

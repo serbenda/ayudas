@@ -1,13 +1,13 @@
-// Comprueba que los enlaces oficiales de la web siguen funcionando.
-// Las administraciones cambian sus webs a menudo: mejor enterarse antes que quien la usa.
-// Uso: node scripts/enlaces.mjs   (sale con error si algún enlace está roto)
+// Checks that the site's official links still work.
+// Public administrations change their websites often: better to find out before the people using it do.
+// Usage: node scripts/watch/links.mjs   (exits with an error if any link is broken)
 
 import { readFile, writeFile } from 'node:fs/promises';
 import { BENEFITS, REGIONS } from '../../site/assets/js/data/benefits.js';
 import { FIGURE_SOURCES } from '../../site/assets/js/data/figures.js';
 
 const root = new URL('../../site/', import.meta.url);
-const urls = new Map(); // url → dónde aparece
+const urls = new Map(); // url → where it appears
 
 const addUrl = (url, where) => {
   if (!url || !/^https:\/\//.test(url)) return;
@@ -34,7 +34,7 @@ async function check(url) {
       const r = await fetch(url, { redirect: 'follow', headers: { 'user-agent': UA, accept: 'text/html,*/*' }, signal: AbortSignal.timeout(20000) });
       await r.body?.cancel();
       if (r.ok) return { url, ok: true, status: r.status };
-      // Muchas webs públicas cortan a los robots: eso no es un enlace roto
+      // Many public websites block robots: that is not a broken link
       if ([401, 403, 405, 429].includes(r.status)) return { url, ok: true, doubtful: true, status: r.status };
       if (attempt === 2) return { url, ok: false, status: r.status };
     } catch (e) {
@@ -59,10 +59,10 @@ for (const r of results.sort((a, b) => a.url.localeCompare(b.url))) {
 }
 
 const report = broken.map((r) => `- ${r.url} (${r.status}) — en ${[...urls.get(r.url)].join(', ')}`).join('\n');
-await writeFile(new URL('enlaces-rotos.md', root), broken.length ? `Estos enlaces oficiales no responden:\n\n${report}\n` : '');
+await writeFile('broken-links.md', broken.length ? `Estos enlaces oficiales no responden:\n\n${report}\n` : '');
 
-console.log(`\n${results.length} enlaces, ${broken.length} rotos, ${results.filter((r) => r.doubtful).length} que no dejan comprobar a los robots.`);
+console.log(`\n${results.length} links, ${broken.length} broken, ${results.filter((r) => r.doubtful).length} that block robots.`);
 if (broken.length) {
-  for (const r of broken) console.log(`::warning::Enlace roto: ${r.url} (${r.status})`);
+  for (const r of broken) console.log(`::warning::Broken link: ${r.url} (${r.status})`);
   process.exit(1);
 }

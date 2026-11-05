@@ -1,10 +1,10 @@
-// Reglas: a partir de tus respuestas, qué ayudas te pueden corresponder.
-// Funciones puras (sin DOM) para poder probarlas con node --test.
+// Rules: from your answers, which benefits you may be entitled to.
+// Pure functions (no DOM) so they can be tested with node --test.
 //
-// Cada regla devuelve null (no te corresponde o no sabemos nada que lo apunte) o un resultado:
-//   { id, estado: 'si' | 'quizas', motivos: [...], comprobar: [...], importe?: { mes?, año?, unico?, texto } }
-// · 'si': por lo que has contestado, cumples lo principal. Aun así, lo decide el organismo al pedirla.
-// · 'quizas': puede corresponderte, pero depende de algo que no hemos preguntado o no has contestado.
+// Each rule returns null (you do not qualify, or nothing we know points to it) or a result:
+//   { id, status: 'si' | 'quizas', reasons: [...], check: [...], payment?: { monthly?, yearly?, single?, text } }
+// · 'si': from your answers, you meet the main requirements. Even so, the agency decides when you apply.
+// · 'quizas': you may qualify, but it depends on something we have not asked or you have not answered.
 
 import { FIGURES } from '../data/figures.js';
 import { MINIMUM_INCOME } from '../data/regions.js';
@@ -16,7 +16,7 @@ const GRADES = ['1', '2', '3'];
 const WITH_33 = ['33', '65', '75'];
 const WITH_65 = ['65', '75'];
 
-/** Perfil vacío: lo que se supone si no se contesta nada */
+/** Empty profile: what is assumed if nothing is answered*/
 export function emptyProfile() {
   return {
     age: null,
@@ -46,13 +46,13 @@ export function emptyProfile() {
     contributed15: null,
     contributedOneYear: null,
     madridCity: null,
-    city: null, // 'barcelona' | 'valencia' | 'zaragoza' | 'malaga' si vive en esa ciudad
-    residence: null, // 'si' (española, UE o permiso) | 'tramite' | 'no'
+    city: null, // 'barcelona' | 'valencia' | 'zaragoza' | 'malaga' if they live in that city
+    residence: null, // 'si' (Spanish, EU or permit) | 'tramite' | 'no'
     urgent: { food: false, housingAtRisk: false, homeless: false, violence: false, soledad: false },
   };
 }
 
-// ── Cálculos que usan varias reglas ──────────────────────────────────────
+// ── Calculations used by several rules ─────────────────────────────────
 
 export function totalChildren(p) {
   return p.children.under3 + p.children.age3to5 + p.children.age6to17;
@@ -64,10 +64,10 @@ export function members(p) {
 
 const works = (p) => p.situation === 'cuenta-ajena' || p.situation === 'autonomo';
 const unemployed = (p) => p.situation === 'paro-cobrando' || p.situation === 'paro-sin';
-// Para las deducciones «reembolsables» hay que trabajar, cobrar paro o pensión
+// «Refundable» deductions require working, or receiving unemployment benefit or a pension
 const hasCountableIncome = (p) => works(p) || p.situation === 'paro-cobrando' || p.pension !== 'no' || p.situation === 'pensionista';
 
-/** Todas las personas del hogar con sus circunstancias: tú y las que cuidas */
+/** Everyone in the household with their circumstances: you and the people you care for*/
 function people(p) {
   return [{ who: 'tú', relationship: 'yo', age: p.age, disability: p.disability, dependency: p.dependency, livesWith: true, iCare: false }, ...p.caredFor.map((c, i) => ({ who: personName(c, i), ...c }))];
 }
@@ -77,12 +77,12 @@ function personName(c, i) {
   return `${names[c.relationship] ?? 'la persona'}${i > 0 ? ` (${i + 1}.ª persona)` : ''}`;
 }
 
-/** ¿Hay en el hogar alguien con discapacidad ≥ 65 % o dependencia de grado III? (complemento del IMV) */
+/** Is there anyone in the household with a disability ≥ 65 % or grade III dependency? (IMV supplement)*/
 function hasSevereDisability(p) {
   return people(p).some((x) => WITH_65.includes(x.disability) || x.dependency === '3');
 }
 
-/** Renta garantizada del IMV al mes para este hogar */
+/** IMV guaranteed monthly income for this household*/
 export function guaranteedIncome(p) {
   const { base, perPerson, maximum, supplement } = FIGURES.imv;
   const scale = Math.min(1 + perPerson * (members(p) - 1), maximum);
@@ -90,7 +90,7 @@ export function guaranteedIncome(p) {
   return round2(base * (scale + extra));
 }
 
-/** Límite de ingresos del bono social de la luz (euros al año) y el multiplicador del IPREM que se ha usado */
+/** Income limit for the electricity social discount (euros per year) and the IPREM multiplier used*/
 export function socialDiscountLimit(p) {
   const minors = totalChildren(p);
   let times = 1.5 + 0.5 * Math.min(minors, 2);
@@ -99,7 +99,7 @@ export function socialDiscountLimit(p) {
   return { times, euros: times * FIGURES.iprem.annual14 };
 }
 
-/** Pensión mínima que te tocaría según tu pensión, edad y familia (euros al mes) */
+/** Minimum pension you would get given your pension, age and family (euros per month)*/
 export function minimumPension(p) {
   const m = FIGURES.minimums;
   if (p.pension === 'viudedad') {
@@ -118,7 +118,7 @@ const round2 = (n) => Math.round(n * 100) / 100;
 const yearly = (n) => `${euros(n)} al año`;
 const monthly = (n) => `${euros(n)} al mes`;
 
-// ── Reglas ───────────────────────────────────────────────────────────────
+// ── Rules ──────────────────────────────────────────────────────────────
 
 const RULES = {
   imv(p) {
@@ -186,7 +186,7 @@ const RULES = {
 
   'subsidio-desempleo'(p) {
     if (!unemployed(p)) return null;
-    if ((p.age ?? 0) >= 52 && p.contributed15) return null; // le toca el de mayores de 52
+    if ((p.age ?? 0) >= 52 && p.contributed15) return null; // they get the over-52 one
     const limit = FIGURES.allowance.monthlyIncomeLimit * 12;
     if (p.ownIncome != null && p.ownIncome > limit) return null;
     const reasons = [p.situation === 'paro-cobrando' ? 'Cobras el paro: cuando se te acabe, puedes pasar al subsidio.' : 'Estás en paro sin cobrar prestación.'];
@@ -556,7 +556,7 @@ const RULES = {
     return { status: 'si', reasons: [`Vuestros ingresos no pasan de ${yearly(limit)}.`], check: ['Solo si necesitas un abogado o ir a juicio.'] };
   },
 
-  // ── Si lo necesitas ya ─────────────────────────────────────────────────
+  // ── If you need it now ─────────────────────────────────────────────────
   'violencia-genero'(p) {
     if (!p.urgent.violence) return null;
     return { status: 'si', reasons: ['Has marcado que sufres violencia de género.'], check: ['Llama al 016 aunque no hayas denunciado: te orientan y no sale en la factura.'], payment: { text: '016 · 24 horas' }, urgent: true };
@@ -594,7 +594,7 @@ const RULES = {
     return { status: 'si', reasons: ['No tienes permiso de residencia (o está en trámite).'], check: ['Pide orientación a una ONG para regularizar tu situación.'] };
   },
 
-  // ── Comunidad y Ayuntamiento de Madrid ─────────────────────────────────
+  // ── Community and City of Madrid ───────────────────────────────────────
   'rmi-madrid'(p) {
     if (p.region !== 'madrid') return null;
     if (p.pension === 'jubilacion' || p.pension === 'pnc') return null;
@@ -785,17 +785,17 @@ function capital(s) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-// Ayudas que piden nacionalidad, residencia legal o estar dado de alta en Hacienda o la Seguridad Social
+// Benefits that require nationality, legal residence or being registered with the Tax Agency or Social Security
 const NEED_RESIDENCE = new Set([
   'imv', 'capi', 'renta-minima', 'rmi-madrid', 'subsidio-desempleo', 'subsidio-52', 'paro', 'nacimiento', 'pago-unico-nacimiento',
   'madrid-natalidad', 'titulo-familia-numerosa', 'pnc-jubilacion', 'pnc-invalidez', 'pnc-alquiler', 'alquiler-joven', 'alquiler-general',
   'vivienda-social-madrid', 'bono-cultural-joven', 'dependencia-valoracion', 'dependencia-prestacion', 'hijo-cargo-discapacidad',
 ]);
 
-// Reglas de las ayudas propias de cada comunidad
+// Rules for each region's own benefits
 for (const a of REGIONAL_BENEFITS) RULES[a.id] = a.rule;
 
-/** Evalúa todas las reglas. Devuelve los resultados en el orden del catálogo. */
+/** Evaluates every rule. Returns the results in catalogue order.*/
 export function evaluate(profile) {
   const base = emptyProfile();
   const p = { ...base, ...profile, children: { ...base.children, ...(profile?.children ?? {}) }, urgent: { ...base.urgent, ...(profile?.urgent ?? {}) } };
@@ -812,7 +812,7 @@ export function evaluate(profile) {
   return results;
 }
 
-// Orden en que conviene pedir las cosas: primero lo urgente, luego lo que abre la puerta a lo demás
+// Order in which to apply: urgent things first, then what opens the door to the rest
 const PRIORITY = [
   'violencia-genero', 'sin-hogar', 'desahucio', 'alimentos', 'emergencia-social', 'sanidad-sin-papeles',
   'imv', 'dependencia-valoracion', 'certificado-discapacidad', 'paro', 'subsidio-desempleo', 'subsidio-52', 'pnc-jubilacion', 'pnc-invalidez',
@@ -820,7 +820,7 @@ const PRIORITY = [
   'titulo-familia-numerosa', 'bono-social', 'brecha-genero', 'hijo-cargo-discapacidad', 'dependencia-prestacion', 'convenio-cuidadores',
 ];
 
-/** Las primeras cosas que hacer, en orden (como mucho `n`) */
+/** The first things to do, in order (at most `n`)*/
 export function whereToStart(results, n = 4) {
   const range = (id) => {
     const i = PRIORITY.indexOf(id);
@@ -831,9 +831,9 @@ export function whereToStart(results, n = 4) {
 
 export const IDS_WITH_RULE = Object.keys(RULES);
 
-// ── Gráficos: tu cifra frente al límite, y el dinero que podría entrar ──
+// ── Charts: your figure against the limit, and the money that could come in ──
 
-/** Para las ayudas con límite de ingresos: tu cifra y el límite, para dibujar la barra. null si no se sabe. */
+/** For benefits with an income limit: your figure and the limit, to draw the bar. null if unknown.*/
 export function thresholdOf(id, profile) {
   const base = emptyProfile();
   const p = { ...base, ...profile, children: { ...base.children, ...(profile?.children ?? {}) }, urgent: { ...base.urgent, ...(profile?.urgent ?? {}) } };
@@ -871,10 +871,10 @@ export function thresholdOf(id, profile) {
   }
 }
 
-// Ayudas que son dinero cada mes y que se pueden sumar (con el ajuste del IMV, que descuenta lo demás que cobras)
+// Benefits that are money every month and can be added up (with the IMV adjustment, which deducts whatever else you receive)
 const MONTHLY_SUMMABLE = ['imv', 'capi', 'pnc-jubilacion', 'pnc-invalidez', 'complemento-minimos', 'brecha-genero', 'subsidio-desempleo', 'subsidio-52'];
 
-/** Cuánto dinero podría entrar: al mes (14 pagas para pensiones, 12 el resto) y al año en pagos o deducciones. Solo «Cumples lo principal». */
+/** How much money could come in: per month (14 payments for pensions, 12 for the rest) and per year in payments or deductions. Only «You meet the main requirements».*/
 export function estimatedMoney(results) {
   const yes = new Map(results.filter((r) => r.status === 'si').map((r) => [r.id, r]));
   const parts = [];
@@ -882,7 +882,7 @@ export function estimatedMoney(results) {
     const r = yes.get(id);
     if (!r?.payment?.monthly) continue;
     let figure = r.payment.monthly;
-    // El IMV completa hasta un mínimo: el subsidio o la pensión cuentan como ingreso y lo reducen
+    // The IMV tops up to a minimum: the allowance or pension count as income and reduce it
     if (id === 'imv') {
       const others = ['subsidio-desempleo', 'subsidio-52', 'pnc-invalidez'].map((k) => yes.get(k)?.payment?.monthly ?? 0).reduce((a, b) => a + b, 0);
       figure = Math.max(0, figure - others);

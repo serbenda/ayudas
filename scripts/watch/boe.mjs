@@ -1,7 +1,7 @@
-// Vigila el BOE: busca en los sumarios de los últimos días disposiciones que pueden cambiar las cifras de la web
-// (revalorización de pensiones, SMI, IPREM, IMV, bono social, dependencia, paro, vivienda, copago…).
-// Si encuentra algo, escribe boe-novedades.md; la Action abre o actualiza un issue para revisarlo.
-// Uso: node scripts/boe.mjs [días]   (por defecto, los últimos 7)
+// Watches the BOE: searches the summaries of recent days for provisions that may change the figures on the site
+// (pension increases, minimum wage, IPREM, IMV, social discount, dependency, unemployment, housing, co-payment…).
+// If it finds something, it writes boe-news.md; the Action opens or updates an issue to review it.
+// Usage: node scripts/watch/boe.mjs [days]   (the last 7 by default)
 
 import { writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
@@ -19,12 +19,12 @@ export const TOPICS = [
   ['Medicinas', /aportaci[oó]n farmac[eé]utica|copago/i],
 ];
 
-// Solo disposiciones generales (1) y otras disposiciones (3): ahí salen las normas y las cuantías
+// Only general provisions (1) and other provisions (3): that is where rules and amounts are published
 const SECTIONS = new Set(['1', '3']);
 
 const asList = (x) => (x == null ? [] : Array.isArray(x) ? x : [x]);
 
-/** Las disposiciones de un sumario que tocan algún tema, con el tema */
+/** The provisions in a summary that touch a topic, with the topic*/
 export function search(summary) {
   const found = [];
   for (const journal of asList(summary?.data?.sumario?.diario)) {
@@ -46,7 +46,7 @@ const date = (d) => d.toISOString().slice(0, 10).replaceAll('-', '');
 
 async function summaryOf(d) {
   const r = await fetch(`https://www.boe.es/datosabiertos/api/boe/sumario/${date(d)}`, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(30000) });
-  if (r.status === 404) return null; // domingo o día sin BOE
+  if (r.status === 404) return null; // Sunday or a day without BOE
   if (!r.ok) throw new Error(`BOE ${date(d)}: HTTP ${r.status}`);
   return r.json();
 }
@@ -64,10 +64,10 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     }
   }
   const text = all.length
-    ? `En el BOE de los últimos ${days} días hay disposiciones que pueden cambiar cifras de la web. Revísalas y actualiza \`assets/js/data/figures.js\` si hace falta:\n\n${all
+    ? `En el BOE de los últimos ${days} días hay disposiciones que pueden cambiar cifras de la web. Revísalas y actualiza \`site/assets/js/data/figures.js\` si hace falta:\n\n${all
         .map((x) => `- **${x.topic}** (${x.date.slice(6)}/${x.date.slice(4, 6)}): [${x.title}](${x.url}) — ${x.department}`)
         .join('\n')}\n`
     : '';
-  await writeFile('boe-novedades.md', text);
-  console.log(all.length ? text : `Nada relevante en el BOE de los últimos ${days} días.`);
+  await writeFile('boe-news.md', text);
+  console.log(all.length ? text : `Nothing relevant in the BOE in the last ${days} days.`);
 }

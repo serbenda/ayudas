@@ -1,4 +1,4 @@
-// Página de fuentes: tabla con las cifras que usa la web
+// Sources page: table with the figures the site uses
 
 import { FIGURES, FIGURE_SOURCES } from '../data/figures.js';
 import { renderHistory } from '../ui/evolution-chart.js';

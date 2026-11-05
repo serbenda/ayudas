@@ -1,6 +1,6 @@
-// Service worker de ayudas: la web funciona sin conexión.
-// Páginas, estilos y scripts: primero la red (así nunca se mezclan versiones); sin conexión, lo último guardado.
-// Fuente e imágenes: lo guardado, y se actualiza en segundo plano.
+// ayudas service worker: the site works offline.
+// Pages, styles and scripts: network first (so versions never mix); offline, the last saved copy.
+// Font and images: the saved copy, updated in the background.
 
 const VERSION = 'ayudas-v8';
 const CORE_FILES = [

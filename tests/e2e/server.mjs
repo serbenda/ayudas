@@ -1,5 +1,5 @@
-// Servidor estático mínimo que imita GitHub Pages: sirve _site/ (o RAIZ_WEB) en la raíz, como ayudas.bendi.dev.
-// Lo usan los tests de navegador.
+// Minimal static server that mimics GitHub Pages: serves _site/ (or SITE_ROOT) at the root, like ayudas.bendi.dev.
+// Used by the browser tests.
 
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
@@ -21,7 +21,7 @@ export async function start(root = process.env.SITE_ROOT ?? new URL('../../_site
       res.writeHead(200, { 'Content-Type': TYPES[extname(routePath)] ?? 'application/octet-stream', 'Cache-Control': 'max-age=600' });
       res.end(await readFile(routePath));
     } catch {
-      // Como GitHub Pages: la página 404 propia, con su código
+      // Like GitHub Pages: its own 404 page, with its status code
       try {
         res.writeHead(404, { 'Content-Type': TYPES['.html'] }).end(await readFile(join(root, '404.html')));
       } catch {

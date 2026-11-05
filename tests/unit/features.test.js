@@ -12,19 +12,19 @@ import { regionPanel } from '../../site/assets/js/ui/region-panel.js';
 const profile = (c) => ({ ...emptyProfile(), ...c });
 const ids = (p) => evaluate(profile(p)).map((r) => r.id);
 
-test('cada comunidad tiene su forma en el mapa, su renta mínima y sus pasos', () => {
+test('every region has its map shape, its minimum income and its steps', () => {
   for (const c of REGIONS) {
-    assert.ok(SHAPES[c.id] && CENTRES[c.id], `falta ${c.id} en el mapa`);
-    assert.ok(MINIMUM_INCOME[c.id]?.name && /^https:\/\//.test(MINIMUM_INCOME[c.id].website), `falta la renta de ${c.id}`);
+    assert.ok(SHAPES[c.id] && CENTRES[c.id], `${c.id} missing from the map`);
+    assert.ok(MINIMUM_INCOME[c.id]?.name && /^https:\/\//.test(MINIMUM_INCOME[c.id].website), `missing minimum income for ${c.id}`);
     const steps = procedureOf('renta-minima', c.id).steps;
-    assert.ok(steps.length >= 2, `pocos pasos en ${c.id}`);
-    if (c.id !== 'madrid') assert.notDeepEqual(steps, procedureOf('renta-minima', null).steps, `${c.id} sin pasos propios`);
+    assert.ok(steps.length >= 2, `too few steps in ${c.id}`);
+    if (c.id !== 'madrid') assert.notDeepEqual(steps, procedureOf('renta-minima', null).steps, `${c.id} has no own steps`);
     for (const id of [...benefitsOf(c.id).common, ...benefitsOf(c.id).own, ...benefitsOf(c.id).capital]) assert.ok(BY_ID[id], `${id} no existe`);
     assert.match(regionPanel(c.id), new RegExp(MINIMUM_INCOME[c.id].name.replace(/[()]/g, '\\$&')));
   }
 });
 
-test('Madrid enseña sus ayudas propias y las de la capital', () => {
+test("Madrid shows its own benefits and the capital's", () => {
   const m = benefitsOf('madrid');
   assert.ok(m.own.includes('rmi-madrid') && m.capital.includes('tarjeta-familias'));
   assert.ok(!m.common.includes('renta-minima'));
@@ -32,7 +32,7 @@ test('Madrid enseña sus ayudas propias y las de la capital', () => {
   assert.equal(benefitsOf('ceuta').own.length, 0);
 });
 
-test('nuevas ayudas: autónomos, retornados, vivienda y salud', () => {
+test('new benefits: self-employed, returnees, housing and health', () => {
   assert.ok(ids({ startingBusiness: true }).includes('tarifa-plana-autonomos'));
   assert.ok(!ids({}).includes('tarifa-plana-autonomos'));
   assert.ok(ids({ situation: 'autonomo' }).includes('cese-actividad'));
@@ -45,7 +45,7 @@ test('nuevas ayudas: autónomos, retornados, vivienda y salud', () => {
   for (const id of ['tarifa-plana-autonomos', 'cese-actividad', 'subsidio-retornados', 'aval-ico-vivienda', 'ortoprotesica']) assert.ok(procedureOf(id, null).steps.length >= 3, id);
 });
 
-test('recordatorios .ics: válido, con la fecha siguiente y solo los que tocan', () => {
+test('.ics reminders: valid, with the next date and only the relevant ones', () => {
   const today = new Date(2026, 10, 5);
   assert.deepEqual(remindersFor([]).map((r) => r.id), ['revisar']);
   assert.ok(remindersFor(['pnc-jubilacion']).some((r) => r.id === 'pnc'));
@@ -59,7 +59,7 @@ test('recordatorios .ics: válido, con la fecha siguiente y solo los que tocan',
   for (const line of ics.split('\r\n')) assert.ok(line.length <= 75, line);
 });
 
-test('enlace con respuestas: ida y vuelta, y rechaza lo raro', () => {
+test('answers link: round trip, and rejects anything odd', () => {
   const data = { age: '72', region: 'galicia', widowed: true, 'contributedOneYear': 'si', empty: '', no: false };
   assert.deepEqual(fromLink(toLink(data)), { age: '72', region: 'galicia', widowed: true, 'contributedOneYear': 'si' });
   assert.equal(fromLink('esto no es base64 ¿'), null);
@@ -67,22 +67,22 @@ test('enlace con respuestas: ida y vuelta, y rechaza lo raro', () => {
   assert.deepEqual(fromLink(Buffer.from(JSON.stringify({ '<x>': 'y', ok: { a: 1 } })).toString('base64url')), {});
 });
 
-test('cada comunidad tiene cuánto da su renta, sus deducciones y quién valora la dependencia', async () => {
+test('every region has its income amount, its deductions and who assesses dependency', async () => {
   const { minimumIncomeAmount } = await import('../../site/assets/js/data/regions.js');
   const { deductionsOf } = await import('../../site/assets/js/data/deductions.js');
   for (const c of REGIONS) {
-    assert.match(minimumIncomeAmount(c.id) ?? '', /Hasta [\d.,]+ € al mes/, `cuantía de ${c.id}`);
-    if (!['ceuta', 'melilla'].includes(c.id)) assert.ok(deductionsOf(c.id), `deducciones de ${c.id}`);
+    assert.match(minimumIncomeAmount(c.id) ?? '', /Hasta [\d.,]+ € al mes/, `amount for ${c.id}`);
+    if (!['ceuta', 'melilla'].includes(c.id)) assert.ok(deductionsOf(c.id), `deductions for ${c.id}`);
     if (c.id !== 'madrid') {
-      assert.notDeepEqual(procedureOf('dependencia-valoracion', c.id).steps, procedureOf('dependencia-valoracion', null).steps, `dependencia en ${c.id}`);
-      assert.notDeepEqual(procedureOf('certificado-discapacidad', c.id).steps, procedureOf('certificado-discapacidad', null).steps, `discapacidad en ${c.id}`);
+      assert.notDeepEqual(procedureOf('dependencia-valoracion', c.id).steps, procedureOf('dependencia-valoracion', null).steps, `dependency in ${c.id}`);
+      assert.notDeepEqual(procedureOf('certificado-discapacidad', c.id).steps, procedureOf('certificado-discapacidad', null).steps, `disability in ${c.id}`);
     }
   }
   assert.ok(deductionsOf('navarra').foral);
   assert.ok(procedureOf('renta-minima', 'galicia').phones.includes('galicia'));
 });
 
-test('ayudas de grandes ciudades: solo si vives allí', () => {
+test('large city benefits: only if you live there', () => {
   const children = { children: { under3: 0, age3to5: 1, age6to17: 0 } };
   assert.ok(ids({ region: 'cataluna', city: 'barcelona', ...children }).includes('fons-infancia-barcelona'));
   assert.ok(!ids({ region: 'cataluna', city: null, ...children }).includes('fons-infancia-barcelona'));
@@ -93,7 +93,7 @@ test('ayudas de grandes ciudades: solo si vives allí', () => {
   assert.ok(!ids({ region: 'galicia', situation: 'paro-sin' }).includes('aes-euskadi'));
 });
 
-test('guías en otros idiomas: completas y con los mismos apartados', async () => {
+test('guides in other languages: complete and with the same sections', async () => {
   const { LANGUAGES } = await import('../../scripts/build/languages.mjs');
   const keys = Object.keys(LANGUAGES.en).sort();
   for (const [code, t] of Object.entries(LANGUAGES)) {
@@ -107,7 +107,7 @@ test('guías en otros idiomas: completas y con los mismos apartados', async () =
   assert.match(LANGUAGES.va.benefits.map(([n]) => n).join(), /Renta Valenciana/);
 });
 
-test('voz: elige la más humana de cada navegador y lee frase a frase', async () => {
+test('voice: picks the most human one in each browser and reads sentence by sentence', async () => {
   const { bestVoice, sentences, score } = await import('../../site/assets/js/lib/voice.js');
   const v = (name, lang, extra = {}) => ({ name, lang, voiceURI: name, ...extra });
   const edge = [v('Microsoft Helena - Spanish (Spain)', 'es-ES', { default: true }), v('Microsoft Elvira Online (Natural) - Spanish (Spain)', 'es-ES'), v('Microsoft Sonia Online (Natural) - English (United Kingdom)', 'en-GB')];
@@ -123,29 +123,29 @@ test('voz: elige la más humana de cada navegador y lee frase a frase', async ()
   assert.deepEqual(sentences('Cuesta 1.221 € al mes.'), ['Cuesta 1.221 € al mes.']);
 });
 
-test('palabras difíciles: se marcan una vez, enteras y nunca dentro de una web', async () => {
+test('difficult words: marked once, as whole words and never inside a web address', async () => {
   const { markTerms, termsIn, GLOSSARY } = await import('../../site/assets/js/data/guide.js');
   const used = new Set();
   const html = markTerms('El IPREM y otra vez el IPREM. Entra en imv.seg-social.es para pedir el IMV.', used);
   assert.equal(html.match(/data-term="IPREM"/g).length, 1);
   assert.equal(html.match(/data-term="IMV"/g).length, 1);
   assert.ok(html.includes('imv.seg-social.es'));
-  assert.equal(markTerms('Más IPREM.', used), 'Más IPREM.', 'ya marcado en la misma ficha');
-  assert.deepEqual(termsIn('empadronados'), [], 'no dentro de otra palabra');
-  for (const [k, d] of Object.entries(GLOSSARY)) assert.ok(d.length > 15 && d.length < 260 && /\.$/.test(d), `explicación de ${k}`);
+  assert.equal(markTerms('Más IPREM.', used), 'Más IPREM.', 'already marked in the same card');
+  assert.deepEqual(termsIn('empadronados'), [], 'not inside another word');
+  for (const [k, d] of Object.entries(GLOSSARY)) assert.ok(d.length > 15 && d.length < 260 && /\.$/.test(d), `explanation for ${k}`);
 });
 
-test('ayudas propias de cada comunidad: ficha, regla, pasos y salen solo allí', async () => {
+test('regional benefits: card, rule, steps and only shown there', async () => {
   const { REGIONAL_BENEFITS } = await import('../../site/assets/js/data/regional-benefits.js');
   const common = new Set(['madrid', 'ceuta', 'melilla']);
   const withOwn = new Set(REGIONAL_BENEFITS.map((a) => a.region));
-  for (const c of REGIONS) if (!common.has(c.id)) assert.ok(withOwn.has(c.id), `${c.id} sin ayudas propias`);
+  for (const c of REGIONS) if (!common.has(c.id)) assert.ok(withOwn.has(c.id), `${c.id} has no own benefits`);
   const familia = { baby: true, children: { under3: 1, age3to5: 0, age6to17: 1 }, largeFamily: 'especial', singleParent: true, pension: 'pnc', situation: 'cuenta-ajena', householdIncome: 20000 };
   for (const a of REGIONAL_BENEFITS) {
     assert.ok(BY_ID[a.id] && procedureOf(a.id, a.region).steps.length >= 2, a.id);
     assert.ok(/^https:\/\//.test(a.link.url), a.id);
     const other = a.region === 'galicia' ? 'rioja' : 'galicia';
-    assert.ok(!ids({ ...familia, region: other }).includes(a.id), `${a.id} no debe salir en ${other}`);
+    assert.ok(!ids({ ...familia, region: other }).includes(a.id), `${a.id} must not show in ${other}`);
   }
   assert.ok(ids({ ...familia, region: 'galicia' }).includes('tarxeta-benvida'));
   assert.ok(ids({ ...familia, region: 'pais-vasco' }).includes('ayuda-hijos-euskadi'));
@@ -153,7 +153,7 @@ test('ayudas propias de cada comunidad: ficha, regla, pasos y salen solo allí',
   assert.ok(ids({ ...familia, region: 'murcia' }).includes('familias-especiales-murcia'));
 });
 
-test('vigilancia: fichas por revisar, convocatorias y salario mínimo del BOE', async () => {
+test('watchers: cards to review, calls and the minimum wage from the BOE', async () => {
   const { toReview, CHECK_ON } = await import('../../site/assets/js/data/review.js');
   const { WATCHLIST, inRegion } = await import('../../scripts/watch/calls.mjs');
   const { smiFromText } = await import('../../scripts/watch/january.mjs');
@@ -164,7 +164,7 @@ test('vigilancia: fichas por revisar, convocatorias y salario mínimo del BOE', 
   for (const [, , id] of WATCHLIST) assert.ok(BY_ID[id], id);
   const resp = { content: [{ descripcion: 'Tarxeta Benvida 2027', nivel1: 'AUTONOMICA', nivel2: 'GALICIA' }, { descripcion: 'Otra', nivel2: 'ARAGÓN' }] };
   assert.equal(inRegion(resp, 'GALICIA').length, 1);
-  assert.equal(inRegion(resp, 'ARAGON').length, 1, 'sin tildes');
+  assert.equal(inRegion(resp, 'ARAGON').length, 1, 'without accents');
   assert.equal(inRegion({}, 'GALICIA').length, 0);
   assert.equal(smiFromText('el salario mínimo queda fijado en 1.260,50 euros/mes'), 1260.5);
   assert.equal(smiFromText('sin cifras'), null);

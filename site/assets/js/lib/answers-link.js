@@ -1,5 +1,5 @@
-// Respuestas dentro de un enlace: JSON en base64 (apto para URL). Solo se guarda lo que no está vacío.
-// Va después de «#», así que el navegador nunca lo envía al servidor.
+// Answers inside a link: JSON in base64 (URL-safe). Only non-empty values are kept.
+// It goes after «#», so the browser never sends it to the server.
 
 export function toLink(data) {
   const useful = Object.fromEntries(Object.entries(data).filter(([, v]) => v !== '' && v !== false && v != null));
@@ -14,7 +14,7 @@ export function fromLink(text) {
     const bin = atob(text.replace(/-/g, '+').replace(/_/g, '/'));
     const data = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0))));
     if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
-    // Solo textos, números y casillas: nada que pueda ejecutarse
+    // Only text, numbers and checkboxes: nothing that could be executed
     return Object.fromEntries(Object.entries(data).filter(([k, v]) => /^[\w\-ñ]+$/u.test(k) && ['string', 'number', 'boolean'].includes(typeof v)).map(([k, v]) => [k, typeof v === 'string' ? v.slice(0, 200) : v]));
   } catch {
     return null;

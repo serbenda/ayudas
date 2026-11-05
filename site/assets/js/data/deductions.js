@@ -1,7 +1,7 @@
-// Deducciones autonómicas del IRPF que más interesan a familias, mayores, personas con discapacidad e inquilinos.
-// Nombres: guía de deducciones autonómicas de la Agencia Tributaria (Renta 2025).
-// Cantidades: Agencia Tributaria (Madrid, Renta 2025) y «Tributación autonómica. Medidas 2026» del Ministerio de Hacienda (Andalucía, Cataluña, Galicia).
-// Navarra y el País Vasco tienen su propio IRPF (régimen foral): sus deducciones están en su Hacienda foral.
+// Regional income tax (IRPF) deductions most relevant to families, older people, people with disabilities and tenants.
+// Names: the Tax Agency's guide to regional deductions (2025 tax return).
+// Amounts: Tax Agency (Madrid, 2025 tax return) and «Tributación autonómica. Medidas 2026» from the Ministry of Finance (Andalusia, Catalonia, Galicia).
+// Navarre and the Basque Country have their own income tax (foral system): their deductions are with their foral treasury.
 
 const AEAT = 'https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025-deducciones-autonomicas/guia-deducciones-autonomicas/';
 
@@ -62,7 +62,7 @@ export const FORAL_REGIONS = {
   'pais-vasco': { name: 'la Hacienda Foral de tu territorio (Álava, Bizkaia o Gipuzkoa)', url: 'https://www.euskadi.eus/' },
 };
 
-/** Lo que se enseña en la ficha de deducciones autonómicas para una comunidad, o null */
+/** What the regional deductions card shows for a region, or null*/
 export function deductionsOf(region) {
   if (FORAL_REGIONS[region]) return { foral: FORAL_REGIONS[region] };
   const d = REGIONAL_DEDUCTIONS[region];

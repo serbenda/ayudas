@@ -1,8 +1,8 @@
-// Lo que cambia de una comunidad a otra: cómo se llama su renta mínima y dónde se pide.
-// Revisado en las webs oficiales de cada comunidad (noviembre de 2026).
-// importe: lo máximo al mes para una persona sola; maximo: el tope para los hogares más grandes; anio: año de la cifra.
-// Cifras de 2025: Informe de Rentas Mínimas de Inserción 2025 del Ministerio de Derechos Sociales (cuadro 1 y apartado 3.3).
-// Cifras de 2026: Andalucía y Canarias (igual que el IMV), Baleares (Govern, desde junio), Navarra (Orden Foral 5/2026) y Madrid (tope del SMI).
+// What changes from one region to another: what its minimum income is called and where to apply.
+// Reviewed on each region's official website (November 2026).
+// payment: the monthly maximum for a person living alone; maximum: the cap for the largest households; year: year of the figure.
+// 2025 figures: 2025 Minimum Insertion Income Report from the Ministry of Social Rights (table 1 and section 3.3).
+// 2026 figures: Andalusia and Canary Islands (same as the IMV), Balearic Islands (Govern, from June), Navarre (Orden Foral 5/2026) and Madrid (minimum wage cap).
 
 import { euros } from '../lib/format.js';
 import { BY_REGION } from './regional-benefits.js';
@@ -29,13 +29,13 @@ export const MINIMUM_INCOME = {
   melilla: { payment: 328, maximum: 656, year: 2025, name: 'Ingreso Melillense de Integración', website: 'https://www.melilla.es/', note: 'Pregunta en los servicios sociales de la Ciudad.' },
 };
 
-// Ayudas que se piden en la comunidad (o que la comunidad gestiona aunque sean estatales)
+// Benefits applied for in the region (or managed by the region even if they are national)
 export const MANAGED_BY_REGION = [
   'renta-minima', 'pnc-jubilacion', 'pnc-invalidez', 'pnc-alquiler', 'dependencia-valoracion', 'dependencia-prestacion', 'dependencia-servicios',
   'certificado-discapacidad', 'titulo-familia-numerosa', 'escuela-infantil', 'alquiler-joven', 'alquiler-general', 'bono-termico', 'deducciones-ccaa',
 ];
 
-// Grandes ciudades con ayudas propias (además de Madrid, que tiene su propia pregunta)
+// Large cities with their own benefits (besides Madrid, which has its own question)
 export const CITIES = {
   cataluna: { id: 'barcelona', name: 'Barcelona' },
   valencia: { id: 'valencia', name: 'València' },
@@ -43,7 +43,7 @@ export const CITIES = {
   andalucia: { id: 'malaga', name: 'Málaga' },
 };
 
-// Ayudas propias de una comunidad o de su capital
+// A region's or its capital's own benefits
 export const OWN_BENEFITS = {
   madrid: { regional: ['madrid-natalidad', 'rmi-madrid', 'agua-canal', 'vivienda-social-madrid', 'transporte-madrid'], capital: ['tarjeta-familias', 'escuela-infantil-madrid', 'teleasistencia-madrid'], cityName: 'la ciudad de Madrid' },
   cataluna: { regional: [], capital: ['fons-infancia-barcelona'], cityName: 'Barcelona' },
@@ -54,7 +54,7 @@ export const OWN_BENEFITS = {
 };
 
 
-/** Frase con lo que da la renta mínima de una comunidad */
+/** Sentence with what a region's minimum income pays*/
 export function minimumIncomeAmount(region) {
   const r = MINIMUM_INCOME[region];
   if (!r?.payment) return null;
@@ -64,7 +64,7 @@ export function minimumIncomeAmount(region) {
 export function benefitsOf(region) {
   const base = OWN_BENEFITS[region];
   const own = base || BY_REGION[region] ? { ...base, regional: [...(base?.regional ?? []), ...(BY_REGION[region] ?? [])], capital: base?.capital ?? [] } : undefined;
-  // En Madrid la RMI propia sustituye a la ficha general de renta mínima
+  // In Madrid its own RMI replaces the general minimum income card
   const common = own?.regional.includes('rmi-madrid') ? MANAGED_BY_REGION.filter((id) => id !== 'renta-minima') : MANAGED_BY_REGION;
   return { common, own: own?.regional ?? [], capital: own?.capital ?? [], cityName: own?.cityName };
 }

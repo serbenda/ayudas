@@ -1,5 +1,5 @@
-// Contornos de las comunidades autónomas para el mapa (SVG, 1000 de ancho). Canarias va en un recuadro.
-// Generado a partir de spain-communities.geojson de Code for America (click_that_hood, licencia MIT), simplificado.
+// Outlines of the regions for the map (SVG, 1000 wide). The Canary Islands go in an inset box.
+// Generated from spain-communities.geojson by Code for America (click_that_hood, MIT licence), simplified.
 
 export const MAP = { width: 1000, height: 955, canarias: {"x": 12, "y": 773.1, "w": 285.9, "h": 158.2} };
 

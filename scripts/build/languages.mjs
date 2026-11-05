@@ -1,7 +1,7 @@
-// Guías en otros idiomas: lo esencial para empezar, con los nombres oficiales en castellano
-// para poder pedirlos en la ventanilla. Se generan al publicar (scripts/paginas.mjs).
-// Los nombres de las ayudas se dejan en castellano a propósito: es como se llaman en la ventanilla.
-// Lenguas oficiales de España (catalán, valenciano, gallego y euskera) y el inglés.
+// Guides in other languages: the essentials to get started, with the official names in Spanish
+// so people can ask for them at the counter. Generated at build time (scripts/build/pages.mjs).
+// Benefit names stay in Spanish on purpose: that is what they are called at the counter.
+// Official languages of Spain (Catalan, Valencian, Galician and Basque) and English.
 
 import { FIGURES as C } from '../../site/assets/js/data/figures.js';
 import { euros } from '../../site/assets/js/lib/format.js';
@@ -10,7 +10,7 @@ const imv = euros(C.imv.base);
 const pnc = euros(C.pnc.perMonth ?? C.pnc.annual / 14);
 const capi = euros(C.capi.under3);
 
-// La frase para enseñar en la ventanilla va siempre en castellano
+// The sentence to show at the counter is always in Spanish
 export const COUNTER_SENTENCE = 'Hola. No hablo bien español. Necesito ayuda para pedir ayudas sociales. ¿Me puede atender un trabajador social o un intérprete, por favor?';
 
 export const LANGUAGES = {

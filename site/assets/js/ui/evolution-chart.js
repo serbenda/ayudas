@@ -1,5 +1,5 @@
-// Gráfico de líneas: cómo han subido las ayudas (euros al mes). SVG para las líneas, HTML para los textos.
-// Un solo eje (todo en €/mes), leyenda + etiquetas directas, tooltip al pasar el dedo y tabla con los datos.
+// Line chart: how benefits have risen (euros per month). SVG for the lines, HTML for the text.
+// A single axis (everything in €/month), legend + direct labels, tooltip on touch and a data table.
 
 import { HISTORY } from '../data/figures.js';
 import { euros } from '../lib/format.js';
@@ -23,7 +23,7 @@ export function renderHistory(box) {
     })
     .join('');
   const last = series.map((s) => ({ s, v: s.valueList.at(-1) }));
-  // Etiquetas al final de cada línea, separadas para que no se pisen
+  // Labels at the end of each line, spaced so they do not overlap
   const positions = last.map((u) => ({ ...u, top: y(u.v) })).sort((a, b) => a.top - b.top);
   for (let i = 1; i < positions.length; i++) if (positions[i].top - positions[i - 1].top < 34) positions[i].top = positions[i - 1].top + 34;
 
@@ -57,7 +57,7 @@ export function renderHistory(box) {
       <p class="note">${series.map((s) => `${esc(s.name)}: ${esc(s.note)}.`).join(' ')}</p>
     </details>`;
 
-  // Tooltip: el año más cercano al dedo o al ratón
+  // Tooltip: the year closest to the finger or the mouse
   const canvas = box.querySelector('.canvas');
   const tip = box.querySelector('.tooltip');
   const cursor = box.querySelector('.cursor');

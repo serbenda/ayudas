@@ -1,5 +1,5 @@
-// Ejemplos con personas y números, calculados con las cifras de este año (cambian solos cuando cambian las cifras).
-// Y tablas «cuánto según tu hogar» para las ayudas que dependen del tamaño de la familia.
+// Examples with people and numbers, calculated with this year's figures (they update when the figures change).
+// And «how much for your household» tables for benefits that depend on the size of the family.
 
 import { FIGURES as C } from './figures.js';
 import { guaranteedIncome, emptyProfile, minimumPension, socialDiscountLimit } from '../lib/rules.js';
@@ -8,7 +8,7 @@ import { euros, percent } from '../lib/format.js';
 const p = (changes) => ({ ...emptyProfile(), ...changes, children: { ...emptyProfile().children, ...(changes.children ?? {}) } });
 const r2 = (n) => Math.round(n * 100) / 100;
 
-/** Un ejemplo en frases cortas: quién es, qué cobra y por qué */
+/** An example in short sentences: who they are, what they get and why*/
 export const EXAMPLES = {
   imv() {
     const rg = guaranteedIncome(p({ children: { age3to5: 1 }, singleParent: true }));
@@ -82,7 +82,7 @@ export const EXAMPLES = {
   },
 };
 
-/** Tablas «cuánto según tu hogar»: filas con etiqueta y cifra al mes, para dibujar barras */
+/** «How much for your household» tables: rows with a label and a monthly figure, to draw bars*/
 export const TABLES = {
   imv() {
     const rows = [1, 2, 3, 4, 5].map((n) => ({

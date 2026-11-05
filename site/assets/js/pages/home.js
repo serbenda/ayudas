@@ -1,5 +1,5 @@
-// Portada: el cuestionario por pasos y la lista de ayudas que salen.
-// Nada se envía: las respuestas solo viven en esta página (y en el navegador si marcas «recordar»).
+// Home page: the step-by-step questionnaire and the list of benefits that come up.
+// Nothing is sent: answers only live in this page (and in the browser if you tick «recordar»).
 
 import { evaluate, emptyProfile, totalChildren, whereToStart, estimatedMoney } from '../lib/rules.js';
 import { CITIES } from '../data/regions.js';
@@ -35,11 +35,11 @@ let visited = new Set([1]);
 let activeFilter = 'todas';
 let singleParentTouched = false;
 
-// ── Comunidades ─────────────────────────────────────────────────────────
+// ── Regions ────────────────────────────────────────────────────────────
 const regionSelect = document.getElementById('region');
 for (const c of REGIONS) regionSelect.add(new Option(c.name, c.id));
 
-// ── Pasos ───────────────────────────────────────────────────────────────
+// ── Steps ──────────────────────────────────────────────────────────────
 function goTo(n, { focus = true } = {}) {
   currentStep = Math.min(Math.max(n, 1), steps.length);
   visited.add(currentStep);
@@ -64,7 +64,7 @@ back.addEventListener('click', () => goTo(currentStep - 1));
 next.addEventListener('click', () => (currentStep === steps.length ? showResults() : goTo(currentStep + 1)));
 skip.addEventListener('click', showResults);
 
-// ── Contadores − / + ────────────────────────────────────────────────────
+// ── − / + counters ─────────────────────────────────────────────────────
 form.addEventListener('click', (e) => {
   const b = e.target.closest('[data-increment], [data-decrement]');
   if (!b) return;
@@ -75,7 +75,7 @@ form.addEventListener('click', (e) => {
   input.dispatchEvent(new Event('input', { bubbles: true }));
 });
 
-// ── Personas a cargo ────────────────────────────────────────────────────
+// ── People you care for ────────────────────────────────────────────────
 function personTemplate(i) {
   const n = i + 1;
   return `
@@ -125,7 +125,7 @@ function adjustPeople() {
   for (let i = currentOnes; i > n; i--) peopleBox.lastElementChild.remove();
 }
 
-// ── Leer el formulario ──────────────────────────────────────────────────
+// ── Reading the form ───────────────────────────────────────────────────
 const fieldValue = (name) => form.elements[name]?.value ?? '';
 const radio = (name) => form.querySelector(`input[name="${name}"]:checked`)?.value ?? null;
 const yesNo = (name) => {
@@ -136,7 +136,7 @@ const integer = (name, definition = 0) => {
   const n = parseInt(fieldValue(name), 10);
   return Number.isFinite(n) && n >= 0 ? n : definition;
 };
-// ¿La pregunta está en juego? Solo cuentan las que se esconden por no aplicar, no las de otros pasos.
+// Does the question count? Only those hidden because they do not apply are skipped, not those on other steps.
 const visible = (el) => !el.closest('[data-show-if][hidden]');
 
 export function readProfile() {
@@ -187,7 +187,7 @@ export function readProfile() {
   return p;
 }
 
-// ── Preguntas que solo salen cuando hacen falta ─────────────────────────
+// ── Questions that only show when needed ───────────────────────────────
 function updateConditions() {
   const p = readProfile();
   const n = totalChildren(p);
@@ -207,7 +207,7 @@ function updateConditions() {
   };
   for (const el of form.querySelectorAll('[data-show-if]')) el.hidden = !rules[el.dataset.showIf];
   if (CITIES[p.region]) document.getElementById('city-name').textContent = `la ciudad de ${CITIES[p.region].name}`;
-  // Una persona sola con hijos: casi siempre es monoparental (se puede desmarcar)
+  // A person living alone with children: almost always single-parent (can be unticked)
   if (rules['single-parent'] && !singleParentTouched && radio('partner') === 'no' && p.adults === 1) form.singleParent.checked = true;
 }
 
@@ -232,7 +232,7 @@ function onChange() {
   save();
 }
 
-// ── Resultados ──────────────────────────────────────────────────────────
+// ── Results ────────────────────────────────────────────────────────────
 function showResults() {
   updateConditions();
   renderPhones();
@@ -254,10 +254,10 @@ function render() {
     ? `Con lo que has contestado salen ${all.length} ${all.length === 1 ? 'ayuda' : 'ayudas'}. Pulsa cada una para ver cómo se pide, paso a paso.`
     : 'Con lo que has contestado no sale ninguna ayuda. Prueba a completar más preguntas: los ingresos y quién vive contigo cambian mucho el resultado.';
 
-  // Lo que podría entrar en casa: lo que ya entra + cada ayuda, en una barra
+  // What could come into the household: what already comes in + each benefit, in one bar
   renderMoney(p, all);
 
-  // Por dónde empezar
+  // Where to start
   const first = whereToStart(all);
   const begin = document.getElementById('start');
   begin.hidden = !first.length;
@@ -268,7 +268,7 @@ function render() {
     })
     .join('');
 
-  // Papeles de todas las ayudas que salen
+  // Documents for every benefit that came up
   const papers = papersFor(all.map((r) => r.id));
   document.getElementById('papers-block').hidden = !papers.length;
   document.getElementById('papers').innerHTML = papers
@@ -319,7 +319,7 @@ function renderMoney(p, all) {
   ].join('');
 }
 
-// Abrir una ayuda desde «Por dónde empezar»
+// Open a benefit from «Por dónde empezar»
 document.getElementById('start-list').addEventListener('click', (e) => {
   const a = e.target.closest('[data-open-page]');
   if (!a) return;
@@ -327,7 +327,7 @@ document.getElementById('start-list').addEventListener('click', (e) => {
   if (d) d.open = true;
 });
 
-// Seguimiento: cómo va cada ayuda
+// Tracking: how each application is going
 list.addEventListener('change', (e) => {
   const s = e.target.closest('[data-track]');
   if (!s) return;
@@ -359,7 +359,7 @@ const resultIds = () => {
 };
 document.getElementById('calendar').addEventListener('click', () => downloadCalendar(resultIds()));
 
-// Guardar en un enlace: las respuestas van dentro del enlace (después de #), que no llega a ningún servidor
+// Save in a link: the answers go inside the link (after #), which never reaches any server
 const linkStatus = document.getElementById('link-status');
 document.getElementById('answers-link').addEventListener('click', async () => {
   const url = `${location.origin}${location.pathname}#r=${toLink(answers())}`;
@@ -371,7 +371,7 @@ document.getElementById('answers-link').addEventListener('click', async () => {
   }
 });
 
-// Modo profesional: para servicios sociales y entidades que orientan a varias personas
+// Professional mode: for social services and organisations that advise several people
 const PRO = 'pro' in document.documentElement.dataset;
 const box = document.getElementById('pro');
 if (PRO) {
@@ -403,10 +403,10 @@ document.getElementById('clear').addEventListener('click', () => {
   updateConditions();
   goTo(1);
 });
-// Al imprimir, todas las ayudas abiertas
+// When printing, every benefit open
 addEventListener('beforeprint', () => results.querySelectorAll('details').forEach((d) => (d.open = true)));
 
-// ── Recordar respuestas (solo si se marca) ──────────────────────────────
+// ── Remember answers (only if ticked) ──────────────────────────────────
 function answers() {
   const data = {};
   for (const el of form.elements) {
@@ -457,7 +457,7 @@ remember.addEventListener('change', () => {
   } catch {}
 });
 
-// ── Ejemplos ────────────────────────────────────────────────────────────
+// ── Examples ───────────────────────────────────────────────────────────
 const EXAMPLES = {
   familia: { age: '29', region: 'madrid', madridCity: 'si', residence: 'si', situation: 'cuenta-ajena', partner: 'si', adults: '2', 'children-age3to5': '1', baby: true, householdIncome: '28.000', wealth: 'bajo', housing: 'alquiler' },
   jubilada: { age: '74', region: 'madrid', madridCity: 'si', residence: 'si', 'u-soledad': true, situation: 'pensionista', partner: 'no', adults: '1', widowed: true, householdIncome: '10.500', wealth: 'bajo', housing: 'propia', pension: 'viudedad', pensionMonthly: '720', pensionSince2021: 'si', childrenBorn: '3' },
@@ -477,7 +477,7 @@ for (const b of document.querySelectorAll('[data-example]')) {
   });
 }
 
-// ── Necesito ayuda hoy ──────────────────────────────────────────────────
+// ── I need help today ──────────────────────────────────────────────────
 function renderPhones() {
   const madrid = form.region.value === 'madrid';
   const keys = ['emergencias', 'violencia', 'crisis', 'cruzRoja', ...(madrid ? ['madrid012', 'linea010', 'mayoresMadrid'] : []), 'imv'];
@@ -485,7 +485,7 @@ function renderPhones() {
 }
 form.region.addEventListener('change', renderPhones);
 
-// ── Arranque ────────────────────────────────────────────────────────────
+// ── Start-up ───────────────────────────────────────────────────────────
 try {
   const savedAnswers = localStorage.getItem(STORAGE_KEY);
   if (savedAnswers) {
@@ -494,7 +494,7 @@ try {
     remember.checked = true;
   }
 } catch {}
-// Si se abre un enlace con respuestas (#r=…), se rellenan y se quitan de la barra de direcciones
+// If a link with answers is opened (#r=…), they are filled in and removed from the address bar
 const fromLinkAnswers = location.hash.startsWith('#r=') ? fromLink(location.hash.slice(3)) : null;
 if (fromLinkAnswers) {
   fill(fromLinkAnswers);

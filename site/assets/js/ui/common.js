@@ -1,16 +1,16 @@
-// Código común a todas las páginas: contador de visitas y enlaces para avisar de errores.
+// Code shared by every page: visit counter and links to report errors.
 
 import { speak, stop, isSpeaking, canSpeak, voices, voiceFor, setupSettings } from '../lib/voice.js';
 import { GLOSSARY } from '../data/guide.js';
 
-// Funciona sin conexión e instalable en el móvil: guarda la web en el navegador
+// Works offline and can be installed on the phone: stores the site in the browser
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   navigator.serviceWorker.register(new URL('../../../sw.js', import.meta.url), { scope: new URL('../../../', import.meta.url).pathname }).catch(() => {});
 }
 
-// Visitas con GoatCounter: sin cookies ni datos personales. Solo en la web publicada.
-// Las rutas se cuentan como /ayudas/… para que no se mezclen con las de bendi.dev en el panel de visitas.
-// Solo se cuenta la página, nunca las respuestas del cuestionario.
+// Visits with GoatCounter: no cookies or personal data. Only on the published site.
+// Paths are counted as /ayudas/… so they do not mix with bendi.dev's in the visits dashboard.
+// Only the page is counted, never the questionnaire answers.
 if (location.hostname.endsWith('bendi.dev')) {
   window.goatcounter = { ...(window.goatcounter ?? {}), path: (p) => (p.startsWith('/ayudas') ? p : `/ayudas${p}`) };
   const s = document.createElement('script');
@@ -20,8 +20,8 @@ if (location.hostname.endsWith('bendi.dev')) {
   document.head.append(s);
 }
 
-// Avisos (en Fuentes): el enlace a GitHub ya lleva la página de la que vienes y el navegador,
-// para que quien avisa no tenga que explicarlo. No se envía nada: solo se rellena el formulario.
+// Reports (on Sources): the GitHub link already includes the page you came from and the browser,
+// so whoever reports does not have to explain it. Nothing is sent: it only fills in the form.
 const sourcePage = (() => {
   try {
     const r = new URL(document.referrer);
@@ -44,7 +44,7 @@ for (const a of document.querySelectorAll('a[data-notice]')) {
   a.href = u.href;
 }
 
-// Letra grande y lectura fácil: se recuerda en este navegador (no es un dato personal)
+// Large text and easy reading: remembered in this browser (it is not personal data)
 const easyButton = document.getElementById('easy');
 if (easyButton) {
   const renderEasy = () => easyButton.setAttribute('aria-pressed', String('facil' in document.documentElement.dataset));
@@ -60,7 +60,7 @@ if (easyButton) {
   });
 }
 
-// Alto contraste: negro sobre blanco (o al revés en modo oscuro), bordes gruesos y enlaces subrayados
+// High contrast: black on white (or the other way round in dark mode), thick borders and underlined links
 const contrastButton = document.getElementById('contrast');
 if (contrastButton) {
   const render = () => contrastButton.setAttribute('aria-pressed', String('contraste' in document.documentElement.dataset));
@@ -76,9 +76,9 @@ if (contrastButton) {
   });
 }
 
-// Leer en voz alta: cualquier botón con data-read lee su texto, en el idioma de donde está
-// (las guías en otros idiomas se leen en su idioma) y con la voz más humana del aparato
-// data-lang manda (la frase para la ventanilla se lee en castellano aunque el botón esté en otro idioma)
+// Read aloud: any button with data-read reads its text, in the language of where it is
+// (guides in other languages are read in their language) and with the device's most human voice
+// data-lang wins (the sentence for the counter is read in Spanish even if the button is in another language)
 const languageOf = (b) => b.dataset.lang || b.closest('[lang]')?.lang || 'es';
 if (canSpeak) {
   document.addEventListener('click', (e) => {
@@ -87,9 +87,9 @@ if (canSpeak) {
     if (isSpeaking() && b.getAttribute('aria-pressed') === 'true') return stop();
     speak(b.dataset.read, { lang: languageOf(b), button: b });
   });
-  // Si el aparato no tiene ninguna voz para ese idioma, el botón no se enseña
+  // If the device has no voice for that language, the button is not shown
   voices().then(async (list) => {
-    // Sin lista de voces (algunos navegadores no la dan) se deja el botón: leerá con la voz por defecto
+    // Without a list of voices (some browsers do not provide one) the button stays: it will read with the default voice
     if (!list.length) return;
     for (const b of document.querySelectorAll('[data-read]')) if (!(await voiceFor(languageOf(b)))) b.hidden = true;
   });
@@ -101,8 +101,8 @@ if (canSpeak) {
 }
 addEventListener('pagehide', stop);
 
-// Versión para insertar en otras webs (?widget=1): sin cabecera ni pie, enlaces en otra pestaña
-// y la altura se avisa a la página que la contiene para que no salga barra de desplazamiento.
+// Version to embed in other websites (?widget=1): no header or footer, links in a new tab
+// and the height is reported to the host page so no scrollbar appears.
 if ('widget' in document.documentElement.dataset) {
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href]');
@@ -119,7 +119,7 @@ if ('widget' in document.documentElement.dataset) {
   }
 }
 
-// Menús de la barra (Voz e Idioma): solo uno abierto, y se cierran al pulsar fuera o con Escape
+// Top bar menus (Voice and Language): only one open, closed by clicking outside or with Escape
 const menus = [...document.querySelectorAll('.voice-setting, .language-setting')];
 for (const m of menus) m.addEventListener('toggle', () => m.open && menus.forEach((o) => o !== m && (o.open = false)));
 document.addEventListener('click', (e) => menus.forEach((m) => m.open && !m.contains(e.target) && (m.open = false)));
@@ -132,7 +132,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Palabras difíciles: al pulsar una palabra marcada sale debajo qué significa; al volver a pulsar, se esconde
+// Difficult words: tapping a marked word shows what it means below; tapping again hides it
 {
   let n = 0;
   document.addEventListener('click', (e) => {
@@ -155,7 +155,7 @@ document.addEventListener('keydown', (e) => {
     box.innerHTML = `<strong></strong> <span></span> <a href="/palabras/#${encodeURIComponent(b.dataset.term)}">Más palabras</a>`;
     box.querySelector('strong').textContent = `${b.textContent}:`;
     box.querySelector('span').textContent = definition;
-    // La explicación va al final de la frase, para no cortarla
+    // The explanation goes at the end of the sentence, so as not to cut it
     (b.closest('li, p, dd, dt') ?? b.parentElement).append(box);
     b.setAttribute('aria-controls', id);
     b.setAttribute('aria-expanded', 'true');

@@ -1,5 +1,5 @@
-// Crea una página por ayuda (/ayuda/<id>/) y una por comunidad (/comunidad/<id>/) para que se encuentren en buscadores.
-// También rehace sitemap.xml. Uso: node scripts/paginas.mjs [carpeta de salida, por defecto _site]
+// Creates one page per benefit (/ayuda/<id>/) and one per region (/comunidad/<id>/) so search engines can find them.
+// Also rebuilds sitemap.xml. Usage: node scripts/build/pages.mjs [output folder, _site by default]
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -86,7 +86,7 @@ for (const c of REGIONS) {
   });
 }
 
-// Índice de comunidades
+// Region index
 page({
   routePath: '/comunidad/',
   title: 'Ayudas por comunidad autónoma',
@@ -100,7 +100,7 @@ page({
 });
 
 
-// Guías en otros idiomas: misma cabecera con los textos traducidos, y su idioma
+// Guides in other languages: same header with translated texts, and their language
 const TODAY_PHONES = [['112', '112'], ['016', '016'], ['024', '024'], ['900 107 917', 'redCross']];
 for (const [code, t] of Object.entries(LANGUAGES)) {
   let html = template
@@ -150,4 +150,4 @@ ${routes.map((r) => `  <url><loc>${SITE_URL}${r}</loc></url>`).join('\n')}
 </urlset>
 `);
 
-console.log(`${BENEFITS.length} fichas, ${routes.length} direcciones en el mapa del sitio (${Object.keys(BY_ID).length} ayudas).`);
+console.log(`${BENEFITS.length} cards, ${routes.length} URLs in the sitemap (${Object.keys(BY_ID).length} benefits).`);

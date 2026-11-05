@@ -71,7 +71,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 [hidden] { display: none !important; }
 
-/* Cabecera */
+/* Header */
 .header {
   display: flex;
   align-items: center;
@@ -105,7 +105,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 .nav a .icon { opacity: 0.8; }
 .nav a[aria-current='page'] .icon { color: var(--accent); opacity: 1; }
 
-/* Tipografía */
+/* Typography */
 h1, h2, h3, h4 { line-height: 1.1; margin: 0; }
 .headline {
   font-stretch: 118%;
@@ -125,12 +125,12 @@ section + section { margin-top: 3.5rem; }
 .section-title { border-top: 2px solid var(--ink); padding-top: 1rem; margin-bottom: 1.25rem; }
 .section-title p { margin: 0.4rem 0 0; color: var(--muted); max-width: var(--measure); }
 
-/* Iconos: trazos de 24×24 que toman el color del texto */
+/* Icons: 24×24 strokes that take the text colour */
 .icon { width: 1.15em; height: 1.15em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -0.2em; }
 .badge { --size: 2.4rem; display: inline-grid; place-items: center; flex: none; width: var(--size); height: var(--size); border-radius: 50%; background: var(--accent-soft); color: var(--accent); }
 .badge .icon { width: 55%; height: 55%; }
 
-/* Botones */
+/* Buttons */
 .button {
   font: inherit;
   font-weight: 600;
@@ -151,7 +151,7 @@ section + section { margin-top: 3.5rem; }
 .button.text { border-color: transparent; background: transparent; color: var(--muted); text-decoration: underline; text-underline-offset: 4px; padding-inline: 0.4rem; }
 .button.text:hover { color: var(--ink); }
 
-/* Ejemplos */
+/* Examples */
 .examples { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin-top: 1.25rem; font-size: 0.92rem; color: var(--muted); }
 .examples span { margin-right: 0.25rem; }
 .examples button, .chips button {
@@ -169,7 +169,7 @@ section + section { margin-top: 3.5rem; }
 .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .chips button[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: var(--paper); font-weight: 600; }
 
-/* Cuestionario */
+/* Questionnaire */
 .questionnaire { margin-top: 2.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: calc(var(--radius) * 2); padding: 1.5rem clamp(1rem, 4vw, 2.25rem) 1.75rem; }
 .steps { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.35rem; padding: 0; margin: 0 0 1.75rem; counter-reset: paso; }
 .steps li { counter-increment: paso; }
@@ -217,7 +217,7 @@ section + section { margin-top: 3.5rem; }
 .with-unit b { position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--muted); }
 .short { max-width: 8rem !important; }
 
-/* Opciones en tarjetas (radio) */
+/* Card options (radio) */
 .options { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0.5rem; }
 .options.two { grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); max-width: 26rem; }
 .option { position: relative; }
@@ -238,12 +238,12 @@ section + section { margin-top: 3.5rem; }
 .option input:checked + span { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; box-shadow: inset 0 0 0 1px var(--accent); }
 .option input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
 
-/* Casillas */
+/* Checkboxes */
 .checkbox { display: flex; align-items: flex-start; gap: 0.65rem; cursor: pointer; font-weight: 600; max-width: var(--measure); }
 .checkbox input { flex: none; width: 1.35rem; height: 1.35rem; margin: 0.1rem 0 0; accent-color: var(--accent); }
 .checkbox small { display: block; }
 
-/* Contador (− número +) */
+/* Counter (− number +) */
 .counter { display: inline-flex; align-items: center; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--surface); width: max-content; }
 .counter button { font: inherit; font-size: 1.3rem; width: 2.8rem; height: 2.8rem; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
 .counter button:disabled { color: var(--line); cursor: default; }
@@ -252,7 +252,7 @@ section + section { margin-top: 3.5rem; }
 .children { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: 1rem; }
 .children .question > label { font-weight: 400; color: var(--muted); font-size: 0.95rem; }
 
-/* Personas a cargo */
+/* People you care for */
 .people { display: grid; gap: 1rem; }
 .person { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--radius); padding: 1rem 1.1rem; display: grid; gap: 0.9rem; }
 .person h3 { font-size: 1.05rem; font-stretch: 100%; }
@@ -266,7 +266,7 @@ section + section { margin-top: 3.5rem; }
 .remember { margin-top: 0.75rem; font-weight: 400; font-size: 0.9rem; color: var(--muted); }
 .remember input { width: 1.1rem; height: 1.1rem; }
 
-/* Resultados */
+/* Results */
 .results-head { display: grid; gap: 1rem; }
 .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1rem; margin: 0; }
 .figure { background: var(--surface); padding: 1.1rem 1.2rem; border-radius: var(--radius); border: 1px solid var(--line); border-top: 6px solid var(--color, var(--line)); }
@@ -319,7 +319,7 @@ section + section { margin-top: 3.5rem; }
 .notice p + p { margin-top: 0.4rem; }
 .empty { padding: 2rem 0; color: var(--muted); }
 
-/* Catálogo */
+/* Catalogue */
 .filters { display: grid; gap: 1rem; margin: 1.5rem 0 1.25rem; }
 .search input {
   width: 100%;
@@ -337,7 +337,7 @@ section + section { margin-top: 3.5rem; }
 .region-field select { font: inherit; min-height: 2.5rem; padding: 0.4rem 0.6rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); }
 .results-counter { color: var(--muted); margin: 0 0 0.75rem; }
 
-/* Texto largo (fuentes) */
+/* Long text (sources) */
 .text section { max-width: var(--measure); }
 .text h2 { margin-bottom: 0.75rem; }
 .text table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
@@ -345,7 +345,7 @@ section + section { margin-top: 3.5rem; }
 .text th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 .table-scroll { overflow-x: auto; }
 
-/* Pie */
+/* Footer */
 .footer { border-top: 1px solid var(--line); padding-block: 1.5rem 3rem; color: var(--muted); font-size: 0.9rem; }
 .footer p { margin: 0.25rem 0; max-width: var(--measure); }
 .footer p a { padding-block: 0.3rem; }
@@ -382,7 +382,7 @@ section + section { margin-top: 3.5rem; }
   .benefit-detail { display: grid !important; }
 }
 
-/* Ajustes de la lista de resultados */
+/* Results list settings */
 #list { margin-top: 1.75rem; }
 @media (max-width: 34rem) {
   .figures { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
@@ -390,7 +390,7 @@ section + section { margin-top: 3.5rem; }
   .figure dd { font-size: 1.6rem; }
 }
 
-/* ── Barra: ayuda urgente y letra grande ─────────────────────────────── */
+/* ── Bar: urgent help and large text ─────────────────────────────────── */
 :root { --urgent: #b3261e; --urgent-soft: #fbe9e7; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) { --urgent: #ff8a80; --urgent-soft: #3b1d1b; } }
 .bar { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; padding-top: 0.9rem; }
@@ -409,7 +409,7 @@ section + section { margin-top: 3.5rem; }
 
 .steps { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 
-/* ── Resultados: por dónde empezar, papeles, teléfonos ───────────────── */
+/* ── Results: where to start, documents, phone numbers ───────────────── */
 .start { margin: 1.75rem 0 0; padding: 1.1rem 1.25rem 1.25rem; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--accent); }
 .start h3 { font-size: 1.2rem; margin-bottom: 0.75rem; }
 .start ol { margin: 0; padding-left: 1.4rem; display: grid; gap: 0.75rem; }
@@ -426,7 +426,7 @@ section + .start { margin-top: 1.75rem; }
 .group-urgente .group-title { border-bottom-color: var(--urgent); }
 .group-urgente .badge { background: var(--urgent-soft); color: var(--urgent); }
 
-/* Botones de llamar: grandes, para el pulgar */
+/* Call buttons: large, for the thumb */
 .calls { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 0.6rem; }
 .call {
   display: flex; align-items: flex-start; gap: 0.75rem; min-height: 3.5rem; padding: 0.75rem 0.9rem;
@@ -440,7 +440,7 @@ section + .start { margin-top: 1.75rem; }
 .help-today .calls { margin-top: 0.5rem; }
 .help-today .section-title { border-top-color: var(--urgent); }
 
-/* ── Ficha de cada ayuda ─────────────────────────────────────────────── */
+/* ── Benefit card ────────────────────────────────────────────────────── */
 .procedure-steps { margin: 0; padding-left: 1.6rem; display: grid; gap: 0.55rem; counter-reset: none; }
 .procedure-steps li { padding-left: 0.2rem; }
 .procedure-steps li::marker { font-weight: 800; color: var(--accent); }
@@ -464,7 +464,7 @@ section + .start { margin-top: 1.75rem; }
 .tracking-mark.concedida { background: var(--accent); color: var(--paper); }
 .tracking-mark.denegada { background: var(--urgent-soft); color: var(--urgent); }
 
-/* ── Modo fácil: letra grande, frases cortas ─────────────────────────── */
+/* ── Easy mode: large text, short sentences ──────────────────────────── */
 .easy-only { display: none; }
 [data-easy] .easy-only { display: inline; }
 [data-easy] .normal-only { display: none; }
@@ -475,7 +475,7 @@ section + .start { margin-top: 1.75rem; }
 [data-easy] .button, [data-easy] .option span { min-height: 3.4rem; font-size: 1.15rem; }
 [data-easy] .lead { font-size: 1.3rem; }
 
-/* ── Hoja para imprimir ─────────────────────────────────────────────── */
+/* ── Print sheet ────────────────────────────────────────────────────── */
 @media print {
   .bar, .seniors-notice, .chips, #figures, .track, .help-today .section-title p, .glossary, .benefit-footer a { display: none !important; }
   .block { border: 0; padding: 0; }
@@ -486,7 +486,7 @@ section + .start { margin-top: 1.75rem; }
   #results::before { content: 'Mis ayudas · ayudas.bendi.dev · orientativo: lo decide el organismo que da cada ayuda'; display: block; font-size: 0.85rem; margin-bottom: 1rem; }
 }
 
-/* ── Página para personas mayores: letra grande, botones grandes, mucho contraste ── */
+/* ── Seniors page: large text, large buttons, strong contrast ── */
 .seniors-page { font-size: 1.3rem; line-height: 1.6; }
 .seniors-page .headline { font-size: clamp(2.2rem, 7vw, 3.6rem); max-width: 20ch; }
 .seniors-page .lead { font-size: 1.4rem; color: var(--ink); margin-top: 0.6rem; }
@@ -556,7 +556,7 @@ section + .start { margin-top: 1.75rem; }
   .seniors-how > summary { background: none; color: #000; padding: 0; min-height: 0; font-size: 1.1rem; }
 }
 
-/* ── Portada más cálida: héroe con ilustración, confianza y temas ───── */
+/* ── Warmer home page: hero with illustration, trust and topics ─────── */
 :root { --warm: #f6d7b8; --warm-strong: #a14e16; --s-smi: #2a78d6; --s-pnc: #eb6834; --s-imv: #1baf7a; --s-iprem: #eda100; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) { --warm: #4a3322; --warm-strong: #e8935a; --s-smi: #3987e5; --s-pnc: #d95926; --s-imv: #199e70; --s-iprem: #c98500; }
@@ -607,7 +607,7 @@ section + .start { margin-top: 1.75rem; }
 .questionnaire { box-shadow: 0 18px 40px -28px rgb(0 0 0 / 0.35); border-radius: 16px; scroll-margin-top: 1rem; }
 .questionnaire:focus { outline: none; }
 
-/* ── Gráfico de evolución ──────────────────────────────────────────── */
+/* ── Evolution chart ───────────────────────────────────────────────── */
 .s-smi { --c: var(--s-smi); } .s-pnc { --c: var(--s-pnc); } .s-imv { --c: var(--s-imv); } .s-iprem { --c: var(--s-iprem); }
 .legend { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; padding: 0; margin: 0 0 0.75rem; font-size: 0.92rem; color: var(--muted); }
 .legend i, .label-end i, .rise i, .tooltip i { display: inline-block; width: 0.8rem; height: 0.8rem; border-radius: 3px; background: var(--c); margin-right: 0.4rem; vertical-align: -0.05em; }
@@ -638,7 +638,7 @@ section + .start { margin-top: 1.75rem; }
 .explain { margin-top: 1.25rem; display: grid; gap: 0.6rem; max-width: var(--measure); }
 .explain p { margin: 0; padding: 0.8rem 1rem; background: var(--surface); border-radius: var(--radius); border-left: 4px solid var(--warm-strong); }
 
-/* ── Leer en voz alta y alto contraste ─────────────────────────────── */
+/* ── Read aloud and high contrast ──────────────────────────────────── */
 .no-voice [data-read], .no-voice .listen { display: none !important; }
 .benefit-detail > .listen { justify-self: start; margin-top: 0; }
 #contrast[aria-pressed='true'] { background: var(--ink); color: var(--paper); }
@@ -658,7 +658,7 @@ section + .start { margin-top: 1.75rem; }
 [data-contrast] .muted, [data-contrast] small, [data-contrast] .note, [data-contrast] .lead { color: var(--ink); }
 [data-contrast] .illustration { filter: grayscale(1) contrast(1.4); }
 
-/* ── Explicar mejor: por qué preguntamos, ejemplos, umbrales y tablas ── */
+/* ── Explaining better: why we ask, examples, thresholds and tables ── */
 .why { font-size: 0.9rem; }
 .why > summary { cursor: pointer; color: var(--accent); font-weight: 600; width: max-content; max-width: 100%; }
 .why p { margin: 0.4rem 0 0; color: var(--muted); max-width: 46ch; }
@@ -696,7 +696,7 @@ section + .start { margin-top: 1.75rem; }
 .example ul { margin: 0.4rem 0; color: var(--muted); }
 .ex-result { font-weight: 800; color: var(--ink); }
 
-/* Pasos como una línea de tiempo */
+/* Steps as a timeline */
 .procedure-steps { list-style: none; padding-left: 0 !important; counter-reset: paso-tramite; gap: 0 !important; }
 .procedure-steps li { counter-increment: paso-tramite; position: relative; padding: 0 0 1rem 2.6rem !important; min-height: 2.2rem; }
 .procedure-steps li::before {
@@ -705,7 +705,7 @@ section + .start { margin-top: 1.75rem; }
 }
 .procedure-steps li:not(:last-child)::after { content: ''; position: absolute; left: 0.9rem; top: 1.9rem; bottom: 0.1rem; width: 2px; background: var(--accent-soft); }
 
-/* Lo que podría entrar en casa */
+/* What could come into the household */
 .money { background: var(--surface); border: 1px solid var(--line); border-radius: calc(var(--radius) * 2); padding: 1.1rem 1.25rem 1.2rem; }
 .money h3 { font-size: 1.15rem; }
 .money-total { font-size: 1.15rem; margin: 0.4rem 0 0.9rem; }
@@ -719,7 +719,7 @@ section + .start { margin-top: 1.75rem; }
 .money-legend i.annual { background: transparent; border: 2px solid var(--accent); }
 .money-legend small { color: var(--muted); }
 
-/* Mapa de comunidades */
+/* Region map */
 .map-grid { display: grid; gap: 1.5rem; margin-top: 1.5rem; }
 @media (min-width: 64rem) { .map-grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: start; } .map-column { position: sticky; top: 1rem; } }
 .map { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 0.75rem; }
@@ -743,7 +743,7 @@ section + .start { margin-top: 1.75rem; }
 .panel-note { color: var(--muted); max-width: var(--measure); }
 [data-contrast] .map-svg .zone path { stroke: var(--ink); }
 
-/* Fichas sueltas de cada ayuda y de cada comunidad */
+/* Standalone pages for each benefit and each region */
 .breadcrumbs ol { list-style: none; padding: 0; margin: 0 0 1rem; display: flex; flex-wrap: wrap; gap: 0.3rem; font-size: 0.95rem; color: var(--muted); }
 .breadcrumbs li + li::before { content: '›'; margin-right: 0.3rem; }
 .breadcrumbs a { color: var(--muted); }
@@ -754,13 +754,13 @@ section + .start { margin-top: 1.75rem; }
 .region-list a { font-weight: 700; font-size: 1.1rem; }
 .region-list span { color: var(--muted); font-size: 0.95rem; }
 
-/* Insertado en otra web */
+/* Embedded in another website */
 [data-widget] .header, [data-widget] .footer, [data-widget] .bar { display: none; }
 [data-widget] body { background: var(--paper); }
 [data-widget] main { padding-top: 1rem; }
 .widget-footer { margin: 2rem 0 1rem; color: var(--muted); font-size: 0.95rem; }
 
-/* Modo profesional */
+/* Professional mode */
 .pro { margin: 1.5rem 0; border: 2px dashed var(--accent); border-radius: var(--radius); padding: 1rem 1.1rem; background: var(--surface); }
 .pro h3 { margin-top: 0; }
 .pro-fields { display: grid; gap: 1rem; }
@@ -776,7 +776,7 @@ section + .start { margin-top: 1.75rem; }
   .pro-fields textarea { border: none; resize: none; }
 }
 
-/* Página para entidades */
+/* Organisations page */
 .code { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; overflow-x: auto; font-size: 0.9rem; }
 .code code { white-space: pre; font-family: ui-monospace, monospace; }
 .organisations-options { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); list-style: none; padding: 0; }
@@ -784,7 +784,7 @@ section + .start { margin-top: 1.75rem; }
 .organisations-options h3 { margin: 0 0 0.4rem; font-size: 1.15rem; }
 .organisations-view { width: 100%; border: 1px solid var(--line); border-radius: var(--radius); height: 34rem; background: var(--paper); }
 
-/* Guías en otros idiomas */
+/* Guides in other languages */
 .benefits-guide { display: grid; gap: 0.75rem; margin: 0; }
 .benefits-guide div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 0.9rem 1.1rem; }
 .benefits-guide dt { font-weight: 700; font-size: 1.1rem; }
@@ -792,7 +792,7 @@ section + .start { margin-top: 1.75rem; }
 .counter-sentence { font-size: 1.35rem; font-weight: 600; line-height: 1.45; background: var(--accent-soft); border-left: 5px solid var(--accent); border-radius: var(--radius); padding: 1rem 1.2rem; max-width: var(--measure); }
 .languages-footer a { white-space: nowrap; }
 
-/* Ajuste de voz */
+/* Voice setting */
 .voice-setting { position: relative; }
 .voice-setting > summary { list-style: none; cursor: pointer; }
 .voice-setting > summary::-webkit-details-marker { display: none; }
@@ -805,7 +805,7 @@ section + .start { margin-top: 1.75rem; }
 .listen.speaking { background: var(--accent); color: var(--paper); }
 @media print { .voice-setting { display: none; } }
 
-/* Idiomas con bandera: selector arriba y fila de botones en el pie */
+/* Languages with flags: selector at the top and a row of buttons in the footer */
 .flag { display: block; flex: none; width: 1.5rem; height: 1.5rem; border-radius: 50%; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12), 0 0 0 2px var(--surface), 0 0 0 3px var(--line); }
 .language-setting { position: relative; }
 .language-setting > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.55rem; }
@@ -828,7 +828,7 @@ section + .start { margin-top: 1.75rem; }
 .guide-bar { justify-content: flex-end; }
 @media print { .languages-footer, .language-setting { display: none; } }
 
-/* Barra de arriba: los menús de Voz e Idioma se abren bajo la barra, sin tapar otros botones */
+/* Top bar: the Voice and Language menus open under the bar without covering other buttons */
 .bar { position: relative; align-items: center; }
 .voice-setting, .language-setting { position: static; }
 .voice-setting > summary, .language-setting > summary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
@@ -846,14 +846,14 @@ section + .start { margin-top: 1.75rem; }
   .voice-setting-panel, .language-setting-panel { position: absolute; left: 0; right: 0; width: auto; margin-top: 0; }
 }
 
-/* Palabras difíciles: subrayado de puntos; al pulsar sale la explicación debajo */
+/* Difficult words: dotted underline; tapping shows the explanation below */
 button.term { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: help; text-decoration: underline dotted var(--accent); text-decoration-thickness: 2px; text-underline-offset: 3px; display: inline; }
 button.term:hover, button.term[aria-expanded='true'] { color: var(--accent); }
 button.term:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
 .definition { display: block; margin: 0.4rem 0 0.6rem; padding: 0.65rem 0.85rem; background: var(--accent-soft); border-left: 4px solid var(--accent); border-radius: var(--radius); font-size: 0.95rem; line-height: 1.45; color: var(--ink); }
 .definition a { margin-inline-start: 0.25rem; white-space: nowrap; }
 @media print { button.term { text-decoration: none; } .definition { display: none; } }
-/* Página de palabras */
+/* Words page */
 .words { display: grid; gap: 0.6rem; margin: 1.5rem 0 0; }
 .words > div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 0.85rem 1.1rem; scroll-margin-top: 1rem; }
 .words > div:target { border-color: var(--accent); box-shadow: inset 4px 0 0 var(--accent); }
@@ -861,7 +861,7 @@ button.term:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px
 .words dd { margin: 0.25rem 0 0; }
 #word-search { margin-top: 1rem; }
 
-/* Voz e Idioma van juntos: se abren justo debajo de su botón, alineados a su borde derecho */
+/* Voice and Language go together: they open right under their button, aligned to its right edge */
 .settings-bar { display: flex; gap: 0.5rem; }
 @media (min-width: 40.01rem) {
   .settings-bar .voice-setting, .settings-bar .language-setting, .guide-bar .language-setting { position: relative; }
