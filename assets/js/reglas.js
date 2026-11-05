@@ -719,3 +719,71 @@ export function porDondeEmpezar(resultados, n = 4) {
 }
 
 export const IDS_CON_REGLA = Object.keys(REGLAS);
+
+// ── Gráficos: tu cifra frente al límite, y el dinero que podría entrar ──
+
+/** Para las ayudas con límite de ingresos: tu cifra y el límite, para dibujar la barra. null si no se sabe. */
+export function umbralDe(id, perfil) {
+  const base = perfilVacio();
+  const p = { ...base, ...perfil, hijos: { ...base.hijos, ...(perfil?.hijos ?? {}) }, urgencias: { ...base.urgencias, ...(perfil?.urgencias ?? {}) } };
+  const rgAnual = rentaGarantizada(p) * 12;
+  const hogar = (limite, extra = {}) => (p.ingresosHogar == null ? null : { tuyo: p.ingresosHogar, limite, que: 'Ingresos de tu hogar al año', ...extra });
+  const propios = (limite) => (p.ingresosPropios == null ? null : { tuyo: p.ingresosPropios, limite, que: 'Tus ingresos al año' });
+  const m = miembros(p);
+  switch (id) {
+    case 'imv':
+    case 'renta-minima':
+    case 'rmi-madrid':
+      return hogar(rgAnual);
+    case 'capi':
+      return hogar(rgAnual * CIFRAS.capi.limiteVecesRenta);
+    case 'pnc-jubilacion':
+    case 'pnc-invalidez':
+      return propios(CIFRAS.pnc.anual);
+    case 'subsidio-desempleo':
+    case 'subsidio-52':
+      return propios(CIFRAS.subsidio.limiteRentasMes * 12);
+    case 'bono-social':
+      return hogar(limiteBonoSocial(p).euros);
+    case 'alquiler-joven':
+      return hogar(CIFRAS.alquiler.limiteIpremJoven * CIFRAS.iprem.anual14);
+    case 'alquiler-general':
+      return hogar(CIFRAS.alquiler.limiteIpremGeneral * CIFRAS.iprem.anual14);
+    case 'tarjeta-familias':
+      return hogar(752 * 12);
+    case 'justicia-gratuita':
+      return hogar((m === 1 ? 2 : m < 4 ? 2.5 : 3) * CIFRAS.iprem.anual12);
+    case 'complemento-minimos':
+      return p.pensionMes == null || !PENSIONES_CONTRIBUTIVAS.includes(p.pension) ? null : { tuyo: p.pensionMes, limite: pensionMinima(p).cifra, que: 'Tu pensión al mes', debajoEsBueno: true, texto: 'pensión mínima' };
+    default:
+      return null;
+  }
+}
+
+// Ayudas que son dinero cada mes y que se pueden sumar (con el ajuste del IMV, que descuenta lo demás que cobras)
+const SUMAN_MES = ['imv', 'capi', 'pnc-jubilacion', 'pnc-invalidez', 'complemento-minimos', 'brecha-genero', 'subsidio-desempleo', 'subsidio-52'];
+
+/** Cuánto dinero podría entrar: al mes (14 pagas para pensiones, 12 el resto) y al año en pagos o deducciones. Solo «Cumples lo principal». */
+export function dineroEstimado(resultados) {
+  const si = new Map(resultados.filter((r) => r.estado === 'si').map((r) => [r.id, r]));
+  const partes = [];
+  for (const id of SUMAN_MES) {
+    const r = si.get(id);
+    if (!r?.importe?.mes) continue;
+    let cifra = r.importe.mes;
+    // El IMV completa hasta un mínimo: el subsidio o la pensión cuentan como ingreso y lo reducen
+    if (id === 'imv') {
+      const otros = ['subsidio-desempleo', 'subsidio-52', 'pnc-invalidez'].map((k) => si.get(k)?.importe?.mes ?? 0).reduce((a, b) => a + b, 0);
+      cifra = Math.max(0, cifra - otros);
+    }
+    if (cifra > 0) partes.push({ id, mes: Math.round(cifra * 100) / 100 });
+  }
+  const alAño = [];
+  for (const r of si.values()) if (r.importe?.año) alAño.push({ id: r.id, año: r.importe.año });
+  return {
+    mes: Math.round(partes.reduce((a, x) => a + x.mes, 0) * 100) / 100,
+    año: alAño.reduce((a, x) => a + x.año, 0),
+    partes,
+    alAño,
+  };
+}

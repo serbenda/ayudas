@@ -6,7 +6,7 @@ import { POR_ID, COMUNIDADES } from './ayudas.js';
 import { tramiteDe, papelesPara } from './tramites.js';
 import { DOCUMENTOS } from './guia.js';
 import { icono } from './iconos.js';
-import { botonTelefono, esc } from './tarjeta.js';
+import { botonTelefono, esc, cajaEjemplo } from './tarjeta.js';
 import { compartir } from './compartir.js';
 
 const caja = document.getElementById('asistente');
@@ -181,6 +181,7 @@ function tarjetaMayores(r, ccaa, numero) {
     ${botonEscuchar(r.id)}
     <details class="como-mayores">
       <summary>Qué tengo que hacer</summary>
+      ${cajaEjemplo(r.id)}
       <ol>${t.pasos.map((p) => `<li>${esc(p)}</li>`).join('')}</ol>
       ${t.telefonos.length ? `<h4>Llama a</h4><div class="llamadas">${t.telefonos.map(botonTelefono).join('')}</div>` : ''}
       ${t.documentos.length ? `<h4>Lleva estos papeles</h4><ul class="papeles">${t.documentos.map((d) => `<li>${esc(DOCUMENTOS[d].nombre)}</li>`).join('')}</ul>` : ''}

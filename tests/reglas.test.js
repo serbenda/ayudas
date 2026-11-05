@@ -242,3 +242,25 @@ test('teléfonos y pasos por comunidad existen', () => {
   assert.match(tramiteDe('dependencia-valoracion', 'andalucia').pasos.join(' '), /Junta de Andalucía/);
   assert.match(tramiteDe('renta-minima', 'galicia').pasos.join(' '), /servicios sociales/);
 });
+
+// ── Gráficos ─────────────────────────────────────────────────────────────
+import { umbralDe, dineroEstimado } from '../assets/js/reglas.js';
+
+test('barra de umbral: tus ingresos frente al límite', () => {
+  const u = umbralDe('imv', perfil({ adultos: 2, hijos: { de6a17: 2 }, ingresosHogar: 9000 }));
+  assert.equal(u.tuyo, 9000);
+  assert.equal(u.limite, 1393.84 * 12);
+  assert.equal(umbralDe('imv', perfil({})), null);
+  const pension = umbralDe('complemento-minimos', perfil({ edad: 70, pension: 'jubilacion', pensionMes: 800 }));
+  assert.equal(pension.limite, 936.2);
+});
+
+test('dinero estimado: suma lo compatible y descuenta del IMV el subsidio', () => {
+  const r = evaluar(perfil({ edad: 30, situacion: 'paro-sin', ingresosPropios: 0, ingresosHogar: 0, adultos: 1, hijos: { menor3: 1 }, monoparental: true, cotizadoUnAño: false }));
+  const d = dineroEstimado(r);
+  const imv = d.partes.find((x) => x.id === 'imv').mes;
+  const imvBruto = r.find((x) => x.id === 'imv').importe.mes;
+  assert.equal(Math.round((imvBruto - 570) * 100) / 100, imv);
+  assert.ok(d.partes.some((x) => x.id === 'capi'));
+  assert.equal(d.año, 50, 'solo el bono térmico: sin trabajo, la deducción por maternidad no suma');
+});

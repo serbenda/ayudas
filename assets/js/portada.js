@@ -1,7 +1,8 @@
 // Portada: el cuestionario por pasos y la lista de ayudas que salen.
 // Nada se envía: las respuestas solo viven en esta página (y en el navegador si marcas «recordar»).
 
-import { evaluar, perfilVacio, totalHijos, porDondeEmpezar } from './reglas.js';
+import { evaluar, perfilVacio, totalHijos, porDondeEmpezar, dineroEstimado } from './reglas.js';
+import { euros } from './formato.js';
 import { AYUDAS, POR_ID, CATEGORIAS, COMUNIDADES } from './ayudas.js';
 import { papelesPara, tramiteDe } from './tramites.js';
 import { DOCUMENTOS } from './guia.js';
@@ -245,6 +246,9 @@ function pintar() {
     ? `Con lo que has contestado salen ${todos.length} ${todos.length === 1 ? 'ayuda' : 'ayudas'}. Pulsa cada una para ver cómo se pide, paso a paso.`
     : 'Con lo que has contestado no sale ninguna ayuda. Prueba a completar más preguntas: los ingresos y quién vive contigo cambian mucho el resultado.';
 
+  // Lo que podría entrar en casa: lo que ya entra + cada ayuda, en una barra
+  pintarDinero(p, todos);
+
   // Por dónde empezar
   const primeras = porDondeEmpezar(todos);
   const empezar = document.getElementById('empezar');
@@ -273,9 +277,38 @@ function pintar() {
     if (!delGrupo.length) return '';
     return `<section class="grupo grupo-${c.id}" aria-labelledby="g-${c.id}">
       <h3 class="grupo-titulo" id="g-${c.id}"><span class="insignia">${icono(c.icono)}</span>${esc(c.nombre)}</h3>
-      <ul class="lista-ayudas">${delGrupo.map((r) => tarjeta(r.id, { resultado: r, ccaa: p.ccaa, seguimiento: seguimiento[r.id] ?? '' })).join('')}</ul>
+      <ul class="lista-ayudas">${delGrupo.map((r) => tarjeta(r.id, { resultado: r, ccaa: p.ccaa, seguimiento: seguimiento[r.id] ?? '', perfil: p })).join('')}</ul>
     </section>`;
   }).join('');
+}
+
+const COLORES = ['var(--s-smi)', 'var(--s-pnc)', 'var(--s-imv)', 'var(--s-iprem)', 'var(--acento)', 'var(--calido-fuerte)', 'var(--quizas)', 'var(--tenue)'];
+
+function pintarDinero(p, todos) {
+  const caja = document.getElementById('dinero');
+  const d = dineroEstimado(todos);
+  if (!d.mes && !d.año) {
+    caja.hidden = true;
+    return;
+  }
+  caja.hidden = false;
+  const ahora = p.ingresosHogar != null ? Math.round(p.ingresosHogar / 12) : 0;
+  const total = ahora + d.mes;
+  const trozos = [
+    ...(ahora && d.mes ? [{ nombre: 'Lo que ya entra', cifra: ahora, color: 'var(--linea)', ya: true }] : []),
+    ...d.partes.map((x, i) => ({ nombre: POR_ID[x.id].nombre, cifra: x.mes, color: COLORES[i % COLORES.length] })),
+  ];
+  document.getElementById('dinero-total').innerHTML = d.mes
+    ? `Hasta <strong>${euros(d.mes)} más al mes</strong>${ahora ? `: de ${euros(ahora)} a unos ${euros(total)}` : ''}${d.año ? `, y <strong>${euros(d.año)} al año</strong> en pagos y deducciones` : ''}.`
+    : `<strong>${euros(d.año)} al año</strong> en pagos y deducciones.`;
+  const barra = document.getElementById('dinero-barra');
+  barra.hidden = !d.mes;
+  barra.setAttribute('aria-label', trozos.map((t) => `${t.nombre}: ${euros(t.cifra)} al mes`).join('. '));
+  barra.innerHTML = trozos.map((t) => `<span style="flex:${t.cifra} 1 0;background:${t.color}"${t.ya ? ' class="ya"' : ''}></span>`).join('');
+  document.getElementById('dinero-leyenda').innerHTML = [
+    ...trozos.map((t) => `<li><i style="background:${t.color}"></i>${esc(t.nombre)} <strong>${euros(t.cifra)}</strong><small>al mes</small></li>`),
+    ...d.alAño.map((x) => `<li><i class="anual"></i>${esc(POR_ID[x.id].nombre)} <strong>${euros(x.año)}</strong><small>al año</small></li>`),
+  ].join('');
 }
 
 // Abrir una ayuda desde «Por dónde empezar»

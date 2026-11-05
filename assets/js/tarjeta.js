@@ -5,6 +5,9 @@ import { POR_ID, enlaceDe } from './ayudas.js';
 import { tramiteDe } from './tramites.js';
 import { DOCUMENTOS, TELEFONOS, GLOSARIO, terminosEn, tel } from './guia.js';
 import { icono } from './iconos.js';
+import { EJEMPLOS, TABLAS } from './ejemplos.js';
+import { umbralDe, miembros } from './reglas.js';
+import { euros } from './formato.js';
 
 export const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
@@ -22,11 +25,52 @@ export function botonTelefono(clave) {
   return `<a class="llamar" href="${tel(t.numero)}"><span class="llamar-icono">${icono('telefono')}</span><span><strong>${esc(t.numero)}</strong> ${esc(t.texto)}${t.gratis ? ' <em>(gratis)</em>' : ''}<small>${esc(t.cuando)}</small></span></a>`;
 }
 
+/** Barra «tu cifra frente al límite» */
+export function barraUmbral(u) {
+  if (!u) return '';
+  const max = Math.max(u.tuyo, u.limite) * 1.15 || 1;
+  const dentro = u.tuyo < u.limite;
+  const diferencia = Math.abs(u.limite - u.tuyo);
+  const pct = (n) => `${Math.min(100, (n / max) * 100).toFixed(1)}%`;
+  const etiquetaLimite = u.texto ?? 'límite';
+  const frase = dentro
+    ? `Estás ${euros(diferencia)} por debajo del ${etiquetaLimite}.`
+    : `Te pasas ${euros(diferencia)} del ${etiquetaLimite}.`;
+  return `<figure class="umbral ${dentro ? 'dentro' : 'fuera'}">
+    <figcaption>${esc(u.que)}: <strong>${euros(u.tuyo)}</strong> · ${esc(etiquetaLimite.charAt(0).toUpperCase() + etiquetaLimite.slice(1))}: <strong>${euros(u.limite)}</strong></figcaption>
+    <div class="umbral-pista" role="img" aria-label="${esc(`${u.que}: ${euros(u.tuyo)}. ${etiquetaLimite}: ${euros(u.limite)}. ${frase}`)}">
+      <span class="umbral-tuyo" style="width:${pct(u.tuyo)}"></span>
+      <span class="umbral-limite" style="left:${pct(u.limite)}"><i>${esc(etiquetaLimite)}</i></span>
+    </div>
+    <p>${esc(frase)}</p>
+  </figure>`;
+}
+
+/** Barras «cuánto según tu caso» */
+export function barrasTabla(tabla, resaltar = -1) {
+  if (!tabla) return '';
+  const max = Math.max(...tabla.filas.map((f) => f.cifra));
+  return `<figure class="tabla-barras">
+    <figcaption>${esc(tabla.titulo)}</figcaption>
+    <ul>${tabla.filas
+      .map((f, i) => `<li${i === resaltar ? ' class="tu-caso"' : ''}><span class="tb-etiqueta">${esc(f.etiqueta)}${i === resaltar ? ' <em>(tu caso)</em>' : ''}</span><span class="tb-pista"><span class="tb-barra" style="width:${((f.cifra / max) * 100).toFixed(1)}%"></span></span><strong>${euros(f.cifra)}</strong></li>`)
+      .join('')}</ul>
+    ${tabla.nota ? `<p class="nota">${esc(tabla.nota)}</p>` : ''}
+  </figure>`;
+}
+
+/** Un ejemplo con persona y cuentas */
+export function cajaEjemplo(id) {
+  const e = EJEMPLOS[id]?.();
+  if (!e) return '';
+  return `<aside class="ejemplo"><h5>Un ejemplo</h5><p class="ej-quien">${esc(e.quien)}</p><ul>${e.cuentas.map((c) => `<li>${esc(c)}</li>`).join('')}</ul><p class="ej-resultado">${esc(e.resultado)}</p></aside>`;
+}
+
 /**
  * @param {string} id
- * @param {{ resultado?: object, ccaa?: string|null, seguimiento?: string, abierta?: boolean }} op
+ * @param {{ resultado?: object, ccaa?: string|null, seguimiento?: string, abierta?: boolean, perfil?: object }} op
  */
-export function tarjeta(id, { resultado = null, ccaa = null, seguimiento, abierta = false } = {}) {
+export function tarjeta(id, { resultado = null, ccaa = null, seguimiento, abierta = false, perfil = null } = {}) {
   const a = POR_ID[id];
   const t = tramiteDe(id, ccaa);
   const enlace = enlaceDe(a, ccaa);
@@ -51,22 +95,22 @@ export function tarjeta(id, { resultado = null, ccaa = null, seguimiento, abiert
       </summary>
       <div class="ayuda-detalle">
         <button type="button" class="escuchar" data-leer="${esc([a.nombre, r?.importe?.texto ?? '', ...t.facil, 'Cómo se pide.', ...t.pasos].filter(Boolean).join('. '))}">${icono('altavoz')} Escuchar esta ayuda</button>
-        ${r?.motivos.length ? `<div><h4>Por qué te sale</h4><ul class="motivos">${r.motivos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
-        ${r?.comprobar.length ? `<div><h4>Qué falta comprobar</h4><ul class="comprobar">${r.comprobar.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
-        <div><h4>Cuánto da en 2026</h4><p>${esc(a.cuantia)}</p></div>
+        ${r?.motivos.length ? `<div><h4>¿Por qué me sale?</h4><ul class="motivos">${r.motivos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul>${perfil ? barraUmbral(umbralDe(id, perfil)) : ''}</div>` : ''}
+        ${r?.comprobar.length ? `<div><h4>¿Qué tengo que comprobar?</h4><ul class="comprobar">${r.comprobar.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
+        <div><h4>¿Cuánto dan?</h4><p>${esc(a.cuantia)}</p>${barrasTabla(TABLAS[id]?.(), id === 'imv' && perfil ? Math.min(miembros(perfil), 5) - 1 : -1)}${cajaEjemplo(id)}</div>
+        <div class="solo-normal"><h4>¿Quién puede pedirla?</h4><ul>${a.requisitos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>
         <div class="como">
-          <h4>Cómo se pide, paso a paso</h4>
+          <h4>¿Cómo la pido? Paso a paso</h4>
           <ol class="pasos-tramite">${t.pasos.map((p) => `<li>${esc(p)}</li>`).join('')}</ol>
           <p class="sin-internet">${icono('escudo')} ${esc(t.pasosAntes)}</p>
         </div>
-        ${t.telefonos.length ? `<div><h4>A quién llamar</h4><div class="llamadas">${t.telefonos.map(botonTelefono).join('')}</div></div>` : ''}
-        ${t.documentos.length ? `<div><h4>Papeles que necesitas</h4><ul class="papeles">${t.documentos.map((d) => `<li><strong>${esc(DOCUMENTOS[d].nombre)}</strong>. ${esc(DOCUMENTOS[d].ayuda)}</li>`).join('')}</ul></div>` : ''}
+        ${t.telefonos.length ? `<div><h4>¿A quién llamo?</h4><div class="llamadas">${t.telefonos.map(botonTelefono).join('')}</div></div>` : ''}
+        ${t.documentos.length ? `<div><h4>¿Qué papeles llevo?</h4><ul class="papeles">${t.documentos.map((d) => `<li><strong>${esc(DOCUMENTOS[d].nombre)}</strong>. ${esc(DOCUMENTOS[d].ayuda)}</li>`).join('')}</ul></div>` : ''}
         <dl class="plazos">
-          <div><dt>Cuándo pedirla</dt><dd>${esc(t.plazo)}</dd></div>
-          <div><dt>Cuánto tardan y si te dicen que no</dt><dd>${esc(t.respuesta)}</dd></div>
+          <div><dt>¿Cuándo la pido?</dt><dd>${esc(t.plazo)}</dd></div>
+          <div><dt>¿Cuánto tardan? ¿Y si me dicen que no?</dt><dd>${esc(t.respuesta)}</dd></div>
         </dl>
         ${t.ojo?.length ? `<div class="ojo"><h4>Importante</h4><ul>${t.ojo.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
-        <div class="solo-normal"><h4>Requisitos principales</h4><ul>${a.requisitos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>
         ${terminos.length ? `<details class="glosario"><summary>Palabras difíciles de esta ayuda</summary><dl>${terminos.map((k) => `<div><dt>${esc(k)}</dt><dd>${esc(GLOSARIO[k])}</dd></div>`).join('')}</dl></details>` : ''}
         <p class="ayuda-pie"><span>${esc(a.ambito)} · ${esc(a.organismo)}</span>${seguir}${enlace.url ? `<a class="boton secundario" href="${esc(enlace.url)}" rel="noopener" target="_blank">Web oficial<span class="oculto"> (${esc(enlace.texto)}, se abre en otra pestaña)</span></a>` : ''}</p>
       </div>
