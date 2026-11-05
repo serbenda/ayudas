@@ -1,0 +1,104 @@
+name: Probar y publicar
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Cada lunes: comprobar que los enlaces oficiales siguen vivos (hora en UTC)
+    - cron: '23 6 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
+  cancel-in-progress: false
+
+jobs:
+  construir:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      # Actions fijadas por commit para que no cambien sin que lo sepamos (versión en el comentario)
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Tests de las reglas
+        run: npm test
+
+      - name: Fuente servida desde la web (Archivo)
+        run: npm run fuente
+
+      - name: Preparar la web
+        run: |
+          mkdir -p _site
+          cp -r index.html 404.html catalogo fuentes assets vendor robots.txt sitemap.xml .nojekyll _site/
+          # Versión en estilos y scripts: al publicar, nadie mezcla HTML nuevo con CSS o JS viejos
+          v="${GITHUB_SHA::8}"
+          find _site -name '*.html' -exec sed -i -E "s#(href=\"[^\"]+\.css)\"#\1?v=$v\"#g; s#(src=\"[^\"]+\.js)\"#\1?v=$v\"#g" {} +
+          sed -i -E "s#(from '\./[a-z0-9-]+\.js)'#\1?v=$v'#g" _site/assets/js/*.js
+          grep -q "?v=$v" _site/assets/js/portada.js || { echo "::error::No se han versionado los imports"; exit 1; }
+          ls -R _site | head -40
+
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  publicar:
+    # En las PR solo se prueba; se publica desde main
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: construir
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - id: despliegue
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  enlaces:
+    # Las webs oficiales cambian a menudo. Cada semana se comprueban los enlaces y, si alguno
+    # está roto, se abre (o se actualiza) un issue; se cierra solo cuando vuelven a funcionar.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Comprobar enlaces
+        id: comprobar
+        continue-on-error: true
+        run: npm run enlaces
+
+      - name: Abrir o cerrar el aviso
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ROTOS: ${{ steps.comprobar.outcome == 'failure' }}
+        run: |
+          titulo="Enlaces oficiales rotos"
+          abierto=$(gh issue list --repo "$REPO" --state open --search "\"$titulo\" in:title" --json number --jq '.[0].number')
+          if [ "$ROTOS" = "true" ]; then
+            if [ -n "$abierto" ]; then
+              gh issue comment "$abierto" --repo "$REPO" --body-file enlaces-rotos.md
+            else
+              gh issue create --repo "$REPO" --title "$titulo" --body-file enlaces-rotos.md
+            fi
+          elif [ -n "$abierto" ]; then
+            gh issue close "$abierto" --repo "$REPO" --comment "Todos los enlaces vuelven a funcionar."
+          fi
