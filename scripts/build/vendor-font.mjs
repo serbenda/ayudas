@@ -6,36 +6,36 @@
 
 import { cp, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 
-const raiz = new URL('../../', import.meta.url);
-const destino = new URL('site/vendor/fonts/', raiz);
-const origen = new URL('node_modules/@fontsource-variable/archivo/files/', raiz);
+const root = new URL('../../', import.meta.url);
+const target = new URL('site/vendor/fonts/', root);
+const sourcePage = new URL('node_modules/@fontsource-variable/archivo/files/', root);
 
-await rm(new URL('site/vendor/', raiz), { recursive: true, force: true });
-await mkdir(destino, { recursive: true });
+await rm(new URL('site/vendor/', root), { recursive: true, force: true });
+await mkdir(target, { recursive: true });
 
-const archivos = await readdir(origen);
-const SUBCONJUNTOS = {
+const files = await readdir(sourcePage);
+const SUBSETS = {
   latin: 'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD',
   'latin-ext': 'U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF',
 };
 
 let css = '';
-for (const [sub, rango] of Object.entries(SUBCONJUNTOS)) {
+for (const [sub, range] of Object.entries(SUBSETS)) {
   // Preferimos el fichero con todos los ejes (anchura y peso)
-  const fichero = ['full', 'wdth', 'wght'].map((eje) => `archivo-${sub}-${eje}-normal.woff2`).find((n) => archivos.includes(n));
-  if (!fichero) throw new Error(`No encuentro la fuente Archivo para ${sub}. Ficheros: ${archivos.join(', ')}`);
-  await cp(new URL(fichero, origen), new URL(fichero, destino));
+  const file = ['full', 'wdth', 'wght'].map((axis) => `archivo-${sub}-${axis}-normal.woff2`).find((n) => files.includes(n));
+  if (!file) throw new Error(`No encuentro la fuente Archivo para ${sub}. Ficheros: ${files.join(', ')}`);
+  await cp(new URL(file, sourcePage), new URL(file, target));
   css += `@font-face {
   font-family: 'Archivo';
   font-style: normal;
   font-display: swap;
   font-weight: 100 900;
   font-stretch: 62% 125%;
-  src: url('${fichero}') format('woff2-variations');
-  unicode-range: ${rango};
+  src: url('${file}') format('woff2-variations');
+  unicode-range: ${range};
 }
 `;
-  console.log(`Fuente ${sub}: ${fichero}`);
+  console.log(`Fuente ${sub}: ${file}`);
 }
-await writeFile(new URL('archivo.css', destino), css);
+await writeFile(new URL('archivo.css', target), css);
 console.log('vendor/ listo');

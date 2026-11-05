@@ -1,20 +1,20 @@
 // Banderas sencillas (SVG) para la lista de idiomas. Son decorativas: el nombre del idioma va siempre escrito.
 // España, Cataluña (senyera), Comunitat Valenciana (senyera con franja azul), Galicia, Euskadi (ikurriña) e inglés (Reino Unido).
 
-const svg = (vista, cuerpo) => `<svg class="bandera" viewBox="${vista}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">${cuerpo}</svg>`;
-const franjas = [1, 3, 5, 7].map((i) => `<rect y="${((20 / 9) * i).toFixed(2)}" width="30" height="2.22" fill="#da121a"/>`).join('');
+const svg = (view, body) => `<svg class="bandera" viewBox="${view}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">${body}</svg>`;
+const stripes = [1, 3, 5, 7].map((i) => `<rect y="${((20 / 9) * i).toFixed(2)}" width="30" height="2.22" fill="#da121a"/>`).join('');
 
-export const BANDERAS = {
+export const FLAGS = {
   es: svg('0 0 30 20', '<rect width="30" height="20" fill="#aa151b"/><rect y="5" width="30" height="10" fill="#f1bf00"/>'),
-  ca: svg('0 0 30 20', `<rect width="30" height="20" fill="#fcdd09"/>${franjas}`),
-  va: svg('0 0 30 20', `<rect width="30" height="20" fill="#fcdd09"/>${franjas}<rect width="10.5" height="20" fill="#0073cf"/>`),
+  ca: svg('0 0 30 20', `<rect width="30" height="20" fill="#fcdd09"/>${stripes}`),
+  va: svg('0 0 30 20', `<rect width="30" height="20" fill="#fcdd09"/>${stripes}<rect width="10.5" height="20" fill="#0073cf"/>`),
   gl: svg('0 0 30 20', '<rect width="30" height="20" fill="#fff"/><path d="M0 0h4.6L30 16.6V20h-4.6L0 3.4Z" fill="#0099cc"/>'),
   eu: svg('0 0 30 20', '<rect width="30" height="20" fill="#d52b1e"/><path d="M0 0 30 20M30 0 0 20" stroke="#009b48" stroke-width="3"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="3"/>'),
   en: svg('0 0 60 40', '<rect width="60" height="40" fill="#012169"/><path d="M0 0 60 40M60 0 0 40" stroke="#fff" stroke-width="8"/><path d="M0 0 60 40M60 0 0 40" stroke="#c8102e" stroke-width="3"/><path d="M30 0v40M0 20h60" stroke="#fff" stroke-width="12"/><path d="M30 0v40M0 20h60" stroke="#c8102e" stroke-width="7"/>'),
 };
 
 // code de la página, lang del enlace y nombre en su propia lengua
-export const LISTA_IDIOMAS = [
+export const LANGUAGE_LIST = [
   ['es', 'es', 'Español'],
   ['ca', 'ca', 'Català'],
   ['va', 'ca-ES-valencia', 'Valencià'],
@@ -26,18 +26,18 @@ export const LISTA_IDIOMAS = [
 const href = (base, c) => (c === 'es' ? base || './' : `${base}${c}/`);
 
 /** Lista de idiomas con bandera (pie). `base` es el prefijo de las rutas ('', '../' o '/'); `actual` el código de la página. */
-export function enlacesIdiomas(base, actual = 'es') {
-  return `<ul class="idiomas-lista">${LISTA_IDIOMAS.map(([c, lang, nombre]) => {
-    const aqui = c === actual ? ' aria-current="page"' : '';
-    return `<li><a href="${href(base, c)}" hreflang="${lang}" lang="${lang}"${aqui}>${BANDERAS[c]}<span>${nombre}</span></a></li>`;
+export function languageLinks(base, current = 'es') {
+  return `<ul class="idiomas-lista">${LANGUAGE_LIST.map(([c, lang, name]) => {
+    const here = c === current ? ' aria-current="page"' : '';
+    return `<li><a href="${href(base, c)}" hreflang="${lang}" lang="${lang}"${here}>${FLAGS[c]}<span>${name}</span></a></li>`;
   }).join('')}</ul>`;
 }
 
 /** Selector de idioma de la barra de arriba: botón con la bandera del idioma actual y menú con los demás */
-export function selectorIdioma(base, actual = 'es', etiqueta = 'Idioma') {
-  const [, , nombreActual] = LISTA_IDIOMAS.find(([c]) => c === actual) ?? LISTA_IDIOMAS[0];
+export function languageSelector(base, current = 'es', label = 'Idioma') {
+  const [, , currentName] = LANGUAGE_LIST.find(([c]) => c === current) ?? LANGUAGE_LIST[0];
   return `<details class="ajuste-idioma">
-      <summary class="boton secundario" aria-label="${etiqueta}: ${nombreActual}">${BANDERAS[actual]}<span>${nombreActual}</span></summary>
-      <ul class="ajuste-idioma-panel">${LISTA_IDIOMAS.map(([c, lang, nombre]) => `<li><a href="${href(base, c)}" hreflang="${lang}" lang="${lang}"${c === actual ? ' aria-current="page"' : ''}>${BANDERAS[c]}<span>${nombre}</span></a></li>`).join('')}</ul>
+      <summary class="boton secundario" aria-label="${label}: ${currentName}">${FLAGS[current]}<span>${currentName}</span></summary>
+      <ul class="ajuste-idioma-panel">${LANGUAGE_LIST.map(([c, lang, name]) => `<li><a href="${href(base, c)}" hreflang="${lang}" lang="${lang}"${c === current ? ' aria-current="page"' : ''}>${FLAGS[c]}<span>${name}</span></a></li>`).join('')}</ul>
     </details>`;
 }

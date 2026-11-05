@@ -2,14 +2,14 @@
 // La Action semanal (scripts/caducidad.mjs) avisa cuando una ficha lleva más de un año sin revisar
 // o cuando llega la fecha de mirar su convocatoria (MIRAR_EN).
 
-export const REVISADO_POR_DEFECTO = '2026-11';
+export const DEFAULT_REVIEWED = '2026-11';
 
 // Fichas revisadas en otra fecha (año-mes)
-export const REVISADO = {};
+export const REVIEWED = {};
 
 // Fecha en la que toca mirar la convocatoria (año-mes-día): cuando acaba el plazo abierto,
 // o cuando suele salir la del año siguiente si la de este año ya se cerró.
-export const MIRAR_EN = {
+export const CHECK_ON = {
   'concilia-asturias': '2027-07-15', // 2026: del 8 de agosto al 15 de septiembre
   'natalidad-rural-extremadura': '2027-07-15', // 2026: del 7 de agosto al 30 de septiembre
   'familias-especiales-murcia': '2027-09-15', // 2026: del 1 al 15 de octubre
@@ -23,24 +23,24 @@ export const MIRAR_EN = {
   'renta-minima': '2026-12-31', // Castilla-La Mancha: solo renovaciones hasta esta fecha
 };
 
-export const revisadoDe = (id) => REVISADO[id] ?? REVISADO_POR_DEFECTO;
+export const reviewedOf = (id) => REVIEWED[id] ?? DEFAULT_REVIEWED;
 
-const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 /** «noviembre de 2026» */
-export function textoRevisado(id) {
-  const [a, m] = revisadoDe(id).split('-').map(Number);
-  return `${MESES[m - 1]} de ${a}`;
+export function reviewedText(id) {
+  const [a, m] = reviewedOf(id).split('-').map(Number);
+  return `${MONTHS[m - 1]} de ${a}`;
 }
 
 /** Fichas que hay que revisar hoy: más de un año sin revisar o plazo pasado */
-export function porRevisar(ids, hoy = new Date()) {
-  const avisos = [];
+export function toReview(ids, today = new Date()) {
+  const notices = [];
   for (const id of ids) {
-    const [a, m] = revisadoDe(id).split('-').map(Number);
-    const meses = (hoy.getFullYear() - a) * 12 + (hoy.getMonth() + 1 - m);
-    if (meses >= 12) avisos.push({ id, motivo: `lleva ${meses} meses sin revisar (desde ${textoRevisado(id)})` });
-    const mirar = MIRAR_EN[id];
-    if (mirar && new Date(`${mirar}T00:00:00`) <= hoy) avisos.push({ id, motivo: `desde el ${mirar.split('-').reverse().join('/')} toca mirar su convocatoria: si ha salido una nueva o ha cambiado el plazo, actualiza fechas y cuantías` });
+    const [a, m] = reviewedOf(id).split('-').map(Number);
+    const months = (today.getFullYear() - a) * 12 + (today.getMonth() + 1 - m);
+    if (months >= 12) notices.push({ id, reason: `lleva ${months} meses sin revisar (desde ${reviewedText(id)})` });
+    const checkDate = CHECK_ON[id];
+    if (checkDate && new Date(`${checkDate}T00:00:00`) <= today) notices.push({ id, reason: `desde el ${checkDate.split('-').reverse().join('/')} toca mirar su convocatoria: si ha salido una nueva o ha cambiado el plazo, actualiza fechas y cuantías` });
   }
-  return avisos;
+  return notices;
 }

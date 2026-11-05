@@ -3,45 +3,45 @@
 // si se eligen bien (Edge: voces «Natural» de Microsoft; iPhone y Mac: «mejoradas» o «premium»; Chrome y Android: Google).
 // Se lee frase a frase: suena con pausas más naturales y evita que Chrome se corte en los textos largos.
 
-const ACENTO = { es: 'es-ES', en: 'en-GB', ca: 'ca-ES', gl: 'gl-ES', eu: 'eu-ES' };
+const ACCENT = { es: 'es-ES', en: 'en-GB', ca: 'ca-ES', gl: 'gl-ES', eu: 'eu-ES' };
 // Si no hay voz en gallego, catalán o euskera, se lee con una voz en castellano
-const RESERVA = { ca: 'es', gl: 'es', eu: 'es' };
+const FALLBACK = { ca: 'es', gl: 'es', eu: 'es' };
 // Voces de mala calidad o de broma (macOS, eSpeak…)
-const MALAS = /espeak|compact|eloquence|novelty|zarvox|albert|bad news|bells|bubbles|cellos|fred|jester|organ|superstar|trinoids|whisper|wobble|grandma|grandpa|rocko|shelley|eddy|flo|reed|sandy|bahh|boing|deranged|hysterical|pipe organ/i;
+const BAD_VOICES = /espeak|compact|eloquence|novelty|zarvox|albert|bad news|bells|bubbles|cellos|fred|jester|organ|superstar|trinoids|whisper|wobble|grandma|grandpa|rocko|shelley|eddy|flo|reed|sandy|bahh|boing|deranged|hysterical|pipe organ/i;
 
-const idioma = (lang) => (lang ?? 'es').toLowerCase().split('-')[0];
+const language = (lang) => (lang ?? 'es').toLowerCase().split('-')[0];
 
 /** Puntúa una voz para un idioma: más alta, más humana. Exportada para los tests. */
-export function puntuar(voz, lang) {
-  const base = idioma(lang);
-  const suyo = idioma(voz.lang);
-  if (suyo !== base) return -Infinity;
+export function score(voice, lang) {
+  const base = language(lang);
+  const its = language(voice.lang);
+  if (its !== base) return -Infinity;
   let p = 0;
-  const nombre = voz.name ?? '';
-  if (/natural|neural/i.test(nombre)) p += 100; // Edge y Windows 11
-  if (/premium|mejorada|enhanced|siri/i.test(nombre)) p += 80; // Apple
-  if (/google/i.test(nombre)) p += 60; // Chrome y Android
-  if (/online/i.test(nombre)) p += 20;
-  if (MALAS.test(nombre)) p -= 200;
-  if ((voz.lang ?? '').toLowerCase().replace('_', '-') === (ACENTO[base] ?? '').toLowerCase()) p += 15;
-  if (voz.default) p += 5;
+  const name = voice.name ?? '';
+  if (/natural|neural/i.test(name)) p += 100; // Edge y Windows 11
+  if (/premium|mejorada|enhanced|siri/i.test(name)) p += 80; // Apple
+  if (/google/i.test(name)) p += 60; // Chrome y Android
+  if (/online/i.test(name)) p += 20;
+  if (BAD_VOICES.test(name)) p -= 200;
+  if ((voice.lang ?? '').toLowerCase().replace('_', '-') === (ACCENT[base] ?? '').toLowerCase()) p += 15;
+  if (voice.default) p += 5;
   return p;
 }
 
 /** La mejor voz de la lista para un idioma, o null */
-export function mejorVoz(voces, lang) {
-  let mejor = null;
-  let maximo = -Infinity;
-  for (const v of voces) {
-    const p = puntuar(v, lang);
-    if (p > maximo) [mejor, maximo] = [v, p];
+export function bestVoice(voices, lang) {
+  let best = null;
+  let maximum = -Infinity;
+  for (const v of voices) {
+    const p = score(v, lang);
+    if (p > maximum) [best, maximum] = [v, p];
   }
-  return mejor;
+  return best;
 }
 
 /** Parte un texto en frases cortas para leerlas con pausas */
-export function frases(texto) {
-  return String(texto)
+export function sentences(text) {
+  return String(text)
     .replace(/\s+/g, ' ')
     .split(/(?<=[.!?:;])\s+(?=\S)/u)
     .flatMap((f) => (f.length > 220 ? f.split(/(?<=,)\s+/) : [f]))
@@ -50,134 +50,134 @@ export function frases(texto) {
 }
 
 // ── En el navegador ─────────────────────────────────────────────────────
-const hay = typeof window !== 'undefined' && 'speechSynthesis' in window;
-const CLAVE = (lang) => `ayudas:voz:${idioma(lang)}`;
-const CLAVE_RITMO = 'ayudas:voz:ritmo';
+const available = typeof window !== 'undefined' && 'speechSynthesis' in window;
+const STORAGE_KEY = (lang) => `ayudas:voz:${language(lang)}`;
+const PACE_KEY = 'ayudas:voz:ritmo';
 
-export const puedeHablar = hay;
+export const canSpeak = available;
 
 /** Las voces tardan en cargar en Chrome: se espera a que lleguen (máximo 1,5 s) */
-export function voces() {
-  if (!hay) return Promise.resolve([]);
-  const ya = speechSynthesis.getVoices();
-  if (ya.length) return Promise.resolve(ya);
+export function voices() {
+  if (!available) return Promise.resolve([]);
+  const already = speechSynthesis.getVoices();
+  if (already.length) return Promise.resolve(already);
   return new Promise((ok) => {
-    const listo = () => ok(speechSynthesis.getVoices());
-    speechSynthesis.addEventListener('voiceschanged', listo, { once: true });
-    setTimeout(listo, 1500);
+    const ready = () => ok(speechSynthesis.getVoices());
+    speechSynthesis.addEventListener('voiceschanged', ready, { once: true });
+    setTimeout(ready, 1500);
   });
 }
 
-function leerGuardado(clave) {
+function readSaved(key) {
   try {
-    return localStorage.getItem(clave);
+    return localStorage.getItem(key);
   } catch {
     return null;
   }
 }
 
 /** Voz que se usará para un idioma: la elegida por la persona o la mejor del aparato (con reserva) */
-export async function vozPara(lang) {
-  const lista = await voces();
-  const elegida = leerGuardado(CLAVE(lang));
-  const guardada = elegida && lista.find((v) => v.voiceURI === elegida && idioma(v.lang) === idioma(lang));
-  if (guardada) return guardada;
-  return mejorVoz(lista, lang) ?? (RESERVA[idioma(lang)] ? mejorVoz(lista, RESERVA[idioma(lang)]) : null);
+export async function voiceFor(lang) {
+  const list = await voices();
+  const chosen = readSaved(STORAGE_KEY(lang));
+  const savedVoice = chosen && list.find((v) => v.voiceURI === chosen && language(v.lang) === language(lang));
+  if (savedVoice) return savedVoice;
+  return bestVoice(list, lang) ?? (FALLBACK[language(lang)] ? bestVoice(list, FALLBACK[language(lang)]) : null);
 }
 
-export function ritmo() {
-  return leerGuardado(CLAVE_RITMO) === 'despacio' ? 0.75 : 0.92;
+export function pace() {
+  return readSaved(PACE_KEY) === 'despacio' ? 0.75 : 0.92;
 }
 
-let turno = 0;
-let botonActivo = null;
+let turn = 0;
+let activeButton = null;
 
-function marcar(boton, hablando) {
-  if (!boton) return;
-  boton.setAttribute('aria-pressed', String(hablando));
-  boton.classList.toggle('hablando', hablando);
+function setPressed(button, isSpeaking) {
+  if (!button) return;
+  button.setAttribute('aria-pressed', String(isSpeaking));
+  button.classList.toggle('hablando', isSpeaking);
 }
 
-export function parar() {
-  if (!hay) return;
-  turno++;
+export function stop() {
+  if (!available) return;
+  turn++;
   speechSynthesis.cancel();
-  marcar(botonActivo, false);
-  botonActivo = null;
+  setPressed(activeButton, false);
+  activeButton = null;
 }
 
-export const hablando = () => hay && (speechSynthesis.speaking || speechSynthesis.pending);
+export const isSpeaking = () => available && (speechSynthesis.speaking || speechSynthesis.pending);
 
 /** Lee un texto en voz alta. `boton` se marca mientras habla. */
-export async function hablar(texto, { lang = 'es', boton = null } = {}) {
-  if (!hay || !texto) return;
-  parar();
-  const mio = ++turno;
-  const voz = await vozPara(lang);
-  if (mio !== turno) return;
-  botonActivo = boton;
-  marcar(boton, true);
-  const partes = frases(texto);
-  partes.forEach((f, i) => {
+export async function speak(text, { lang = 'es', button = null } = {}) {
+  if (!available || !text) return;
+  stop();
+  const mine = ++turn;
+  const voice = await voiceFor(lang);
+  if (mine !== turn) return;
+  activeButton = button;
+  setPressed(button, true);
+  const parts = sentences(text);
+  parts.forEach((f, i) => {
     const u = new SpeechSynthesisUtterance(f);
-    u.lang = voz?.lang ?? ACENTO[idioma(lang)] ?? lang;
-    if (voz) u.voice = voz;
-    u.rate = ritmo();
+    u.lang = voice?.lang ?? ACCENT[language(lang)] ?? lang;
+    if (voice) u.voice = voice;
+    u.rate = pace();
     u.pitch = 1;
-    if (i === partes.length - 1) u.onend = u.onerror = () => mio === turno && marcar(boton, false);
+    if (i === parts.length - 1) u.onend = u.onerror = () => mine === turn && setPressed(button, false);
     speechSynthesis.speak(u);
   });
 }
 
 // Nombre corto y claro: «Mónica · España ★ recomendada» en vez de «Mónica (español (España))»
-const PAISES = typeof Intl !== 'undefined' && Intl.DisplayNames ? new Intl.DisplayNames(['es'], { type: 'region' }) : null;
-export function etiquetaVoz(v, recomendada = false) {
-  const nombre = v.name
+const COUNTRIES = typeof Intl !== 'undefined' && Intl.DisplayNames ? new Intl.DisplayNames(['es'], { type: 'region' }) : null;
+export function voiceLabel(v, recommended = false) {
+  const name = v.name
     .replace(/\s*\((?:[^()]|\([^()]*\))*\)\s*$/, '') // «(español (España))», «(Natural)»
     .replace(/^(Microsoft|Google|Apple)\s+/i, '')
     .replace(/\s+Online.*$/i, '')
     .replace(/\s+-\s+.*$/, '')
     .trim() || v.name;
-  const nombreFinal = /^google/i.test(v.name) ? 'Voz de Google' : nombre;
+  const finalName = /^google/i.test(v.name) ? 'Voz de Google' : name;
   const region = (v.lang ?? '').replace('_', '-').split('-')[1];
-  let pais = '';
+  let country = '';
   try {
-    pais = region && PAISES ? PAISES.of(region.toUpperCase()) : '';
+    country = region && COUNTRIES ? COUNTRIES.of(region.toUpperCase()) : '';
   } catch {}
   const natural = /natural|neural|premium|mejorada|enhanced/i.test(v.name) ? ' (natural)' : '';
-  return `${nombreFinal}${natural}${pais ? ` · ${pais}` : ''}${recomendada ? ' ★ recomendada' : ''}`.replace(/</g, '&lt;');
+  return `${finalName}${natural}${country ? ` · ${country}` : ''}${recommended ? ' ★ recomendada' : ''}`.replace(/</g, '&lt;');
 }
 
 /** Rellena el ajuste de voz (si la página lo tiene): lista de voces del idioma, ritmo y «Probar» */
-export async function prepararAjustes() {
-  const caja = document.getElementById('ajuste-voz');
-  if (!caja) return;
-  if (!hay) {
-    caja.hidden = true;
+export async function setupSettings() {
+  const box = document.getElementById('ajuste-voz');
+  if (!box) return;
+  if (!available) {
+    box.hidden = true;
     return;
   }
   const lang = document.documentElement.lang || 'es';
-  const select = caja.querySelector('select[name="voz"]');
-  const todas = (await voces()).filter((v) => idioma(v.lang) === idioma(lang)).sort((a, b) => puntuar(b, lang) - puntuar(a, lang));
+  const select = box.querySelector('select[name="voice"]');
+  const allOf = (await voices()).filter((v) => language(v.lang) === language(lang)).sort((a, b) => score(b, lang) - score(a, lang));
   // Fuera las voces de broma o robóticas (Grandma, Rocko, eSpeak…), salvo que no haya otras
-  const buenas = todas.filter((v) => !MALAS.test(v.name));
-  const lista = buenas.length ? buenas : todas;
-  const actual = await vozPara(lang);
-  const mejor = lista[0];
-  select.innerHTML = lista.length
-    ? lista.map((v) => `<option value="${v.voiceURI.replace(/"/g, '&quot;')}"${v === actual ? ' selected' : ''}>${etiquetaVoz(v, v === mejor)}</option>`).join('')
+  const good = allOf.filter((v) => !BAD_VOICES.test(v.name));
+  const list = good.length ? good : allOf;
+  const current = await voiceFor(lang);
+  const best = list[0];
+  select.innerHTML = list.length
+    ? list.map((v) => `<option value="${v.voiceURI.replace(/"/g, '&quot;')}"${v === current ? ' selected' : ''}>${voiceLabel(v, v === best)}</option>`).join('')
     : '<option value="">La del aparato</option>';
   select.addEventListener('change', () => {
     try {
-      localStorage.setItem(CLAVE(lang), select.value);
+      localStorage.setItem(STORAGE_KEY(lang), select.value);
     } catch {}
   });
-  const despacio = caja.querySelector('input[name="despacio"]');
-  despacio.checked = ritmo() < 0.9;
-  despacio.addEventListener('change', () => {
+  const slow = box.querySelector('input[name="slow"]');
+  slow.checked = pace() < 0.9;
+  slow.addEventListener('change', () => {
     try {
-      localStorage.setItem(CLAVE_RITMO, despacio.checked ? 'despacio' : 'normal');
+      localStorage.setItem(PACE_KEY, slow.checked ? 'despacio' : 'normal');
     } catch {}
   });
-  caja.querySelector('[data-probar]').addEventListener('click', (e) => hablar(e.currentTarget.dataset.probar, { lang, boton: e.currentTarget }));
+  box.querySelector('[data-try-voice]').addEventListener('click', (e) => speak(e.currentTarget.dataset.tryVoice, { lang, button: e.currentTarget }));
 }

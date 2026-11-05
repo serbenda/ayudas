@@ -3,7 +3,7 @@
 // Fuente e imágenes: lo guardado, y se actualiza en segundo plano.
 
 const VERSION = 'ayudas-v8';
-const BASICOS = [
+const CORE_FILES = [
   './', 'mayores/', 'catalogo/', 'mapa/', 'palabras/', 'fuentes/',
   'assets/css/styles.css',
   'assets/js/ui/common.js', 'assets/js/pages/home.js', 'assets/js/pages/seniors.js', 'assets/js/pages/catalogue.js', 'assets/js/pages/sources.js',
@@ -14,7 +14,7 @@ const BASICOS = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(VERSION).then((c) => c.addAll(BASICOS)).catch(() => {}).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE_FILES)).catch(() => {}).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {
@@ -24,15 +24,15 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET' || url.origin !== location.origin) return;
-  const estatico = /\.(woff2|png|svg)$/.test(url.pathname);
-  if (estatico) {
+  const staticServer = /\.(woff2|png|svg)$/.test(url.pathname);
+  if (staticServer) {
     e.respondWith(
-      caches.match(e.request, { ignoreSearch: true }).then((guardado) => {
+      caches.match(e.request, { ignoreSearch: true }).then((savedValue) => {
         const red = fetch(e.request).then((r) => {
           if (r.ok) caches.open(VERSION).then((c) => c.put(e.request, r.clone()));
           return r;
         });
-        return guardado ?? red;
+        return savedValue ?? red;
       }),
     );
     return;
@@ -41,8 +41,8 @@ self.addEventListener('fetch', (e) => {
     fetch(e.request)
       .then((r) => {
         if (r.ok) {
-          const copia = r.clone();
-          caches.open(VERSION).then((c) => c.put(e.request, copia));
+          const copy = r.clone();
+          caches.open(VERSION).then((c) => c.put(e.request, copy));
         }
         return r;
       })

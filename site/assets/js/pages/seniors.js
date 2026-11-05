@@ -1,210 +1,210 @@
 // Página para personas mayores: una pregunta cada vez, botones grandes, frases cortas y lectura en voz alta.
 // Usa las mismas reglas que el resto de la web. Nada sale del navegador.
 
-import { evaluar, perfilVacio, porDondeEmpezar } from '../lib/rules.js';
-import { POR_ID, COMUNIDADES } from '../data/benefits.js';
-import { tramiteDe, papelesPara } from '../data/procedures.js';
-import { DOCUMENTOS, marcarTerminos } from '../data/guide.js';
-import { icono } from '../data/icons.js';
-import { botonTelefono, esc, cajaEjemplo } from '../ui/card.js';
-import { hablar, puedeHablar } from '../lib/voice.js';
-import { compartir } from '../ui/share.js';
+import { evaluate, emptyProfile, whereToStart } from '../lib/rules.js';
+import { BY_ID, REGIONS } from '../data/benefits.js';
+import { procedureOf, papersFor } from '../data/procedures.js';
+import { DOCUMENTS, markTerms } from '../data/guide.js';
+import { icon } from '../data/icons.js';
+import { phoneButton, esc, exampleBox } from '../ui/card.js';
+import { speak, canSpeak } from '../lib/voice.js';
+import { share } from '../ui/share.js';
 
-const caja = document.getElementById('asistente');
-const resultado = document.getElementById('resultado');
-const respuestas = {};
-let historial = [];
+const box = document.getElementById('asistente');
+const result = document.getElementById('resultado');
+const answers = {};
+let registerHistory = [];
 
 // ── Las preguntas ───────────────────────────────────────────────────────
 // Cada una: texto, ayuda (opcional), opciones [texto, valor] y cuándo se hace (si)
-const PREGUNTAS = [
-  { id: 'edad', texto: '¿Cuántos años tienes?', opciones: [['Menos de 60', 55], ['De 60 a 64', 62], ['De 65 a 79', 72], ['80 o más', 85]] },
+const QUESTIONS = [
+  { id: 'age', text: '¿Cuántos años tienes?', options: [['Menos de 60', 55], ['De 60 a 64', 62], ['De 65 a 79', 72], ['80 o más', 85]] },
   {
-    id: 'donde',
-    texto: '¿Dónde vives?',
-    opciones: [['En la ciudad de Madrid', 'capital'], ['En otro pueblo de la Comunidad de Madrid', 'madrid'], ['En otra comunidad', 'otra']],
+    id: 'where',
+    text: '¿Dónde vives?',
+    options: [['En la ciudad de Madrid', 'capital'], ['En otro pueblo de la Comunidad de Madrid', 'madrid'], ['En otra comunidad', 'otra']],
   },
-  { id: 'ccaa', texto: '¿En qué comunidad vives?', tipo: 'lista', si: (r) => r.donde === 'otra' },
-  { id: 'convivencia', texto: '¿Con quién vives?', opciones: [['Vivo solo o sola', 'solo'], ['Con mi pareja', 'pareja'], ['Con otros familiares', 'familia']] },
+  { id: 'region', text: '¿En qué comunidad vives?', type: 'lista', si: (r) => r.where === 'otra' },
+  { id: 'livingWith', text: '¿Con quién vives?', options: [['Vivo solo o sola', 'solo'], ['Con mi pareja', 'pareja'], ['Con otros familiares', 'familia']] },
   {
     id: 'pension',
-    texto: '¿Cobras alguna pensión?',
-    opciones: [['Sí, de jubilación', 'jubilacion'], ['Sí, de viudedad', 'viudedad'], ['Sí, de incapacidad', 'incapacidad'], ['Sí, no contributiva', 'pnc'], ['No cobro pensión', 'no']],
+    text: '¿Cobras alguna pensión?',
+    options: [['Sí, de jubilación', 'jubilacion'], ['Sí, de viudedad', 'viudedad'], ['Sí, de incapacidad', 'incapacidad'], ['Sí, no contributiva', 'pnc'], ['No cobro pensión', 'no']],
   },
   {
-    id: 'pensionMes',
-    texto: '¿Cuánto cobras de pensión al mes, más o menos?',
-    ayuda: 'Lo pone en la carta de la Seguridad Social o en tu banco.',
+    id: 'pensionMonthly',
+    text: '¿Cuánto cobras de pensión al mes, más o menos?',
+    benefit: 'Lo pone en la carta de la Seguridad Social o en tu banco.',
     si: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension),
-    opciones: [['Menos de 700 €', 650], ['De 700 a 900 €', 800], ['De 900 a 1.100 €', 1000], ['De 1.100 a 1.500 €', 1300], ['Más de 1.500 €', 1800], ['No lo sé', null]],
+    options: [['Menos de 700 €', 650], ['De 700 a 900 €', 800], ['De 900 a 1.100 €', 1000], ['De 1.100 a 1.500 €', 1300], ['Más de 1.500 €', 1800], ['No lo sé', null]],
   },
-  { id: 'desde2021', texto: '¿Empezaste a cobrar la pensión en 2021 o después?', si: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension), opciones: [['Sí', true], ['No, antes', false], ['No lo sé', null]] },
-  { id: 'hijos', texto: '¿Cuántos hijos has tenido?', si: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension), opciones: [['Ninguno', 0], ['1', 1], ['2', 2], ['3', 3], ['4 o más', 4]] },
+  { id: 'since2021', text: '¿Empezaste a cobrar la pensión en 2021 o después?', si: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension), options: [['Sí', true], ['No, antes', false], ['No lo sé', null]] },
+  { id: 'children', text: '¿Cuántos hijos has tenido?', si: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension), options: [['Ninguno', 0], ['1', 1], ['2', 2], ['3', 3], ['4 o más', 4]] },
   {
-    id: 'ingresos',
-    texto: '¿Tienes algún dinero que te entre cada mes?',
+    id: 'income',
+    text: '¿Tienes algún dinero que te entre cada mes?',
     si: (r) => r.pension === 'no',
-    opciones: [['No, nada', 0], ['Menos de 500 € al mes', 4000], ['Más de 500 € al mes', 9000], ['No lo sé', null]],
+    options: [['No, nada', 0], ['Menos de 500 € al mes', 4000], ['Más de 500 € al mes', 9000], ['No lo sé', null]],
   },
   {
-    id: 'hogar',
-    texto: '¿Cuánto dinero entra en casa al mes, entre todos?',
-    ayuda: 'Suma pensiones, sueldos y otras ayudas de las personas que viven contigo.',
-    si: (r) => r.convivencia !== 'solo',
-    opciones: [['Menos de 800 €', 700 * 12], ['De 800 a 1.200 €', 1000 * 12], ['De 1.200 a 2.000 €', 1600 * 12], ['Más de 2.000 €', 2500 * 12], ['No lo sé', null]],
+    id: 'household',
+    text: '¿Cuánto dinero entra en casa al mes, entre todos?',
+    benefit: 'Suma pensiones, sueldos y otras ayudas de las personas que viven contigo.',
+    si: (r) => r.livingWith !== 'solo',
+    options: [['Menos de 800 €', 700 * 12], ['De 800 a 1.200 €', 1000 * 12], ['De 1.200 a 2.000 €', 1600 * 12], ['Más de 2.000 €', 2500 * 12], ['No lo sé', null]],
   },
-  { id: 'viudo', texto: '¿Ha fallecido tu marido, tu mujer o tu pareja?', si: (r) => r.pension !== 'viudedad' && r.convivencia !== 'pareja', opciones: [['Sí', true], ['No', false]] },
+  { id: 'widowed', text: '¿Ha fallecido tu marido, tu mujer o tu pareja?', si: (r) => r.pension !== 'viudedad' && r.livingWith !== 'pareja', options: [['Sí', true], ['No', false]] },
   {
-    id: 'ayudaDiaria',
-    texto: '¿Necesitas ayuda de otra persona para asearte, vestirte o comer?',
-    opciones: [['No', 'no'], ['Sí, pero no lo he pedido', 'necesita'], ['Lo he pedido y estoy esperando', 'tramite'], ['Sí, ya tengo el grado de dependencia', 'grado']],
+    id: 'dailyHelp',
+    text: '¿Necesitas ayuda de otra persona para asearte, vestirte o comer?',
+    options: [['No', 'no'], ['Sí, pero no lo he pedido', 'necesita'], ['Lo he pedido y estoy esperando', 'tramite'], ['Sí, ya tengo el grado de dependencia', 'grado']],
   },
-  { id: 'grado', texto: '¿Qué grado de dependencia tienes?', si: (r) => r.ayudaDiaria === 'grado', opciones: [['Grado I', '1'], ['Grado II', '2'], ['Grado III', '3'], ['No me acuerdo', '1']] },
+  { id: 'grade', text: '¿Qué grado de dependencia tienes?', si: (r) => r.dailyHelp === 'grado', options: [['Grado I', '1'], ['Grado II', '2'], ['Grado III', '3'], ['No me acuerdo', '1']] },
   {
-    id: 'discapacidad',
-    texto: '¿Tienes certificado de discapacidad?',
-    opciones: [['No', 'no'], ['No, pero tengo problemas de salud que me limitan', 'sin'], ['Sí, de menos del 65 %', '33'], ['Sí, del 65 % o más', '65']],
+    id: 'disability',
+    text: '¿Tienes certificado de discapacidad?',
+    options: [['No', 'no'], ['No, pero tengo problemas de salud que me limitan', 'sin'], ['Sí, de menos del 65 %', '33'], ['Sí, del 65 % o más', '65']],
   },
-  { id: 'cuidas', texto: '¿Cuidas de alguien de tu familia que necesita ayuda?', opciones: [['No', 'no'], ['Sí, a mi pareja', 'pareja'], ['Sí, a un hijo o hija', 'hijo'], ['Sí, a otra persona', 'otro']] },
-  { id: 'cuidadoGrado', texto: '¿Esa persona tiene la dependencia reconocida?', si: (r) => r.cuidas && r.cuidas !== 'no', opciones: [['Sí', '2'], ['No', 'necesita'], ['Lo hemos pedido', 'tramite']] },
-  { id: 'vivienda', texto: '¿Tu casa es de alquiler?', opciones: [['Sí, pago alquiler', 'alquiler'], ['No, es mía', 'propia'], ['Otra situación', 'otra']] },
-  { id: 'llega', texto: '¿Te llega el dinero para comer y pagar la luz?', opciones: [['Sí', 'si'], ['Justo', 'justo'], ['No', 'no']] },
-  { id: 'soledad', texto: '¿Te sientes solo o sola a menudo?', opciones: [['Sí', true], ['A veces', false], ['No', false]] },
+  { id: 'youCare', text: '¿Cuidas de alguien de tu familia que necesita ayuda?', options: [['No', 'no'], ['Sí, a mi pareja', 'pareja'], ['Sí, a un hijo o hija', 'hijo'], ['Sí, a otra persona', 'otro']] },
+  { id: 'careGrade', text: '¿Esa persona tiene la dependencia reconocida?', si: (r) => r.youCare && r.youCare !== 'no', options: [['Sí', '2'], ['No', 'necesita'], ['Lo hemos pedido', 'tramite']] },
+  { id: 'housing', text: '¿Tu casa es de alquiler?', options: [['Sí, pago alquiler', 'alquiler'], ['No, es mía', 'propia'], ['Otra situación', 'otra']] },
+  { id: 'reaches', text: '¿Te llega el dinero para comer y pagar la luz?', options: [['Sí', 'si'], ['Justo', 'justo'], ['No', 'no']] },
+  { id: 'soledad', text: '¿Te sientes solo o sola a menudo?', options: [['Sí', true], ['A veces', false], ['No', false]] },
 ];
 
-const activas = () => PREGUNTAS.filter((q) => !q.si || q.si(respuestas));
+const activeQuestions = () => QUESTIONS.filter((q) => !q.si || q.si(answers));
 
 // ── Leer en voz alta ────────────────────────────────────────────────────
-function leer(texto) {
-  hablar(texto, { lang: 'es' });
+function read(text) {
+  speak(text, { lang: 'es' });
 }
-const botonEscuchar = (id) => (puedeHablar ? `<button type="button" class="escuchar" data-escuchar="${id}">${icono('altavoz')} Escuchar</button>` : '');
+const listenButton = (id) => (canSpeak ? `<button type="button" class="escuchar" data-listen="${id}">${icon('altavoz')} Escuchar</button>` : '');
 
 // ── Pintar una pregunta ─────────────────────────────────────────────────
-function mostrarPregunta(i) {
-  const lista = activas();
-  const q = lista[i];
-  if (!q) return mostrarResultado();
+function showQuestion(i) {
+  const list = activeQuestions();
+  const q = list[i];
+  if (!q) return showResult();
   const n = i + 1;
-  const total = lista.length;
-  const opciones = q.tipo === 'lista'
-    ? `<div class="opciones-grandes">${COMUNIDADES.filter((c) => c.id !== 'madrid').map((c) => `<button type="button" class="opcion-grande" data-valor="${c.id}">${esc(c.nombre)}</button>`).join('')}</div>`
-    : `<div class="opciones-grandes">${q.opciones.map(([t, v], k) => `<button type="button" class="opcion-grande" data-indice="${k}">${esc(t)}</button>`).join('')}</div>`;
-  caja.innerHTML = `
+  const total = list.length;
+  const options = q.type === 'lista'
+    ? `<div class="opciones-grandes">${REGIONS.filter((c) => c.id !== 'madrid').map((c) => `<button type="button" class="opcion-grande" data-field-value="${c.id}">${esc(c.name)}</button>`).join('')}</div>`
+    : `<div class="opciones-grandes">${q.options.map(([t, v], k) => `<button type="button" class="opcion-grande" data-position="${k}">${esc(t)}</button>`).join('')}</div>`;
+  box.innerHTML = `
     <div class="progreso" role="progressbar" aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${n}" aria-label="Pregunta ${n} de ${total}">
       <span>Pregunta ${n} de ${total}</span>
       <div class="progreso-barra"><i style="width:${Math.round((n / total) * 100)}%"></i></div>
     </div>
-    <h2 class="pregunta-grande" id="pregunta" tabindex="-1">${esc(q.texto)}</h2>
-    ${q.ayuda ? `<p class="pregunta-ayuda">${esc(q.ayuda)}</p>` : ''}
-    ${botonEscuchar('pregunta')}
-    ${opciones}
+    <h2 class="pregunta-grande" id="pregunta" tabindex="-1">${esc(q.text)}</h2>
+    ${q.benefit ? `<p class="pregunta-ayuda">${esc(q.benefit)}</p>` : ''}
+    ${listenButton('pregunta')}
+    ${options}
     <div class="navegar">
       ${i > 0 ? '<button type="button" class="boton secundario grande" data-volver>← Volver</button>' : ''}
       <button type="button" class="boton texto" data-saltar>No quiero contestar</button>
     </div>`;
-  caja.dataset.indice = i;
-  caja.dataset.texto = [q.texto, q.ayuda ?? '', ...(q.opciones ?? []).map(([t]) => t)].join('. ');
+  box.dataset.position = i;
+  box.dataset.text = [q.text, q.benefit ?? '', ...(q.options ?? []).map(([t]) => t)].join('. ');
   document.getElementById('pregunta').focus({ preventScroll: false });
 }
 
-caja.addEventListener('click', (e) => {
-  const i = Number(caja.dataset.indice);
-  const q = activas()[i];
+box.addEventListener('click', (e) => {
+  const i = Number(box.dataset.position);
+  const q = activeQuestions()[i];
   const b = e.target.closest('button');
   if (!b || !q) return;
-  if (b.dataset.escuchar) return leer(caja.dataset.texto);
+  if (b.dataset.listen) return read(box.dataset.text);
   if ('volver' in b.dataset) {
-    const anterior = historial.pop() ?? 0;
-    return mostrarPregunta(anterior);
+    const previous = registerHistory.pop() ?? 0;
+    return showQuestion(previous);
   }
   if ('saltar' in b.dataset) {
-    delete respuestas[q.id];
-  } else if (b.dataset.valor !== undefined) {
-    respuestas[q.id] = b.dataset.valor;
-  } else if (b.dataset.indice !== undefined) {
-    respuestas[q.id] = q.opciones[Number(b.dataset.indice)][1];
+    delete answers[q.id];
+  } else if (b.dataset.fieldValue !== undefined) {
+    answers[q.id] = b.dataset.fieldValue;
+  } else if (b.dataset.position !== undefined) {
+    answers[q.id] = q.options[Number(b.dataset.position)][1];
   } else return;
-  historial.push(i);
+  registerHistory.push(i);
   // Las preguntas que ya no tocan se borran (por ejemplo, si cambias la pensión)
-  const ids = new Set(activas().map((x) => x.id));
-  for (const k of Object.keys(respuestas)) if (!ids.has(k)) delete respuestas[k];
-  const siguiente = activas().findIndex((x) => x.id === q.id) + 1;
-  mostrarPregunta(siguiente);
+  const ids = new Set(activeQuestions().map((x) => x.id));
+  for (const k of Object.keys(answers)) if (!ids.has(k)) delete answers[k];
+  const next = activeQuestions().findIndex((x) => x.id === q.id) + 1;
+  showQuestion(next);
 });
 
 // ── De las respuestas al perfil de las reglas ───────────────────────────
-function perfil() {
-  const r = respuestas;
-  const p = perfilVacio();
-  p.edad = r.edad ?? null;
-  p.ccaa = r.donde === 'capital' || r.donde === 'madrid' ? 'madrid' : r.ccaa ?? null;
-  p.madridCapital = r.donde === 'capital' ? true : r.donde === 'madrid' ? false : null;
-  p.pareja = r.convivencia === 'pareja';
-  p.adultos = r.convivencia === 'solo' ? 1 : 2;
-  p.situacion = r.pension && r.pension !== 'no' ? 'pensionista' : null;
+function profile() {
+  const r = answers;
+  const p = emptyProfile();
+  p.age = r.age ?? null;
+  p.region = r.where === 'capital' || r.where === 'madrid' ? 'madrid' : r.region ?? null;
+  p.madridCity = r.where === 'capital' ? true : r.where === 'madrid' ? false : null;
+  p.partner = r.livingWith === 'pareja';
+  p.adults = r.livingWith === 'solo' ? 1 : 2;
+  p.situation = r.pension && r.pension !== 'no' ? 'pensionista' : null;
   p.pension = r.pension ?? 'no';
-  p.pensionMes = r.pensionMes ?? null;
-  p.pensionDesde2021 = r.desde2021 ?? null;
-  p.hijosTenidos = r.hijos ?? 0;
-  p.viudo = r.pension === 'viudedad' || r.viudo === true;
-  const propios = p.pension === 'no' ? r.ingresos ?? null : p.pensionMes != null ? p.pensionMes * 14 : null;
-  p.ingresosPropios = propios;
-  p.ingresosHogar = r.convivencia === 'solo' ? propios : r.hogar ?? null;
-  p.dependencia = r.ayudaDiaria === 'grado' ? r.grado ?? '1' : r.ayudaDiaria ?? 'no';
-  p.discapacidad = r.discapacidad ?? 'no';
-  p.vivienda = r.vivienda ?? null;
-  if (r.cuidas && r.cuidas !== 'no') {
-    p.cuidados = [{ relacion: r.cuidas, edad: r.cuidas === 'pareja' ? p.edad : null, discapacidad: 'no', dependencia: r.cuidadoGrado ?? 'necesita', convive: true, cuidoYo: true }];
+  p.pensionMonthly = r.pensionMonthly ?? null;
+  p.pensionSince2021 = r.since2021 ?? null;
+  p.childrenBorn = r.children ?? 0;
+  p.widowed = r.pension === 'viudedad' || r.widowed === true;
+  const ownItems = p.pension === 'no' ? r.income ?? null : p.pensionMonthly != null ? p.pensionMonthly * 14 : null;
+  p.ownIncome = ownItems;
+  p.householdIncome = r.livingWith === 'solo' ? ownItems : r.household ?? null;
+  p.dependency = r.dailyHelp === 'grado' ? r.grade ?? '1' : r.dailyHelp ?? 'no';
+  p.disability = r.disability ?? 'no';
+  p.housing = r.housing ?? null;
+  if (r.youCare && r.youCare !== 'no') {
+    p.caredFor = [{ relationship: r.youCare, age: r.youCare === 'pareja' ? p.age : null, disability: 'no', dependency: r.careGrade ?? 'necesita', livesWith: true, iCare: true }];
   }
-  p.urgencias = { ...p.urgencias, comida: r.llega === 'no', soledad: r.soledad === true };
+  p.urgent = { ...p.urgent, food: r.reaches === 'no', soledad: r.soledad === true };
   return p;
 }
 
 // ── Resultado ───────────────────────────────────────────────────────────
-function tarjetaMayores(r, ccaa, numero) {
-  const a = POR_ID[r.id];
-  const t = tramiteDe(r.id, ccaa);
-  const usados = new Set();
-  const ex = (texto) => marcarTerminos(esc(texto), usados);
+function seniorCard(r, region, number) {
+  const a = BY_ID[r.id];
+  const t = procedureOf(r.id, region);
+  const used = new Set();
+  const ex = (text) => markTerms(esc(text), used);
   return `
   <article class="ficha-mayores${r.urgente ? ' urgente' : ''}" id="m-${r.id}">
-    <h3><span class="numero">${numero}</span>${esc(a.nombre)}</h3>
-    ${r.importe?.texto ? `<p class="cuanto">${esc(r.importe.texto)}</p>` : ''}
-    <ul class="frases">${t.facil.map((f) => `<li>${ex(f)}</li>`).join('')}</ul>
-    ${r.estado === 'quizas' && r.comprobar.length ? `<p class="comprobar-mayores"><strong>Hay que comprobar:</strong> ${ex(r.comprobar[0])}</p>` : ''}
-    ${botonEscuchar(r.id)}
+    <h3><span class="numero">${number}</span>${esc(a.name)}</h3>
+    ${r.payment?.text ? `<p class="cuanto">${esc(r.payment.text)}</p>` : ''}
+    <ul class="frases">${t.easy.map((f) => `<li>${ex(f)}</li>`).join('')}</ul>
+    ${r.status === 'quizas' && r.check.length ? `<p class="comprobar-mayores"><strong>Hay que comprobar:</strong> ${ex(r.check[0])}</p>` : ''}
+    ${listenButton(r.id)}
     <details class="como-mayores">
       <summary>Qué tengo que hacer</summary>
-      ${cajaEjemplo(r.id)}
-      <ol>${t.pasos.map((p) => `<li>${ex(p)}</li>`).join('')}</ol>
-      ${t.telefonos.length ? `<h4>Llama a</h4><div class="llamadas">${t.telefonos.map(botonTelefono).join('')}</div>` : ''}
-      ${t.documentos.length ? `<h4>Lleva estos papeles</h4><ul class="papeles">${t.documentos.map((d) => `<li>${esc(DOCUMENTOS[d].nombre)}</li>`).join('')}</ul>` : ''}
-      <p><strong>Cuándo:</strong> ${ex(t.plazo)}</p>
+      ${exampleBox(r.id)}
+      <ol>${t.steps.map((p) => `<li>${ex(p)}</li>`).join('')}</ol>
+      ${t.phones.length ? `<h4>Llama a</h4><div class="llamadas">${t.phones.map(phoneButton).join('')}</div>` : ''}
+      ${t.documents.length ? `<h4>Lleva estos papeles</h4><ul class="papeles">${t.documents.map((d) => `<li>${esc(DOCUMENTS[d].name)}</li>`).join('')}</ul>` : ''}
+      <p><strong>Cuándo:</strong> ${ex(t.deadline)}</p>
     </details>
   </article>`;
 }
 
-function mostrarResultado() {
-  const p = perfil();
-  const todos = evaluar(p);
-  const primeras = porDondeEmpezar(todos, 99);
-  const resto = todos.filter((r) => !primeras.includes(r) && r.estado === 'si');
-  const quizas = todos.filter((r) => !primeras.includes(r) && r.estado === 'quizas');
-  const orden = [...primeras, ...resto, ...quizas];
-  const papeles = papelesPara(orden.map((r) => r.id)).slice(0, 8);
-  const madrid = p.ccaa === 'madrid';
+function showResult() {
+  const p = profile();
+  const all = evaluate(p);
+  const first = whereToStart(all, 99);
+  const rest = all.filter((r) => !first.includes(r) && r.status === 'si');
+  const quizas = all.filter((r) => !first.includes(r) && r.status === 'quizas');
+  const order = [...first, ...rest, ...quizas];
+  const papeles = papersFor(order.map((r) => r.id)).slice(0, 8);
+  const madrid = p.region === 'madrid';
 
-  caja.hidden = true;
-  resultado.hidden = false;
-  resultado.innerHTML = `
-    <h2 class="pregunta-grande" id="t-resultado" tabindex="-1">${orden.length ? `Puedes pedir ${orden.length === 1 ? 'esta ayuda' : `estas ${orden.length} ayudas`}` : 'No sale ninguna ayuda'}</h2>
-    <p class="pregunta-ayuda">${orden.length ? 'Empieza por la primera. Pulsa «Qué tengo que hacer» para ver los pasos.' : 'Con tus respuestas no sale ninguna. Llama a los servicios sociales de tu ayuntamiento: te orientan gratis.'}</p>
-    <p class="consejo">${icono('cuidados')} Puedes pedir ayuda a un familiar, a un vecino o a los servicios sociales para hacer los trámites.</p>
-    <div class="fichas-mayores">${orden.map((r, i) => tarjetaMayores(r, p.ccaa, i + 1)).join('')}</div>
-    ${papeles.length ? `<section class="bloque-mayores"><h3>${icono('papeles')} Papeles que conviene tener a mano</h3><ul class="papeles">${papeles.map(({ doc }) => `<li><strong>${esc(DOCUMENTOS[doc].nombre)}</strong>. ${esc(DOCUMENTOS[doc].ayuda)}</li>`).join('')}</ul></section>` : ''}
-    <section class="bloque-mayores"><h3>${icono('telefono')} Teléfonos que te pueden ayudar</h3>
-      <div class="llamadas">${[...(madrid ? ['mayoresMadrid', 'madrid012', 'linea010'] : []), 'cruzRoja', 'infoInss', 'emergencias'].map(botonTelefono).join('')}</div>
+  box.hidden = true;
+  result.hidden = false;
+  result.innerHTML = `
+    <h2 class="pregunta-grande" id="t-resultado" tabindex="-1">${order.length ? `Puedes pedir ${order.length === 1 ? 'esta ayuda' : `estas ${order.length} ayudas`}` : 'No sale ninguna ayuda'}</h2>
+    <p class="pregunta-ayuda">${order.length ? 'Empieza por la primera. Pulsa «Qué tengo que hacer» para ver los pasos.' : 'Con tus respuestas no sale ninguna. Llama a los servicios sociales de tu ayuntamiento: te orientan gratis.'}</p>
+    <p class="consejo">${icon('cuidados')} Puedes pedir ayuda a un familiar, a un vecino o a los servicios sociales para hacer los trámites.</p>
+    <div class="fichas-mayores">${order.map((r, i) => seniorCard(r, p.region, i + 1)).join('')}</div>
+    ${papeles.length ? `<section class="bloque-mayores"><h3>${icon('papeles')} Papeles que conviene tener a mano</h3><ul class="papeles">${papeles.map(({ doc }) => `<li><strong>${esc(DOCUMENTS[doc].name)}</strong>. ${esc(DOCUMENTS[doc].benefit)}</li>`).join('')}</ul></section>` : ''}
+    <section class="bloque-mayores"><h3>${icon('telefono')} Teléfonos que te pueden ayudar</h3>
+      <div class="llamadas">${[...(madrid ? ['mayoresMadrid', 'madrid012', 'linea010'] : []), 'cruzRoja', 'infoInss', 'emergencias'].map(phoneButton).join('')}</div>
     </section>
     <div class="navegar">
       <button type="button" class="boton grande" data-compartir>Enviar a un familiar</button>
@@ -216,35 +216,35 @@ function mostrarResultado() {
   document.getElementById('t-resultado').focus();
 }
 
-resultado.addEventListener('click', (e) => {
+result.addEventListener('click', (e) => {
   const b = e.target.closest('button');
   if (!b) return;
-  if (b.dataset.escuchar) {
-    const ficha = document.getElementById(`m-${b.dataset.escuchar}`);
-    const t = tramiteDe(b.dataset.escuchar, perfil().ccaa);
-    return leer([POR_ID[b.dataset.escuchar].nombre, ficha.querySelector('.cuanto')?.textContent ?? '', ...t.facil, 'Qué tengo que hacer.', ...t.pasos].join('. '));
+  if (b.dataset.listen) {
+    const card = document.getElementById(`m-${b.dataset.listen}`);
+    const t = procedureOf(b.dataset.listen, profile().region);
+    return read([BY_ID[b.dataset.listen].name, card.querySelector('.cuanto')?.textContent ?? '', ...t.easy, 'Qué tengo que hacer.', ...t.steps].join('. '));
   }
   if ('compartir' in b.dataset) {
-    const ids = [...resultado.querySelectorAll('.ficha-mayores')].map((f) => f.id.replace(/^m-/, ''));
-    return compartir(ids);
+    const ids = [...result.querySelectorAll('.ficha-mayores')].map((f) => f.id.replace(/^m-/, ''));
+    return share(ids);
   }
   if ('imprimir' in b.dataset) {
-    resultado.querySelectorAll('details').forEach((d) => (d.open = true));
+    result.querySelectorAll('details').forEach((d) => (d.open = true));
     return print();
   }
   if ('cambiar' in b.dataset) {
-    resultado.hidden = true;
-    caja.hidden = false;
-    historial = [];
-    mostrarPregunta(0);
+    result.hidden = true;
+    box.hidden = false;
+    registerHistory = [];
+    showQuestion(0);
   }
 });
 
 // ── Arranque ────────────────────────────────────────────────────────────
 document.getElementById('empezar').addEventListener('click', () => {
   document.getElementById('bienvenida').hidden = true;
-  caja.hidden = false;
-  mostrarPregunta(0);
+  box.hidden = false;
+  showQuestion(0);
 });
-document.querySelector('[data-escuchar="bienvenida"]')?.addEventListener('click', () => leer(document.getElementById('bienvenida').innerText));
-if (!puedeHablar) document.querySelector('[data-escuchar="bienvenida"]')?.remove();
+document.querySelector('[data-listen="bienvenida"]')?.addEventListener('click', () => read(document.getElementById('bienvenida').innerText));
+if (!canSpeak) document.querySelector('[data-listen="bienvenida"]')?.remove();

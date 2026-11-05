@@ -3,151 +3,151 @@
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { AYUDAS, POR_ID, COMUNIDADES, CATEGORIAS } from '../../site/assets/js/data/benefits.js';
-import { tramiteDe } from '../../site/assets/js/data/procedures.js';
-import { tarjeta, esc } from '../../site/assets/js/ui/card.js';
-import { RENTA_CCAA } from '../../site/assets/js/data/regions.js';
-import { panelDe } from '../../site/assets/js/ui/region-panel.js';
-import { IDIOMAS, FRASE } from './languages.mjs';
-import { icono } from '../../site/assets/js/data/icons.js';
-import { enlacesIdiomas, selectorIdioma } from '../../site/assets/js/data/flags.js';
+import { BENEFITS, BY_ID, REGIONS, CATEGORIES } from '../../site/assets/js/data/benefits.js';
+import { procedureOf } from '../../site/assets/js/data/procedures.js';
+import { benefitCard, esc } from '../../site/assets/js/ui/card.js';
+import { MINIMUM_INCOME } from '../../site/assets/js/data/regions.js';
+import { regionPanel } from '../../site/assets/js/ui/region-panel.js';
+import { LANGUAGES, COUNTER_SENTENCE } from './languages.mjs';
+import { icon } from '../../site/assets/js/data/icons.js';
+import { languageLinks, languageSelector } from '../../site/assets/js/data/flags.js';
 
-const SALIDA = process.argv[2] ?? '_site';
-const WEB = 'https://ayudas.bendi.dev';
-const plantilla = readFileSync(new URL('../../site/catalogo/index.html', import.meta.url), 'utf8')
+const OUTPUT = process.argv[2] ?? '_site';
+const SITE_URL = 'https://ayudas.bendi.dev';
+const template = readFileSync(new URL('../../site/catalogo/index.html', import.meta.url), 'utf8')
   .replace(/(href|src)="\.\.\//g, '$1="/')
   .replace(' aria-current="page"', '')
   .replace('<script type="module" src="/assets/js/pages/catalogue.js"></script>\n', '');
 
-function pagina({ ruta, titulo, descripcion, cuerpo, datos }) {
-  const html = plantilla
-    .replace(/<title>.*?<\/title>/, `<title>${esc(titulo)} · ayudas</title>`)
+function page({ routePath, title, descripcion, body, data }) {
+  const html = template
+    .replace(/<title>.*?<\/title>/, `<title>${esc(title)} · ayudas</title>`)
     .replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${esc(descripcion)}">`)
-    .replace(/<link rel="canonical" href=".*?">/, `<link rel="canonical" href="${WEB}${ruta}">\n  <script type="application/ld+json">${JSON.stringify(datos).replace(/</g, '\\u003c')}</script>`)
-    .replace(/<main class="envoltorio">[\s\S]*?<\/main>/, `<main class="envoltorio">\n${cuerpo}\n  </main>`);
-  const carpeta = join(SALIDA, ruta);
-  mkdirSync(carpeta, { recursive: true });
-  writeFileSync(join(carpeta, 'index.html'), html);
+    .replace(/<link rel="canonical" href=".*?">/, `<link rel="canonical" href="${SITE_URL}${routePath}">\n  <script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`)
+    .replace(/<main class="envoltorio">[\s\S]*?<\/main>/, `<main class="envoltorio">\n${body}\n  </main>`);
+  const folder = join(OUTPUT, routePath);
+  mkdirSync(folder, { recursive: true });
+  writeFileSync(join(folder, 'index.html'), html);
 }
 
-const preguntas = (lista) => ({
+const questions = (list) => ({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: lista.filter(([, r]) => r).map(([q, r]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: r } })),
+  mainEntity: list.filter(([, r]) => r).map(([q, r]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: r } })),
 });
-const migas = (pasos) => `<nav class="migas" aria-label="Estás en"><ol>${pasos.map(([t, u]) => (u ? `<li><a href="${u}">${esc(t)}</a></li>` : `<li aria-current="page">${esc(t)}</li>`)).join('')}</ol></nav>`;
+const breadcrumbs = (steps) => `<nav class="migas" aria-label="Estás en"><ol>${steps.map(([t, u]) => (u ? `<li><a href="${u}">${esc(t)}</a></li>` : `<li aria-current="page">${esc(t)}</li>`)).join('')}</ol></nav>`;
 
-const rutas = ['/', '/mayores/', '/catalogo/', '/mapa/', '/entidades/', '/palabras/', '/fuentes/', '/comunidad/', ...Object.keys(IDIOMAS).map((c) => `/${c}/`)];
+const routes = ['/', '/mayores/', '/catalogo/', '/mapa/', '/entidades/', '/palabras/', '/fuentes/', '/comunidad/', ...Object.keys(LANGUAGES).map((c) => `/${c}/`)];
 
-for (const a of AYUDAS) {
-  const t = tramiteDe(a.id, null);
-  const ruta = `/ayuda/${a.id}/`;
-  rutas.push(ruta);
-  const tema = CATEGORIAS.find((c) => c.id === a.categoria);
-  pagina({
-    ruta,
-    titulo: `${a.nombre}: cuánto dan y cómo se pide en 2026`,
-    descripcion: `${a.resumen} Qué dan en 2026, quién puede pedirla y cómo se pide, paso a paso.`.slice(0, 300),
-    datos: preguntas([
-      [`¿Qué es ${a.nombre}?`, a.resumen],
-      [`¿Cuánto da ${a.nombre} en 2026?`, a.cuantia],
-      [`¿Quién puede pedir ${a.nombre}?`, a.requisitos.join(' ')],
-      [`¿Cómo se pide ${a.nombre}?`, t.pasos.join(' ')],
+for (const a of BENEFITS) {
+  const t = procedureOf(a.id, null);
+  const routePath = `/ayuda/${a.id}/`;
+  routes.push(routePath);
+  const topic = CATEGORIES.find((c) => c.id === a.category);
+  page({
+    routePath,
+    title: `${a.name}: cuánto dan y cómo se pide en 2026`,
+    descripcion: `${a.summary} Qué dan en 2026, quién puede pedirla y cómo se pide, paso a paso.`.slice(0, 300),
+    data: questions([
+      [`¿Qué es ${a.name}?`, a.summary],
+      [`¿Cuánto da ${a.name} en 2026?`, a.amount],
+      [`¿Quién puede pedir ${a.name}?`, a.requirements.join(' ')],
+      [`¿Cómo se pide ${a.name}?`, t.steps.join(' ')],
     ]),
-    cuerpo: `    <section aria-labelledby="titular">
-      ${migas([['Inicio', '/'], ['Todas las ayudas', '/catalogo/'], [tema?.nombre ?? 'Ayudas', `/catalogo/?tema=${a.categoria}`], [a.nombre]])}
-      <h1 class="titular titular-ficha" id="titular">${esc(a.nombre)}</h1>
-      <p class="entradilla">${esc(a.resumen)} <strong>${esc(a.ambito)}</strong> · ${esc(a.organismo)}.</p>
+    body: `    <section aria-labelledby="titular">
+      ${breadcrumbs([['Inicio', '/'], ['Todas las ayudas', '/catalogo/'], [topic?.name ?? 'Ayudas', `/catalogo/?tema=${a.category}`], [a.name]])}
+      <h1 class="titular titular-ficha" id="titular">${esc(a.name)}</h1>
+      <p class="entradilla">${esc(a.summary)} <strong>${esc(a.scope)}</strong> · ${esc(a.agency)}.</p>
       <p class="ficha-acciones"><a class="boton" href="/">¿Me toca? Contesta unas preguntas</a> <a class="boton secundario" href="/mapa/">Ver cómo se pide en mi comunidad</a></p>
-      <ul class="lista-ayudas ficha">${tarjeta(a.id, { abierta: true })}</ul>
+      <ul class="lista-ayudas ficha">${benefitCard(a.id, { isOpen: true })}</ul>
     </section>`,
   });
 }
 
-for (const c of COMUNIDADES) {
-  const r = RENTA_CCAA[c.id];
+for (const c of REGIONS) {
+  const r = MINIMUM_INCOME[c.id];
   if (!r) continue;
-  const ruta = `/comunidad/${c.id}/`;
-  rutas.push(ruta);
-  pagina({
-    ruta,
-    titulo: `Ayudas en ${c.nombre} en 2026`,
-    descripcion: `Las ayudas que se piden en ${c.nombre}: ${r.nombre}, dependencia, discapacidad, pensiones no contributivas, alquiler y más, con los pasos para pedirlas.`,
-    datos: preguntas([
-      [`¿Cómo se llama la renta mínima en ${c.nombre}?`, `${r.nombre}. ${r.nota ?? ''}`.trim()],
-      [`¿Dónde se piden las ayudas de ${c.nombre}?`, `En la web oficial (${r.sede}) o con ayuda de los servicios sociales de tu ayuntamiento.`],
+  const routePath = `/comunidad/${c.id}/`;
+  routes.push(routePath);
+  page({
+    routePath,
+    title: `Ayudas en ${c.name} en 2026`,
+    descripcion: `Las ayudas que se piden en ${c.name}: ${r.name}, dependencia, discapacidad, pensiones no contributivas, alquiler y más, con los pasos para pedirlas.`,
+    data: questions([
+      [`¿Cómo se llama la renta mínima en ${c.name}?`, `${r.name}. ${r.note ?? ''}`.trim()],
+      [`¿Dónde se piden las ayudas de ${c.name}?`, `En la web oficial (${r.website}) o con ayuda de los servicios sociales de tu ayuntamiento.`],
     ]),
-    cuerpo: `    <section aria-labelledby="titular">
-      ${migas([['Inicio', '/'], ['Mapa', `/mapa/#${c.id}`], [c.nombre]])}
-      <h1 class="titular titular-ficha" id="titular">Ayudas en ${esc(c.nombre)}.</h1>
-      <p class="entradilla">Las ayudas que se piden en ${esc(c.nombre)} y cómo se piden aquí. <a href="/mapa/#${c.id}">Verla en el mapa</a>.</p>
-      <div class="panel-ccaa">${panelDe(c.id, { titulo: false })}</div>
+    body: `    <section aria-labelledby="titular">
+      ${breadcrumbs([['Inicio', '/'], ['Mapa', `/mapa/#${c.id}`], [c.name]])}
+      <h1 class="titular titular-ficha" id="titular">Ayudas en ${esc(c.name)}.</h1>
+      <p class="entradilla">Las ayudas que se piden en ${esc(c.name)} y cómo se piden aquí. <a href="/mapa/#${c.id}">Verla en el mapa</a>.</p>
+      <div class="panel-ccaa">${regionPanel(c.id, { title: false })}</div>
     </section>`,
   });
 }
 
 // Índice de comunidades
-pagina({
-  ruta: '/comunidad/',
-  titulo: 'Ayudas por comunidad autónoma',
+page({
+  routePath: '/comunidad/',
+  title: 'Ayudas por comunidad autónoma',
   descripcion: 'Elige tu comunidad autónoma y mira qué ayudas se piden allí y cómo.',
-  datos: { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Ayudas por comunidad autónoma' },
-  cuerpo: `    <section aria-labelledby="titular">
+  data: { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Ayudas por comunidad autónoma' },
+  body: `    <section aria-labelledby="titular">
       <h1 class="titular" id="titular">Ayudas por comunidad.</h1>
       <p class="entradilla">Elige dónde vives. También puedes <a href="/mapa/">pulsar en el mapa</a>.</p>
-      <ul class="lista-comunidades">${COMUNIDADES.filter((c) => RENTA_CCAA[c.id]).map((c) => `<li><a href="/comunidad/${c.id}/">${esc(c.nombre)}</a><span>${esc(RENTA_CCAA[c.id].nombre)}</span></li>`).join('')}</ul>
+      <ul class="lista-comunidades">${REGIONS.filter((c) => MINIMUM_INCOME[c.id]).map((c) => `<li><a href="/comunidad/${c.id}/">${esc(c.name)}</a><span>${esc(MINIMUM_INCOME[c.id].name)}</span></li>`).join('')}</ul>
     </section>`,
 });
 
 
 // Guías en otros idiomas: misma cabecera con los textos traducidos, y su idioma
-const TELEFONOS_HOY = [['112', '112'], ['016', '016'], ['024', '024'], ['900 107 917', 'cruz']];
-for (const [codigo, t] of Object.entries(IDIOMAS)) {
-  let html = plantilla
+const TODAY_PHONES = [['112', '112'], ['016', '016'], ['024', '024'], ['900 107 917', 'redCross']];
+for (const [code, t] of Object.entries(LANGUAGES)) {
+  let html = template
     .replace('<html lang="es">', `<html lang="${t.lang}" dir="${t.dir}">`)
-    .replace(/<title>.*?<\/title>/, `<title>${esc(t.titulo)} · ayudas</title>`)
+    .replace(/<title>.*?<\/title>/, `<title>${esc(t.title)} · ayudas</title>`)
     .replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${esc(t.descripcion)}">`)
-    .replace(/<link rel="canonical" href=".*?">/, `<link rel="canonical" href="${WEB}/${codigo}/">\n${Object.entries(IDIOMAS).map(([c, o]) => `  <link rel="alternate" hreflang="${o.lang}" href="${WEB}/${c}/">`).join('\n')}\n  <link rel="alternate" hreflang="es" href="${WEB}/">`)
-    .replace('<span>Tus ayudas</span>', `<span>${esc(t.nav.inicio)}</span>`)
+    .replace(/<link rel="canonical" href=".*?">/, `<link rel="canonical" href="${SITE_URL}/${code}/">\n${Object.entries(LANGUAGES).map(([c, o]) => `  <link rel="alternate" hreflang="${o.lang}" href="${SITE_URL}/${c}/">`).join('\n')}\n  <link rel="alternate" hreflang="es" href="${SITE_URL}/">`)
+    .replace('<span>Tus ayudas</span>', `<span>${esc(t.nav.home)}</span>`)
     .replace('<span>Mayores</span>', `<span>${esc(t.nav.mayores)}</span>`)
     .replace('<span>Todas las ayudas</span>', `<span>${esc(t.nav.catalogo)}</span>`)
     .replace('<span>Mapa</span>', `<span>${esc(t.nav.mapa)}</span>`)
-    .replace('<span>Fuentes</span>', `<span>${esc(t.nav.fuentes)}</span>`)
-    .replace(/<div class="envoltorio barra">[\s\S]*?\n  <\/div>\n/, `<div class="envoltorio barra barra-guia">\n    ${selectorIdioma('/', codigo, t.idioma)}\n  </div>\n`)
+    .replace('<span>Fuentes</span>', `<span>${esc(t.nav.sources)}</span>`)
+    .replace(/<div class="envoltorio barra">[\s\S]*?\n  <\/div>\n/, `<div class="envoltorio barra barra-guia">\n    ${languageSelector('/', code, t.language)}\n  </div>\n`)
     .replace(/<footer class="envoltorio pie">[\s\S]*?<\/footer>/, `<footer class="envoltorio pie" lang="${t.lang}">
-    <p>${esc(t.nota)} <a href="/fuentes/#t-error">${esc(t.aviso)}</a>.</p>
-    <nav class="idiomas-pie" aria-label="${esc(t.otros)}"><p>${esc(t.otros)}</p>${enlacesIdiomas('/', codigo)}</nav>
+    <p>${esc(t.note)} <a href="/fuentes/#t-error">${esc(t.notice)}</a>.</p>
+    <nav class="idiomas-pie" aria-label="${esc(t.others)}"><p>${esc(t.others)}</p>${languageLinks('/', code)}</nav>
   </footer>`)
     .replace(/<main class="envoltorio">[\s\S]*?<\/main>/, `<main class="envoltorio guia-idioma">
     <section aria-labelledby="titular">
-      <h1 class="titular titular-ficha" id="titular">${esc(t.titulo)}</h1>
-      <p class="entradilla">${esc(t.entradilla)}</p>
-      <p><button type="button" class="escuchar" data-leer="${esc([t.titulo, t.entradilla, t.pasosTitulo, ...t.pasos, t.ayudasTitulo, ...t.ayudas.map(([n, x]) => `${n}. ${x}`)].join(' '))}">${icono('altavoz')} ${esc(t.escuchar)}</button></p>
+      <h1 class="titular titular-ficha" id="titular">${esc(t.title)}</h1>
+      <p class="entradilla">${esc(t.intro)}</p>
+      <p><button type="button" class="escuchar" data-read="${esc([t.title, t.intro, t.stepsTitle, ...t.steps, t.benefitsTitle, ...t.benefits.map(([n, x]) => `${n}. ${x}`)].join(' '))}">${icon('altavoz')} ${esc(t.listen)}</button></p>
       <section class="ayuda-hoy" aria-labelledby="t-hoy">
-        <h2 id="t-hoy">${esc(t.hoy)}</h2>
-        <div class="llamadas">${TELEFONOS_HOY.map(([n, k]) => `<a class="llamar" href="tel:${n.replace(/\s/g, '')}"><span class="llamar-icono">${icono('telefono')}</span><span><strong dir="ltr">${n}</strong><small>${esc(t.tel[k])}</small></span></a>`).join('')}</div>
+        <h2 id="t-hoy">${esc(t.today)}</h2>
+        <div class="llamadas">${TODAY_PHONES.map(([n, k]) => `<a class="llamar" href="tel:${n.replace(/\s/g, '')}"><span class="llamar-icono">${icon('telefono')}</span><span><strong dir="ltr">${n}</strong><small>${esc(t.tel[k])}</small></span></a>`).join('')}</div>
       </section>
-      <h2 class="seccion-titulo">${esc(t.pasosTitulo)}</h2>
-      <ol class="pasos-tramite">${t.pasos.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
-      <h2 class="seccion-titulo">${esc(t.ayudasTitulo)}</h2>
-      <dl class="guia-ayudas">${t.ayudas.map(([n, x]) => `<div><dt lang="es" dir="ltr">${esc(n)}</dt><dd>${esc(x)}</dd></div>`).join('')}</dl>
-      <h2 class="seccion-titulo">${esc(t.frase)}</h2>
-      <p class="frase-ventanilla" lang="es" dir="ltr">${esc(FRASE)}</p>
-      <p><button type="button" class="escuchar" data-lang="es" data-leer="${esc(FRASE)}">${icono('altavoz')} ${esc(t.escucharFrase)}</button></p>
-      <p>${esc(t.usar)}</p>
-      <p class="ficha-acciones"><a class="boton" href="/" hreflang="es">${esc(t.boton)}</a> <a class="boton secundario" href="/mapa/" hreflang="es">${esc(t.mapa)}</a></p>
+      <h2 class="seccion-titulo">${esc(t.stepsTitle)}</h2>
+      <ol class="pasos-tramite">${t.steps.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
+      <h2 class="seccion-titulo">${esc(t.benefitsTitle)}</h2>
+      <dl class="guia-ayudas">${t.benefits.map(([n, x]) => `<div><dt lang="es" dir="ltr">${esc(n)}</dt><dd>${esc(x)}</dd></div>`).join('')}</dl>
+      <h2 class="seccion-titulo">${esc(t.sentence)}</h2>
+      <p class="frase-ventanilla" lang="es" dir="ltr">${esc(COUNTER_SENTENCE)}</p>
+      <p><button type="button" class="escuchar" data-lang="es" data-read="${esc(COUNTER_SENTENCE)}">${icon('altavoz')} ${esc(t.listenSentence)}</button></p>
+      <p>${esc(t.use)}</p>
+      <p class="ficha-acciones"><a class="boton" href="/" hreflang="es">${esc(t.button)}</a> <a class="boton secundario" href="/mapa/" hreflang="es">${esc(t.mapa)}</a></p>
     </section>
   </main>`);
-  const carpeta = join(SALIDA, codigo);
-  mkdirSync(carpeta, { recursive: true });
-  writeFileSync(join(carpeta, 'index.html'), html);
+  const folder = join(OUTPUT, code);
+  mkdirSync(folder, { recursive: true });
+  writeFileSync(join(folder, 'index.html'), html);
 }
 
 
-writeFileSync(join(SALIDA, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+writeFileSync(join(OUTPUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${rutas.map((r) => `  <url><loc>${WEB}${r}</loc></url>`).join('\n')}
+${routes.map((r) => `  <url><loc>${SITE_URL}${r}</loc></url>`).join('\n')}
 </urlset>
 `);
 
-console.log(`${AYUDAS.length} fichas, ${rutas.length} direcciones en el mapa del sitio (${Object.keys(POR_ID).length} ayudas).`);
+console.log(`${BENEFITS.length} fichas, ${routes.length} direcciones en el mapa del sitio (${Object.keys(BY_ID).length} ayudas).`);

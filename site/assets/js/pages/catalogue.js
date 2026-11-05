@@ -1,75 +1,75 @@
 // Todas las ayudas, con buscador y filtro por tema
 
-import { AYUDAS, CATEGORIAS, COMUNIDADES } from '../data/benefits.js';
-import { TRAMITES } from '../data/procedures.js';
-import { icono } from '../data/icons.js';
-import { tarjeta, esc } from '../ui/card.js';
+import { BENEFITS, CATEGORIES, REGIONS } from '../data/benefits.js';
+import { PROCEDURES } from '../data/procedures.js';
+import { icon } from '../data/icons.js';
+import { benefitCard, esc } from '../ui/card.js';
 
-const lista = document.getElementById('lista');
-const buscar = document.getElementById('buscar');
-const cuantas = document.getElementById('cuantas');
-const selectCcaa = document.getElementById('ccaa');
+const list = document.getElementById('lista');
+const search = document.getElementById('buscar');
+const count = document.getElementById('cuantas');
+const regionSelect = document.getElementById('ccaa');
 const chips = document.getElementById('categorias');
-const CLAVE_CCAA = 'ayudas:ccaa';
+const REGION_KEY = 'ayudas:ccaa';
 
-let tema = new URLSearchParams(location.search).get('tema') ?? 'todas';
+let topic = new URLSearchParams(location.search).get('tema') ?? 'todas';
 // Lista enviada por alguien («Enviar a un familiar»): solo esas ayudas, en ese orden
-const enviadas = (new URLSearchParams(location.search).get('ver') ?? '').split(',').filter((id) => AYUDAS.some((a) => a.id === id));
+const sent = (new URLSearchParams(location.search).get('ver') ?? '').split(',').filter((id) => BENEFITS.some((a) => a.id === id));
 
-for (const c of COMUNIDADES) selectCcaa.add(new Option(c.nombre, c.id));
+for (const c of REGIONS) regionSelect.add(new Option(c.name, c.id));
 try {
-  selectCcaa.value = localStorage.getItem(CLAVE_CCAA) ?? '';
+  regionSelect.value = localStorage.getItem(REGION_KEY) ?? '';
 } catch {}
 
-chips.innerHTML = [{ id: 'todas', nombre: 'Todas' }, ...CATEGORIAS].map((c) => `<button type="button" data-tema="${c.id}" aria-pressed="${c.id === tema}">${c.nombre}</button>`).join('');
+chips.innerHTML = [{ id: 'todas', name: 'Todas' }, ...CATEGORIES].map((c) => `<button type="button" data-topic="${c.id}" aria-pressed="${c.id === topic}">${c.name}</button>`).join('');
 chips.addEventListener('click', (e) => {
-  const b = e.target.closest('[data-tema]');
+  const b = e.target.closest('[data-topic]');
   if (!b) return;
-  tema = b.dataset.tema;
+  topic = b.dataset.topic;
   chips.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-  pintar();
+  render();
 });
 
 // Busca sin tildes ni mayúsculas
 const normal = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 
-function pintarEnviadas() {
-  const ccaa = selectCcaa.value || null;
+function renderSent() {
+  const region = regionSelect.value || null;
   document.getElementById('titular').textContent = 'Ayudas que te han enviado.';
   document.querySelector('.entradilla').innerHTML = 'Alguien te ha mandado esta lista. Pulsa cada ayuda para ver <strong>cómo se pide, paso a paso</strong>. <a href="./">Ver todas las ayudas</a>.';
   document.querySelector('.filtros .buscador').hidden = true;
   chips.hidden = true;
-  cuantas.textContent = `${enviadas.length} ${enviadas.length === 1 ? 'ayuda' : 'ayudas'}`;
-  lista.innerHTML = `<ul class="lista-ayudas">${enviadas.map((id) => tarjeta(id, { ccaa })).join('')}</ul>`;
+  count.textContent = `${sent.length} ${sent.length === 1 ? 'ayuda' : 'ayudas'}`;
+  list.innerHTML = `<ul class="lista-ayudas">${sent.map((id) => benefitCard(id, { region })).join('')}</ul>`;
 }
 
-function pintar() {
-  if (enviadas.length) return pintarEnviadas();
-  const q = normal(buscar.value.trim());
-  const ccaa = selectCcaa.value || null;
-  const filtradas = AYUDAS.filter((a) => (tema === 'todas' || a.categoria === tema) && (!q || normal([a.nombre, a.resumen, a.cuantia, a.organismo, ...a.requisitos, ...(TRAMITES[a.id]?.facil ?? [])].join(' ')).includes(q)));
-  cuantas.textContent = `${filtradas.length} de ${AYUDAS.length} ayudas`;
-  lista.innerHTML = filtradas.length
-    ? CATEGORIAS.map((c) => {
-        const delGrupo = filtradas.filter((a) => a.categoria === c.id);
-        if (!delGrupo.length) return '';
+function render() {
+  if (sent.length) return renderSent();
+  const q = normal(search.value.trim());
+  const region = regionSelect.value || null;
+  const filtered = BENEFITS.filter((a) => (topic === 'todas' || a.category === topic) && (!q || normal([a.name, a.summary, a.amount, a.agency, ...a.requirements, ...(PROCEDURES[a.id]?.easy ?? [])].join(' ')).includes(q)));
+  count.textContent = `${filtered.length} de ${BENEFITS.length} ayudas`;
+  list.innerHTML = filtered.length
+    ? CATEGORIES.map((c) => {
+        const inGroup = filtered.filter((a) => a.category === c.id);
+        if (!inGroup.length) return '';
         return `<section class="grupo grupo-${c.id}" aria-labelledby="g-${c.id}">
-        <h2 class="grupo-titulo" id="g-${c.id}"><span class="insignia">${icono(c.icono)}</span>${esc(c.nombre)}</h2>
-        <ul class="lista-ayudas">${delGrupo.map((a) => tarjeta(a.id, { ccaa })).join('')}</ul>
+        <h2 class="grupo-titulo" id="g-${c.id}"><span class="insignia">${icon(c.icon)}</span>${esc(c.name)}</h2>
+        <ul class="lista-ayudas">${inGroup.map((a) => benefitCard(a.id, { region })).join('')}</ul>
       </section>`;
       }).join('')
     : '<p class="vacio">No hay ninguna ayuda con esa búsqueda. Prueba con otra palabra o <a href="../fuentes/#t-error">avísanos si falta alguna</a>.</p>';
 }
 
-buscar.addEventListener('input', pintar);
-selectCcaa.addEventListener('change', () => {
+search.addEventListener('input', render);
+regionSelect.addEventListener('change', () => {
   try {
-    localStorage.setItem(CLAVE_CCAA, selectCcaa.value);
+    localStorage.setItem(REGION_KEY, regionSelect.value);
   } catch {}
-  pintar();
+  render();
 });
 
-pintar();
+render();
 
 // Si se llega con #id-de-ayuda, se abre esa ficha
 if (location.hash) {

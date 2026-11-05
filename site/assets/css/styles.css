@@ -466,14 +466,14 @@ section + .empezar { margin-top: 1.75rem; }
 
 /* ── Modo fácil: letra grande, frases cortas ─────────────────────────── */
 .solo-facil { display: none; }
-[data-facil] .solo-facil { display: inline; }
-[data-facil] .solo-normal { display: none; }
-[data-facil] body { font-size: 1.3rem; line-height: 1.6; }
-[data-facil] .ayuda-nombre { font-size: 1.3rem; }
-[data-facil] .ayuda-resumen, [data-facil] .sin-internet, [data-facil] .nota, [data-facil] small, [data-facil] .llamar small { font-size: 1.05rem; }
-[data-facil] .pasos-tramite { gap: 0.9rem; }
-[data-facil] .boton, [data-facil] .opcion span { min-height: 3.4rem; font-size: 1.15rem; }
-[data-facil] .entradilla { font-size: 1.3rem; }
+[data-easy] .solo-facil { display: inline; }
+[data-easy] .solo-normal { display: none; }
+[data-easy] body { font-size: 1.3rem; line-height: 1.6; }
+[data-easy] .ayuda-nombre { font-size: 1.3rem; }
+[data-easy] .ayuda-resumen, [data-easy] .sin-internet, [data-easy] .nota, [data-easy] small, [data-easy] .llamar small { font-size: 1.05rem; }
+[data-easy] .pasos-tramite { gap: 0.9rem; }
+[data-easy] .boton, [data-easy] .opcion span { min-height: 3.4rem; font-size: 1.15rem; }
+[data-easy] .entradilla { font-size: 1.3rem; }
 
 /* ── Hoja para imprimir ─────────────────────────────────────────────── */
 @media print {
@@ -639,24 +639,24 @@ section + .empezar { margin-top: 1.75rem; }
 .explica p { margin: 0; padding: 0.8rem 1rem; background: var(--superficie); border-radius: var(--radio); border-left: 4px solid var(--calido-fuerte); }
 
 /* ── Leer en voz alta y alto contraste ─────────────────────────────── */
-.sin-voz [data-leer], .sin-voz .escuchar { display: none !important; }
+.sin-voz [data-read], .sin-voz .escuchar { display: none !important; }
 .ayuda-detalle > .escuchar { justify-self: start; margin-top: 0; }
 #contraste[aria-pressed='true'] { background: var(--tinta); color: var(--papel); }
-:root[data-contraste] {
+:root[data-contrast] {
   --papel: #ffffff; --superficie: #ffffff; --tinta: #000000; --tenue: #1f1f1f; --linea: #000000;
   --acento: #00524f; --acento-suave: #e3f1f0; --quizas: #7a3500; --quizas-suave: #fbeee2; --urgente: #a10000; --urgente-suave: #fde8e8;
 }
 @media (prefers-color-scheme: dark) {
-  :root[data-contraste]:not([data-theme='light']) {
+  :root[data-contrast]:not([data-theme='light']) {
     --papel: #000000; --superficie: #000000; --tinta: #ffffff; --tenue: #f0f0f0; --linea: #ffffff;
     --acento: #7fffe8; --acento-suave: #002b28; --quizas: #ffc58a; --quizas-suave: #2b1600; --urgente: #ff9a9a; --urgente-suave: #2b0000;
   }
 }
-[data-contraste] a { text-decoration: underline !important; text-underline-offset: 3px; }
-[data-contraste] .opcion span, [data-contraste] .tema, [data-contraste] .llamar, [data-contraste] .ayuda, [data-contraste] .cifra, [data-contraste] .confianza li { border-width: 2px; border-color: var(--tinta); }
-[data-contraste] .ayuda { border-bottom: 2px solid var(--tinta); }
-[data-contraste] .tenue, [data-contraste] small, [data-contraste] .nota, [data-contraste] .entradilla { color: var(--tinta); }
-[data-contraste] .ilustracion { filter: grayscale(1) contrast(1.4); }
+[data-contrast] a { text-decoration: underline !important; text-underline-offset: 3px; }
+[data-contrast] .opcion span, [data-contrast] .tema, [data-contrast] .llamar, [data-contrast] .ayuda, [data-contrast] .cifra, [data-contrast] .confianza li { border-width: 2px; border-color: var(--tinta); }
+[data-contrast] .ayuda { border-bottom: 2px solid var(--tinta); }
+[data-contrast] .tenue, [data-contrast] small, [data-contrast] .nota, [data-contrast] .entradilla { color: var(--tinta); }
+[data-contrast] .ilustracion { filter: grayscale(1) contrast(1.4); }
 
 /* ── Explicar mejor: por qué preguntamos, ejemplos, umbrales y tablas ── */
 .porque { font-size: 0.9rem; }
@@ -741,7 +741,7 @@ section + .empezar { margin-top: 1.75rem; }
 .ccaa-nombre { font-size: 1.3rem; font-weight: 700; }
 .panel-sub { font-size: 1.2rem; margin: 1.75rem 0 0.4rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--tinta); }
 .panel-nota { color: var(--tenue); max-width: var(--medida); }
-[data-contraste] .mapa-svg .zona path { stroke: var(--tinta); }
+[data-contrast] .mapa-svg .zona path { stroke: var(--tinta); }
 
 /* Fichas sueltas de cada ayuda y de cada comunidad */
 .migas ol { list-style: none; padding: 0; margin: 0 0 1rem; display: flex; flex-wrap: wrap; gap: 0.3rem; font-size: 0.95rem; color: var(--tenue); }

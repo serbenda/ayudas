@@ -1,6 +1,6 @@
 // Iconos de trazo (24×24) que toman el color del texto
 
-export const ICONOS = {
+export const ICONS = {
   monedas: 'M4 7c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3Z M4 7v5c0 1.7 3.6 3 8 3s8-1.3 8-3V7 M4 12v5c0 1.7 3.6 3 8 3s8-1.3 8-3v-5',
   familia: 'M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z M16 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z M3.5 20v-5a4.5 4.5 0 0 1 9 0v5 M11.5 15a4.5 4.5 0 0 1 9 0v5',
   mayores: 'M12 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z M9 21l2-6 M11 15l1-6 3 3 M12 9l-3 3 M17 12v9 M17 12a1.5 1.5 0 0 0-3 0',
@@ -16,7 +16,7 @@ export const ICONOS = {
   escudo: 'M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6Z M9 12l2 2 4-4',
 };
 
-export function icono(nombre) {
-  const d = ICONOS[nombre];
+export function icon(name) {
+  const d = ICONS[name];
   return d ? `<svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${d}"/></svg>` : '';
 }

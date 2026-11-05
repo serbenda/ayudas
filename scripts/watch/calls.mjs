@@ -8,7 +8,7 @@ import { writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
 // [texto que buscar, región en la BDNS (sin tildes, en mayúsculas) o null para cualquiera, id de la ficha]
-export const VIGILAR = [
+export const WATCHLIST = [
   ['Tarxeta Benvida', 'GALICIA', 'tarxeta-benvida'],
   ['renta de inclusión social', 'GALICIA', 'renta-minima'],
   ['hijas e hijos', 'PAIS VASCO', 'ayuda-hijos-euskadi'],
@@ -35,45 +35,45 @@ export const VIGILAR = [
   ['bono alquiler joven', null, 'alquiler-joven'],
 ];
 
-const sinTildes = (s) => String(s ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toUpperCase();
-const ddmmaaaa = (d) => d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const withoutAccents = (s) => String(s ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toUpperCase();
+const ddmmyyyy = (d) => d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
 const API = 'https://www.infosubvenciones.es/bdnstrans/api/convocatorias/busqueda';
 
 /** Filtra las convocatorias de la respuesta de la BDNS que son de la región buscada */
-export function delaRegion(respuesta, region) {
-  const lista = Array.isArray(respuesta?.content) ? respuesta.content : [];
-  return lista.filter((c) => !region || [c.nivel1, c.nivel2, c.nivel3].some((n) => sinTildes(n).includes(region)));
+export function inRegion(response, region) {
+  const list = Array.isArray(response?.content) ? response.content : [];
+  return list.filter((c) => !region || [c.nivel1, c.nivel2, c.nivel3].some((n) => withoutAccents(n).includes(region)));
 }
 
-async function buscarBdns(texto, desde, hasta) {
+async function searchBdns(text, since, until) {
   const u = new URL(API);
-  Object.entries({ vpd: 'GE', page: 0, pageSize: 50, order: 'numeroConvocatoria', direccion: 'desc', descripcion: texto, descripcionTipoBusqueda: 1, fechaDesde: ddmmaaaa(desde), fechaHasta: ddmmaaaa(hasta) }).forEach(([k, v]) => u.searchParams.set(k, v));
+  Object.entries({ vpd: 'GE', page: 0, pageSize: 50, order: 'numeroConvocatoria', direccion: 'desc', descripcion: text, descripcionTipoBusqueda: 1, fechaDesde: ddmmyyyy(since), fechaHasta: ddmmyyyy(until) }).forEach(([k, v]) => u.searchParams.set(k, v));
   const r = await fetch(u, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(30000) });
-  if (!r.ok) throw new Error(`BDNS «${texto}»: HTTP ${r.status}`);
+  if (!r.ok) throw new Error(`BDNS «${text}»: HTTP ${r.status}`);
   return r.json();
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const dias = Number(process.argv[2] ?? 8);
-  const hasta = new Date();
-  const desde = new Date(Date.now() - dias * 86400000);
-  const encontradas = new Map();
-  const fallos = [];
-  for (const [texto, region, id] of VIGILAR) {
+  const days = Number(process.argv[2] ?? 8);
+  const until = new Date();
+  const since = new Date(Date.now() - days * 86400000);
+  const found = new Map();
+  const failures = [];
+  for (const [text, region, id] of WATCHLIST) {
     try {
-      for (const c of delaRegion(await buscarBdns(texto, desde, hasta), region)) {
-        const clave = c.numeroConvocatoria ?? c.id;
-        if (!encontradas.has(clave)) encontradas.set(clave, { ...c, ficha: id });
+      for (const c of inRegion(await searchBdns(text, since, until), region)) {
+        const key = c.numeroConvocatoria ?? c.id;
+        if (!found.has(key)) found.set(key, { ...c, card: id });
       }
     } catch (e) {
-      fallos.push(e.message);
+      failures.push(e.message);
       console.log(`::warning::${e.message}`);
     }
   }
-  const lineas = [...encontradas.values()].map((c) => `- [ ] **${c.descripcion ?? 'Convocatoria'}** — ${[c.nivel2, c.nivel3].filter(Boolean).join(', ')} (${c.fechaRecepcion ?? 's/f'}). Ficha: \`${c.ficha}\`. [Ver en la BDNS](https://www.infosubvenciones.es/bdnstrans/GE/es/convocatorias/${c.numeroConvocatoria ?? ''})`);
-  let texto = '';
-  if (lineas.length) texto += `Se han publicado convocatorias en los últimos ${dias} días que pueden cambiar fechas o cuantías de la web. Revisa cada una y actualiza la ficha y \`assets/js/data/review.js\`:\n\n${lineas.join('\n')}\n`;
-  if (fallos.length === VIGILAR.length) texto += `\nNo se ha podido consultar la BDNS (${fallos[0]}). Si se repite varias semanas, puede que haya cambiado su API: revisa \`scripts/convocatorias.mjs\`.\n`;
-  await writeFile('convocatorias-novedades.md', texto);
-  console.log(texto || `Sin convocatorias nuevas en los últimos ${dias} días.`);
+  const lines = [...found.values()].map((c) => `- [ ] **${c.descripcion ?? 'Convocatoria'}** — ${[c.nivel2, c.nivel3].filter(Boolean).join(', ')} (${c.fechaRecepcion ?? 's/f'}). Ficha: \`${c.card}\`. [Ver en la BDNS](https://www.infosubvenciones.es/bdnstrans/GE/es/convocatorias/${c.numeroConvocatoria ?? ''})`);
+  let text = '';
+  if (lines.length) text += `Se han publicado convocatorias en los últimos ${days} días que pueden cambiar fechas o cuantías de la web. Revisa cada una y actualiza la ficha y \`assets/js/data/review.js\`:\n\n${lines.join('\n')}\n`;
+  if (failures.length === WATCHLIST.length) text += `\nNo se ha podido consultar la BDNS (${failures[0]}). Si se repite varias semanas, puede que haya cambiado su API: revisa \`scripts/convocatorias.mjs\`.\n`;
+  await writeFile('convocatorias-novedades.md', text);
+  console.log(text || `Sin convocatorias nuevas en los últimos ${days} días.`);
 }

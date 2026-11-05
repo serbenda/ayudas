@@ -13,7 +13,7 @@
   <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
   <link rel="stylesheet" href="../vendor/fonts/archivo.css">
   <link rel="stylesheet" href="../assets/css/styles.css">
-  <script>(function(){var d=document.documentElement.dataset,q=location.search;if(/[?&]widget=1/.test(q))d.widget='';try{if(localStorage.getItem('ayudas:facil')==='1')d.facil='';if(localStorage.getItem('ayudas:contraste')==='1')d.contraste='';if(/[?&]pro=1/.test(q))localStorage.setItem('ayudas:pro','1');if(/[?&]pro=0/.test(q))localStorage.removeItem('ayudas:pro');if(localStorage.getItem('ayudas:pro')==='1')d.pro=''}catch(e){}})()</script>
+  <script>(function(){var d=document.documentElement.dataset,q=location.search;if(/[?&]widget=1/.test(q))d.widget='';try{if(localStorage.getItem('ayudas:facil')==='1')d.easy='';if(localStorage.getItem('ayudas:contraste')==='1')d.contrast='';if(/[?&]pro=1/.test(q))localStorage.setItem('ayudas:pro','1');if(/[?&]pro=0/.test(q))localStorage.removeItem('ayudas:pro');if(localStorage.getItem('ayudas:pro')==='1')d.pro=''}catch(e){}})()</script>
 </head>
 <body>
   <header class="envoltorio cabecera">
@@ -40,9 +40,9 @@
       <details class="ajuste-voz" id="ajuste-voz">
         <summary class="boton secundario"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9Z M16.5 8.5a5 5 0 0 1 0 7 M19 6a8.5 8.5 0 0 1 0 12"/></svg><span>Voz</span></summary>
         <div class="ajuste-voz-panel">
-          <label>Voz que lee <select name="voz"><option value="">La del aparato</option></select></label>
-          <label class="casilla"><input type="checkbox" name="despacio"><span>Leer más despacio</span></label>
-          <button type="button" class="boton secundario" data-probar="Hola. Así suena la voz que te lee las ayudas. Si no te gusta, elige otra.">Probar la voz</button>
+          <label>Voz que lee <select name="voice"><option value="">La del aparato</option></select></label>
+          <label class="casilla"><input type="checkbox" name="slow"><span>Leer más despacio</span></label>
+          <button type="button" class="boton secundario" data-try-voice="Hola. Así suena la voz que te lee las ayudas. Si no te gusta, elige otra.">Probar la voz</button>
           <p class="nota">La que lleva ★ es la que mejor suena en tu aparato. Si tu aparato tiene pocas, puedes descargar voces mejores en los ajustes de idioma o de accesibilidad del sistema.</p>
         </div>
       </details>
@@ -116,9 +116,9 @@
         <div class="seccion-titulo"><h2 id="t-error">¿Ves un error o falta una ayuda?</h2></div>
         <p>Las ayudas cambian a menudo. Si una cifra no cuadra, falta una ayuda o algo no funciona, avisa en GitHub (necesitas una cuenta gratis):</p>
         <ul>
-          <li><a href="https://github.com/serbenda/ayudas/issues/new" data-aviso="dato" rel="noopener">Una cifra o un requisito no cuadra</a></li>
-          <li><a href="https://github.com/serbenda/ayudas/issues/new" data-aviso="falta" rel="noopener">Falta una ayuda</a></li>
-          <li><a href="https://github.com/serbenda/ayudas/issues/new" data-aviso="fallo" rel="noopener">Algo no funciona</a></li>
+          <li><a href="https://github.com/serbenda/ayudas/issues/new" data-notice="dato" rel="noopener">Una cifra o un requisito no cuadra</a></li>
+          <li><a href="https://github.com/serbenda/ayudas/issues/new" data-notice="falta" rel="noopener">Falta una ayuda</a></li>
+          <li><a href="https://github.com/serbenda/ayudas/issues/new" data-notice="fallo" rel="noopener">Algo no funciona</a></li>
         </ul>
       </section>
 

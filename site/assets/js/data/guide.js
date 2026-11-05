@@ -2,63 +2,63 @@
 // Teléfonos comprobados en fuentes oficiales en noviembre de 2026.
 
 /** Papeles que se piden. Cada ayuda dice cuáles necesita (por su id). */
-export const DOCUMENTOS = {
-  dni: { nombre: 'DNI o NIE', ayuda: 'Tuyo y de las personas que viven contigo.' },
-  residencia: { nombre: 'Tarjeta de residencia (TIE)', ayuda: 'Solo si no tienes nacionalidad española.' },
-  padron: { nombre: 'Certificado de empadronamiento', ayuda: 'Lo da tu ayuntamiento. Pide el «colectivo»: el que dice quién vive en la casa.' },
-  padronHistorico: { nombre: 'Empadronamiento histórico', ayuda: 'Dice desde cuándo vives en cada sitio. Lo da tu ayuntamiento.' },
-  libroFamilia: { nombre: 'Libro de familia o certificado de nacimiento', ayuda: 'Para demostrar quiénes son tus hijos o tu pareja.' },
-  iban: { nombre: 'Número de cuenta del banco (IBAN)', ayuda: 'Te lo da tu banco. La cuenta tiene que estar a tu nombre.' },
-  ingresos: { nombre: 'Papeles de lo que cobráis', ayuda: 'Nóminas, pensiones o la declaración de la renta del año pasado.' },
-  vidaLaboral: { nombre: 'Informe de vida laboral', ayuda: 'Dice cuánto has trabajado. Se pide gratis en la Seguridad Social.' },
-  demanda: { nombre: 'Inscripción como demandante de empleo', ayuda: 'Te la dan en la oficina de empleo de tu comunidad.' },
-  certEmpresa: { nombre: 'Certificado de empresa', ayuda: 'Lo manda tu empresa al SEPE cuando acaba tu contrato.' },
-  certDiscapacidad: { nombre: 'Certificado de discapacidad', ayuda: 'El que dice el porcentaje (33 %, 65 %…).' },
-  informeSalud: { nombre: 'Informe de salud', ayuda: 'Pídeselo a tu médico de cabecera.' },
-  informeSocial: { nombre: 'Informe social', ayuda: 'Te lo hacen en los servicios sociales de tu ayuntamiento.' },
-  resolucionDependencia: { nombre: 'Resolución de dependencia', ayuda: 'La carta que dice el grado (I, II o III).' },
-  alquiler: { nombre: 'Contrato de alquiler y recibos', ayuda: 'El contrato y los últimos recibos pagados.' },
-  facturaLuz: { nombre: 'Una factura de la luz', ayuda: 'Para saber tu compañía y tu número de contrato (CUPS).' },
-  tituloFN: { nombre: 'Título de familia numerosa', ayuda: 'El carné en vigor.' },
-  informeEmbarazo: { nombre: 'Informe médico del embarazo', ayuda: 'Con la semana de embarazo y la fecha prevista de parto.' },
-  cartaPension: { nombre: 'Carta de tu pensión', ayuda: 'La de la Seguridad Social con lo que cobras.' },
-  justificanteImv: { nombre: 'Justificante de haber pedido el IMV', ayuda: 'El resguardo que te dan al pedir el Ingreso Mínimo Vital.' },
-  extractos: { nombre: 'Movimientos del banco de los 2 últimos meses', ayuda: 'De todas las cuentas de las personas que viven contigo.' },
-  ordenProteccion: { nombre: 'Orden de protección o informe', ayuda: 'O un informe de servicios sociales o del centro de la mujer. No hace falta denuncia para todo.' },
+export const DOCUMENTS = {
+  dni: { name: 'DNI o NIE', benefit: 'Tuyo y de las personas que viven contigo.' },
+  residencia: { name: 'Tarjeta de residencia (TIE)', benefit: 'Solo si no tienes nacionalidad española.' },
+  padron: { name: 'Certificado de empadronamiento', benefit: 'Lo da tu ayuntamiento. Pide el «colectivo»: el que dice quién vive en la casa.' },
+  padronHistorico: { name: 'Empadronamiento histórico', benefit: 'Dice desde cuándo vives en cada sitio. Lo da tu ayuntamiento.' },
+  libroFamilia: { name: 'Libro de familia o certificado de nacimiento', benefit: 'Para demostrar quiénes son tus hijos o tu pareja.' },
+  iban: { name: 'Número de cuenta del banco (IBAN)', benefit: 'Te lo da tu banco. La cuenta tiene que estar a tu nombre.' },
+  ingresos: { name: 'Papeles de lo que cobráis', benefit: 'Nóminas, pensiones o la declaración de la renta del año pasado.' },
+  vidaLaboral: { name: 'Informe de vida laboral', benefit: 'Dice cuánto has trabajado. Se pide gratis en la Seguridad Social.' },
+  demanda: { name: 'Inscripción como demandante de empleo', benefit: 'Te la dan en la oficina de empleo de tu comunidad.' },
+  certEmpresa: { name: 'Certificado de empresa', benefit: 'Lo manda tu empresa al SEPE cuando acaba tu contrato.' },
+  certDiscapacidad: { name: 'Certificado de discapacidad', benefit: 'El que dice el porcentaje (33 %, 65 %…).' },
+  informeSalud: { name: 'Informe de salud', benefit: 'Pídeselo a tu médico de cabecera.' },
+  informeSocial: { name: 'Informe social', benefit: 'Te lo hacen en los servicios sociales de tu ayuntamiento.' },
+  resolucionDependencia: { name: 'Resolución de dependencia', benefit: 'La carta que dice el grado (I, II o III).' },
+  alquiler: { name: 'Contrato de alquiler y recibos', benefit: 'El contrato y los últimos recibos pagados.' },
+  facturaLuz: { name: 'Una factura de la luz', benefit: 'Para saber tu compañía y tu número de contrato (CUPS).' },
+  tituloFN: { name: 'Título de familia numerosa', benefit: 'El carné en vigor.' },
+  informeEmbarazo: { name: 'Informe médico del embarazo', benefit: 'Con la semana de embarazo y la fecha prevista de parto.' },
+  cartaPension: { name: 'Carta de tu pensión', benefit: 'La de la Seguridad Social con lo que cobras.' },
+  justificanteImv: { name: 'Justificante de haber pedido el IMV', benefit: 'El resguardo que te dan al pedir el Ingreso Mínimo Vital.' },
+  extractos: { name: 'Movimientos del banco de los 2 últimos meses', benefit: 'De todas las cuentas de las personas que viven contigo.' },
+  ordenProteccion: { name: 'Orden de protección o informe', benefit: 'O un informe de servicios sociales o del centro de la mujer. No hace falta denuncia para todo.' },
 };
 
 /** Teléfonos. «gratis» solo cuando la fuente oficial lo dice. */
-export const TELEFONOS = {
-  emergencias: { numero: '112', texto: 'Emergencias', cuando: 'Si hay peligro ahora mismo.', gratis: true },
-  violencia: { numero: '016', texto: 'Violencia contra las mujeres', cuando: 'Las 24 horas. No sale en la factura del teléfono. También por WhatsApp: 600 000 016.', gratis: true },
-  crisis: { numero: '024', texto: 'Línea de atención a la conducta suicida', cuando: 'Si piensas en hacerte daño o conoces a alguien. 24 horas.', gratis: true },
-  cruzRoja: { numero: '900 107 917', texto: 'Cruz Roja Te Escucha', cuando: 'Si te sientes solo o sola, o estás pasando un mal momento.', gratis: true },
-  imv: { numero: '900 20 22 22', texto: 'Ingreso Mínimo Vital', cuando: 'De lunes a viernes, de 9:00 a 14:30.', gratis: true },
-  citaInss: { numero: '91 541 25 30', texto: 'Cita previa de la Seguridad Social', cuando: 'Para pensiones y prestaciones. Las 24 horas (contesta una máquina).' },
-  infoInss: { numero: '91 542 11 76', texto: 'Información de la Seguridad Social', cuando: 'Pensiones y prestaciones. De lunes a viernes, de 9:00 a 20:00.' },
-  sepe: { numero: '060', texto: 'Información del SEPE (paro)', cuando: 'Puede tener coste.' },
-  citaSepe: { numero: '91 926 79 70', texto: 'Cita previa del SEPE', cuando: 'Para ir a la oficina del paro.' },
-  citaAeat: { numero: '91 290 13 40', texto: 'Cita previa de Hacienda', cuando: 'Para la renta y las deducciones.' },
-  madrid012: { numero: '012', texto: 'Comunidad de Madrid', cuando: 'Información de todas sus ayudas.' },
-  madridPnc: { numero: '91 392 56 86', texto: 'Pensiones no contributivas (Madrid)', cuando: 'Información sobre tu solicitud.' },
-  andalucia: { numero: '955 012 012', texto: 'Junta de Andalucía', cuando: 'Información de sus ayudas. También el 012.' },
-  cataluna: { numero: '012', texto: 'Generalitat de Catalunya', cuando: 'Gratis. Para pedir cita, dudas y ver cómo va tu trámite.', gratis: true },
-  valencia: { numero: '012', texto: 'Generalitat Valenciana', cuando: 'Información de sus ayudas.' },
-  balearesDependencia: { numero: '971 177 200', texto: 'Govern balear: dependencia y discapacidad', cuando: 'Dirección General de Atención a la Dependencia.' },
-  canal: { numero: '900 365 365', texto: 'Canal de Isabel II', cuando: 'Gratis. Atención comercial en días laborables de 8:30 a 20:00; averías, a cualquier hora.', gratis: true },
-  baleares: { numero: '012', texto: 'Govern de les Illes Balears', cuando: 'De lunes a viernes de 8 a 20 h y sábados de 9 a 14 h. Desde fuera de Baleares: 971 22 57 91.' },
-  galicia: { numero: '012', texto: 'Xunta de Galicia', cuando: 'Información de sus ayudas y trámites.' },
-  castillaMancha: { numero: '012', texto: 'Junta de Castilla-La Mancha', cuando: 'Información de sus ayudas y trámites.' },
-  castillaLeon: { numero: '012', texto: 'Junta de Castilla y León', cuando: 'Información de sus ayudas y trámites.' },
-  aragonInfancia: { numero: '976 715 629', texto: 'Gobierno de Aragón: Servicio de Infancia', cuando: 'De 9 a 14 h.' },
-  linea010: { numero: '010', texto: 'Ayuntamiento de Madrid (Línea Madrid)', cuando: 'Desde fuera de Madrid: 91 480 00 10.' },
-  mayoresMadrid: { numero: '900 111 065', texto: 'Línea para mayores de 65 (Ayuntamiento de Madrid)', cuando: 'Gratis, las 24 horas. Información y trámites sin salir de casa.', gratis: true },
+export const PHONES = {
+  emergencias: { number: '112', text: 'Emergencias', when: 'Si hay peligro ahora mismo.', free: true },
+  violencia: { number: '016', text: 'Violencia contra las mujeres', when: 'Las 24 horas. No sale en la factura del teléfono. También por WhatsApp: 600 000 016.', free: true },
+  crisis: { number: '024', text: 'Línea de atención a la conducta suicida', when: 'Si piensas en hacerte daño o conoces a alguien. 24 horas.', free: true },
+  cruzRoja: { number: '900 107 917', text: 'Cruz Roja Te Escucha', when: 'Si te sientes solo o sola, o estás pasando un mal momento.', free: true },
+  imv: { number: '900 20 22 22', text: 'Ingreso Mínimo Vital', when: 'De lunes a viernes, de 9:00 a 14:30.', free: true },
+  citaInss: { number: '91 541 25 30', text: 'Cita previa de la Seguridad Social', when: 'Para pensiones y prestaciones. Las 24 horas (contesta una máquina).' },
+  infoInss: { number: '91 542 11 76', text: 'Información de la Seguridad Social', when: 'Pensiones y prestaciones. De lunes a viernes, de 9:00 a 20:00.' },
+  sepe: { number: '060', text: 'Información del SEPE (paro)', when: 'Puede tener coste.' },
+  citaSepe: { number: '91 926 79 70', text: 'Cita previa del SEPE', when: 'Para ir a la oficina del paro.' },
+  citaAeat: { number: '91 290 13 40', text: 'Cita previa de Hacienda', when: 'Para la renta y las deducciones.' },
+  madrid012: { number: '012', text: 'Comunidad de Madrid', when: 'Información de todas sus ayudas.' },
+  madridPnc: { number: '91 392 56 86', text: 'Pensiones no contributivas (Madrid)', when: 'Información sobre tu solicitud.' },
+  andalucia: { number: '955 012 012', text: 'Junta de Andalucía', when: 'Información de sus ayudas. También el 012.' },
+  cataluna: { number: '012', text: 'Generalitat de Catalunya', when: 'Gratis. Para pedir cita, dudas y ver cómo va tu trámite.', free: true },
+  valencia: { number: '012', text: 'Generalitat Valenciana', when: 'Información de sus ayudas.' },
+  balearesDependencia: { number: '971 177 200', text: 'Govern balear: dependencia y discapacidad', when: 'Dirección General de Atención a la Dependencia.' },
+  canal: { number: '900 365 365', text: 'Canal de Isabel II', when: 'Gratis. Atención comercial en días laborables de 8:30 a 20:00; averías, a cualquier hora.', free: true },
+  baleares: { number: '012', text: 'Govern de les Illes Balears', when: 'De lunes a viernes de 8 a 20 h y sábados de 9 a 14 h. Desde fuera de Baleares: 971 22 57 91.' },
+  galicia: { number: '012', text: 'Xunta de Galicia', when: 'Información de sus ayudas y trámites.' },
+  castillaMancha: { number: '012', text: 'Junta de Castilla-La Mancha', when: 'Información de sus ayudas y trámites.' },
+  castillaLeon: { number: '012', text: 'Junta de Castilla y León', when: 'Información de sus ayudas y trámites.' },
+  aragonInfancia: { number: '976 715 629', text: 'Gobierno de Aragón: Servicio de Infancia', when: 'De 9 a 14 h.' },
+  linea010: { number: '010', text: 'Ayuntamiento de Madrid (Línea Madrid)', when: 'Desde fuera de Madrid: 91 480 00 10.' },
+  mayoresMadrid: { number: '900 111 065', text: 'Línea para mayores de 65 (Ayuntamiento de Madrid)', when: 'Gratis, las 24 horas. Información y trámites sin salir de casa.', free: true },
 };
 
 /** Palabras difíciles explicadas en una frase */
 // Palabras difíciles, explicadas con frases cortas. Se marcan solas en el texto de cada ficha (se pulsan para ver qué significan)
 // y están todas juntas en /palabras/. La clave es como aparece en el texto (no importan mayúsculas ni tildes del principio).
-export const GLOSARIO = {
+export const GLOSSARY = {
   subrayadas: 'Así: cuando una palabra sale con puntos debajo, púlsala y te dice qué significa.',
   // Dinero y límites
   IPREM: 'Una cifra que usa el Gobierno para poner límites de ingresos a las ayudas. En 2026 son 600 € al mes (8.400 € al año, en 14 pagas).',
@@ -145,33 +145,33 @@ export const GLOSARIO = {
 /** Busca qué palabras del glosario salen en un texto */
 // Busca una palabra entera (no dentro de otra), sin importar mayúsculas
 // (ni dentro de una dirección web como imv.seg-social.es)
-const patron = (k) => new RegExp(`(?<![\\p{L}\\p{N}@./-])${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\p{L}\\p{N}]|[.\\-/@][\\p{L}\\p{N}])`, 'iu');
-const PATRONES = Object.fromEntries(Object.keys(GLOSARIO).map((k) => [k, patron(k)]));
+const pattern = (k) => new RegExp(`(?<![\\p{L}\\p{N}@./-])${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\p{L}\\p{N}]|[.\\-/@][\\p{L}\\p{N}])`, 'iu');
+const PATTERNS = Object.fromEntries(Object.keys(GLOSSARY).map((k) => [k, pattern(k)]));
 
-export function terminosEn(texto) {
-  return Object.keys(GLOSARIO).filter((k) => PATRONES[k].test(texto));
+export function termsIn(text) {
+  return Object.keys(GLOSSARY).filter((k) => PATTERNS[k].test(text));
 }
 
 /**
  * Marca las palabras difíciles en un texto ya escapado: la primera vez que sale cada una (según `usados`),
  * se convierte en un botón que, al pulsarlo, enseña qué significa. Los términos largos van antes que los cortos.
  */
-const ORDEN = Object.keys(GLOSARIO).sort((a, b) => b.length - a.length);
-export function marcarTerminos(html, usados = new Set()) {
-  let partes = [html];
-  for (const k of ORDEN) {
-    if (usados.has(k)) continue;
-    const re = PATRONES[k];
-    const i = partes.findIndex((p, n) => n % 2 === 0 && re.test(p));
+const ORDER = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
+export function markTerms(html, used = new Set()) {
+  let parts = [html];
+  for (const k of ORDER) {
+    if (used.has(k)) continue;
+    const re = PATTERNS[k];
+    const i = parts.findIndex((p, n) => n % 2 === 0 && re.test(p));
     if (i < 0) continue;
-    usados.add(k);
-    const m = partes[i].match(re);
-    const antes = partes[i].slice(0, m.index);
-    const despues = partes[i].slice(m.index + m[0].length);
-    partes.splice(i, 1, antes, `<button type="button" class="termino" data-termino="${k}" aria-expanded="false">${m[0]}</button>`, despues);
+    used.add(k);
+    const m = parts[i].match(re);
+    const before = parts[i].slice(0, m.index);
+    const after = parts[i].slice(m.index + m[0].length);
+    parts.splice(i, 1, before, `<button type="button" class="termino" data-term="${k}" aria-expanded="false">${m[0]}</button>`, after);
   }
-  return partes.join('');
+  return parts.join('');
 }
 
 /** Enlace tel: a partir del número escrito con espacios */
-export const tel = (numero) => `tel:${numero.replace(/\s/g, '')}`;
+export const tel = (number) => `tel:${number.replace(/\s/g, '')}`;

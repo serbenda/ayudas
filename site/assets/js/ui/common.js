@@ -1,7 +1,7 @@
 // Código común a todas las páginas: contador de visitas y enlaces para avisar de errores.
 
-import { hablar, parar, hablando, puedeHablar, voces, vozPara, prepararAjustes } from '../lib/voice.js';
-import { GLOSARIO } from '../data/guide.js';
+import { speak, stop, isSpeaking, canSpeak, voices, voiceFor, setupSettings } from '../lib/voice.js';
+import { GLOSSARY } from '../data/guide.js';
 
 // Funciona sin conexión e instalable en el móvil: guarda la web en el navegador
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
@@ -22,7 +22,7 @@ if (location.hostname.endsWith('bendi.dev')) {
 
 // Avisos (en Fuentes): el enlace a GitHub ya lleva la página de la que vienes y el navegador,
 // para que quien avisa no tenga que explicarlo. No se envía nada: solo se rellena el formulario.
-const origen = (() => {
+const sourcePage = (() => {
   try {
     const r = new URL(document.referrer);
     return r.origin === location.origin ? r.href : location.href;
@@ -30,76 +30,76 @@ const origen = (() => {
     return location.href;
   }
 })();
-const PLANTILLAS = {
-  fallo: { titulo: 'Algo no funciona: ', cuerpo: ['**¿Qué pasa?** (página en blanco, un botón que no hace nada…)', '', '', '---', `Página: ${origen}`, `Navegador: ${navigator.userAgent}`, `Pantalla: ${innerWidth}×${innerHeight}`] },
-  dato: { titulo: 'Dato: ', cuerpo: ['**¿Qué cifra o requisito no cuadra?**', '', '', '**Enlace a la fuente oficial (si lo tienes):**', '', '', '---', `Página: ${origen}`] },
-  falta: { titulo: 'Falta una ayuda: ', cuerpo: ['**¿Qué ayuda falta?** (nombre, quién la da y para quién es)', '', '', '**Enlace oficial:**', '', '', '---', `Página: ${origen}`] },
+const TEMPLATES = {
+  failure: { title: 'Algo no funciona: ', body: ['**¿Qué pasa?** (página en blanco, un botón que no hace nada…)', '', '', '---', `Página: ${sourcePage}`, `Navegador: ${navigator.userAgent}`, `Pantalla: ${innerWidth}×${innerHeight}`] },
+  datum: { title: 'Dato: ', body: ['**¿Qué cifra o requisito no cuadra?**', '', '', '**Enlace a la fuente oficial (si lo tienes):**', '', '', '---', `Página: ${sourcePage}`] },
+  missing: { title: 'Falta una ayuda: ', body: ['**¿Qué ayuda falta?** (nombre, quién la da y para quién es)', '', '', '**Enlace oficial:**', '', '', '---', `Página: ${sourcePage}`] },
 };
-for (const a of document.querySelectorAll('a[data-aviso]')) {
-  const p = PLANTILLAS[a.dataset.aviso];
+for (const a of document.querySelectorAll('a[data-notice]')) {
+  const p = TEMPLATES[a.dataset.notice];
   if (!p) continue;
   const u = new URL(a.href);
-  u.searchParams.set('title', p.titulo);
-  u.searchParams.set('body', p.cuerpo.join('\n'));
+  u.searchParams.set('title', p.title);
+  u.searchParams.set('body', p.body.join('\n'));
   a.href = u.href;
 }
 
 // Letra grande y lectura fácil: se recuerda en este navegador (no es un dato personal)
-const botonFacil = document.getElementById('facil');
-if (botonFacil) {
-  const pintarFacil = () => botonFacil.setAttribute('aria-pressed', String('facil' in document.documentElement.dataset));
-  pintarFacil();
-  botonFacil.addEventListener('click', () => {
-    const activo = !('facil' in document.documentElement.dataset);
-    if (activo) document.documentElement.dataset.facil = '';
-    else delete document.documentElement.dataset.facil;
+const easyButton = document.getElementById('facil');
+if (easyButton) {
+  const renderEasy = () => easyButton.setAttribute('aria-pressed', String('facil' in document.documentElement.dataset));
+  renderEasy();
+  easyButton.addEventListener('click', () => {
+    const active = !('facil' in document.documentElement.dataset);
+    if (active) document.documentElement.dataset.easy = '';
+    else delete document.documentElement.dataset.easy;
     try {
-      localStorage.setItem('ayudas:facil', activo ? '1' : '0');
+      localStorage.setItem('ayudas:facil', active ? '1' : '0');
     } catch {}
-    pintarFacil();
+    renderEasy();
   });
 }
 
 // Alto contraste: negro sobre blanco (o al revés en modo oscuro), bordes gruesos y enlaces subrayados
-const botonContraste = document.getElementById('contraste');
-if (botonContraste) {
-  const pintar = () => botonContraste.setAttribute('aria-pressed', String('contraste' in document.documentElement.dataset));
-  pintar();
-  botonContraste.addEventListener('click', () => {
-    const activo = !('contraste' in document.documentElement.dataset);
-    if (activo) document.documentElement.dataset.contraste = '';
-    else delete document.documentElement.dataset.contraste;
+const contrastButton = document.getElementById('contraste');
+if (contrastButton) {
+  const render = () => contrastButton.setAttribute('aria-pressed', String('contraste' in document.documentElement.dataset));
+  render();
+  contrastButton.addEventListener('click', () => {
+    const active = !('contraste' in document.documentElement.dataset);
+    if (active) document.documentElement.dataset.contrast = '';
+    else delete document.documentElement.dataset.contrast;
     try {
-      localStorage.setItem('ayudas:contraste', activo ? '1' : '0');
+      localStorage.setItem('ayudas:contraste', active ? '1' : '0');
     } catch {}
-    pintar();
+    render();
   });
 }
 
-// Leer en voz alta: cualquier botón con data-leer lee su texto, en el idioma de donde está
+// Leer en voz alta: cualquier botón con data-read lee su texto, en el idioma de donde está
 // (las guías en otros idiomas se leen en su idioma) y con la voz más humana del aparato
 // data-lang manda (la frase para la ventanilla se lee en castellano aunque el botón esté en otro idioma)
-const idiomaDe = (b) => b.dataset.lang || b.closest('[lang]')?.lang || 'es';
-if (puedeHablar) {
+const languageOf = (b) => b.dataset.lang || b.closest('[lang]')?.lang || 'es';
+if (canSpeak) {
   document.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-leer]');
+    const b = e.target.closest('[data-read]');
     if (!b) return;
-    if (hablando() && b.getAttribute('aria-pressed') === 'true') return parar();
-    hablar(b.dataset.leer, { lang: idiomaDe(b), boton: b });
+    if (isSpeaking() && b.getAttribute('aria-pressed') === 'true') return stop();
+    speak(b.dataset.read, { lang: languageOf(b), button: b });
   });
   // Si el aparato no tiene ninguna voz para ese idioma, el botón no se enseña
-  voces().then(async (lista) => {
+  voices().then(async (list) => {
     // Sin lista de voces (algunos navegadores no la dan) se deja el botón: leerá con la voz por defecto
-    if (!lista.length) return;
-    for (const b of document.querySelectorAll('[data-leer]')) if (!(await vozPara(idiomaDe(b)))) b.hidden = true;
+    if (!list.length) return;
+    for (const b of document.querySelectorAll('[data-read]')) if (!(await voiceFor(languageOf(b)))) b.hidden = true;
   });
-  prepararAjustes();
+  setupSettings();
 } else {
   document.documentElement.classList.add('sin-voz');
-  const ajuste = document.getElementById('ajuste-voz');
-  if (ajuste) ajuste.hidden = true;
+  const setting = document.getElementById('ajuste-voz');
+  if (setting) setting.hidden = true;
 }
-addEventListener('pagehide', parar);
+addEventListener('pagehide', stop);
 
 // Versión para insertar en otras webs (?widget=1): sin cabecera ni pie, enlaces en otra pestaña
 // y la altura se avisa a la página que la contiene para que no salga barra de desplazamiento.
@@ -108,14 +108,14 @@ if ('widget' in document.documentElement.dataset) {
     const a = e.target.closest('a[href]');
     if (a && !a.getAttribute('href').startsWith('#')) a.target = '_blank';
   });
-  const pie = document.createElement('p');
-  pie.className = 'widget-pie';
-  pie.innerHTML = 'Con datos oficiales de <a href="https://ayudas.bendi.dev/" target="_blank" rel="noopener">ayudas.bendi.dev</a>. Tus respuestas no salen de este aparato.';
-  document.querySelector('main')?.append(pie);
+  const footer = document.createElement('p');
+  footer.className = 'widget-pie';
+  footer.innerHTML = 'Con datos oficiales de <a href="https://ayudas.bendi.dev/" target="_blank" rel="noopener">ayudas.bendi.dev</a>. Tus respuestas no salen de este aparato.';
+  document.querySelector('main')?.append(footer);
   if (parent !== window) {
-    const avisar = () => parent.postMessage({ ayudas: 'altura', altura: document.documentElement.scrollHeight }, '*');
-    new ResizeObserver(avisar).observe(document.body);
-    addEventListener('load', avisar);
+    const notify = () => parent.postMessage({ benefits: 'altura', height: document.documentElement.scrollHeight }, '*');
+    new ResizeObserver(notify).observe(document.body);
+    addEventListener('load', notify);
   }
 }
 
@@ -125,10 +125,10 @@ for (const m of menus) m.addEventListener('toggle', () => m.open && menus.forEac
 document.addEventListener('click', (e) => menus.forEach((m) => m.open && !m.contains(e.target) && (m.open = false)));
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
-  const abierto = menus.find((m) => m.open);
-  if (abierto) {
-    abierto.open = false;
-    abierto.querySelector('summary').focus();
+  const openIssue = menus.find((m) => m.open);
+  if (openIssue) {
+    openIssue.open = false;
+    openIssue.querySelector('summary').focus();
   }
 });
 
@@ -139,24 +139,24 @@ document.addEventListener('keydown', (e) => {
     const b = e.target.closest('button.termino');
     if (!b) return;
     e.preventDefault();
-    const abierta = b.getAttribute('aria-expanded') === 'true';
+    const isOpen = b.getAttribute('aria-expanded') === 'true';
     document.querySelectorAll('button.termino[aria-expanded="true"]').forEach((o) => {
       o.setAttribute('aria-expanded', 'false');
       document.getElementById(o.getAttribute('aria-controls'))?.remove();
     });
-    if (abierta) return;
-    const def = GLOSARIO[b.dataset.termino];
-    if (!def) return;
+    if (isOpen) return;
+    const definition = GLOSSARY[b.dataset.term];
+    if (!definition) return;
     const id = `def-${++n}`;
-    const caja = document.createElement('span');
-    caja.className = 'definicion';
-    caja.id = id;
-    caja.setAttribute('role', 'note');
-    caja.innerHTML = `<strong></strong> <span></span> <a href="/palabras/#${encodeURIComponent(b.dataset.termino)}">Más palabras</a>`;
-    caja.querySelector('strong').textContent = `${b.textContent}:`;
-    caja.querySelector('span').textContent = def;
+    const box = document.createElement('span');
+    box.className = 'definicion';
+    box.id = id;
+    box.setAttribute('role', 'note');
+    box.innerHTML = `<strong></strong> <span></span> <a href="/palabras/#${encodeURIComponent(b.dataset.term)}">Más palabras</a>`;
+    box.querySelector('strong').textContent = `${b.textContent}:`;
+    box.querySelector('span').textContent = definition;
     // La explicación va al final de la frase, para no cortarla
-    (b.closest('li, p, dd, dt') ?? b.parentElement).append(caja);
+    (b.closest('li, p, dd, dt') ?? b.parentElement).append(box);
     b.setAttribute('aria-controls', id);
     b.setAttribute('aria-expanded', 'true');
   });

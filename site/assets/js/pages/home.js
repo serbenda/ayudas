@@ -1,100 +1,100 @@
 // Portada: el cuestionario por pasos y la lista de ayudas que salen.
 // Nada se envía: las respuestas solo viven en esta página (y en el navegador si marcas «recordar»).
 
-import { evaluar, perfilVacio, totalHijos, porDondeEmpezar, dineroEstimado } from '../lib/rules.js';
-import { CIUDADES } from '../data/regions.js';
+import { evaluate, emptyProfile, totalChildren, whereToStart, estimatedMoney } from '../lib/rules.js';
+import { CITIES } from '../data/regions.js';
 import { euros } from '../lib/format.js';
-import { AYUDAS, POR_ID, CATEGORIAS, COMUNIDADES } from '../data/benefits.js';
-import { papelesPara, tramiteDe } from '../data/procedures.js';
-import { DOCUMENTOS } from '../data/guide.js';
-import { leerNumero } from '../lib/format.js';
-import { icono } from '../data/icons.js';
-import { tarjeta, botonTelefono, esc } from '../ui/card.js';
-import { pintarEvolucion } from '../ui/evolution-chart.js';
-import { compartir } from '../ui/share.js';
-import { descargarCalendario } from '../lib/reminders.js';
-import { aEnlace, deEnlace } from '../lib/answers-link.js';
+import { BENEFITS, BY_ID, CATEGORIES, REGIONS } from '../data/benefits.js';
+import { papersFor, procedureOf } from '../data/procedures.js';
+import { DOCUMENTS } from '../data/guide.js';
+import { parseNumber } from '../lib/format.js';
+import { icon } from '../data/icons.js';
+import { benefitCard, phoneButton, esc } from '../ui/card.js';
+import { renderHistory } from '../ui/evolution-chart.js';
+import { share } from '../ui/share.js';
+import { downloadCalendar } from '../lib/reminders.js';
+import { toLink, fromLink } from '../lib/answers-link.js';
 
 const form = document.getElementById('cuestionario');
-const pasos = [...form.querySelectorAll('.paso')];
-const botonesPaso = [...document.querySelectorAll('#pasos [data-ir]')];
-const atras = document.getElementById('atras');
-const siguiente = document.getElementById('siguiente');
-const saltar = document.getElementById('saltar');
-const resultados = document.getElementById('resultados');
-const lista = document.getElementById('lista');
-const recordar = document.getElementById('recordar');
-const personasCaja = document.getElementById('personas');
-const CLAVE = 'ayudas:respuestas';
-const CLAVE_SEGUIR = 'ayudas:seguimiento';
-let seguimiento = {};
-const ORDEN = Object.fromEntries(AYUDAS.map((a, i) => [a.id, i]));
+const steps = [...form.querySelectorAll('.paso')];
+const stepButtons = [...document.querySelectorAll('#pasos [data-ir]')];
+const back = document.getElementById('atras');
+const next = document.getElementById('siguiente');
+const skip = document.getElementById('saltar');
+const results = document.getElementById('resultados');
+const list = document.getElementById('lista');
+const remember = document.getElementById('recordar');
+const peopleBox = document.getElementById('personas');
+const STORAGE_KEY = 'ayudas:respuestas';
+const TRACKING_KEY = 'ayudas:seguimiento';
+let tracking = {};
+const ORDER = Object.fromEntries(BENEFITS.map((a, i) => [a.id, i]));
 
-let pasoActual = 1;
-let visitados = new Set([1]);
-let filtro = 'todas';
-let monoparentalTocado = false;
+let currentStep = 1;
+let visited = new Set([1]);
+let activeFilter = 'todas';
+let singleParentTouched = false;
 
 // ── Comunidades ─────────────────────────────────────────────────────────
-const selectCcaa = document.getElementById('ccaa');
-for (const c of COMUNIDADES) selectCcaa.add(new Option(c.nombre, c.id));
+const regionSelect = document.getElementById('region');
+for (const c of REGIONS) regionSelect.add(new Option(c.name, c.id));
 
 // ── Pasos ───────────────────────────────────────────────────────────────
-function irA(n, { foco = true } = {}) {
-  pasoActual = Math.min(Math.max(n, 1), pasos.length);
-  visitados.add(pasoActual);
-  pasos.forEach((p, i) => (p.hidden = i + 1 !== pasoActual));
-  botonesPaso.forEach((b, i) => {
-    if (i + 1 === pasoActual) b.setAttribute('aria-current', 'step');
+function goTo(n, { focus = true } = {}) {
+  currentStep = Math.min(Math.max(n, 1), steps.length);
+  visited.add(currentStep);
+  steps.forEach((p, i) => (p.hidden = i + 1 !== currentStep));
+  stepButtons.forEach((b, i) => {
+    if (i + 1 === currentStep) b.setAttribute('aria-current', 'step');
     else b.removeAttribute('aria-current');
-    b.classList.toggle('hecho', visitados.has(i + 1) && i + 1 !== pasoActual);
+    b.classList.toggle('hecho', visited.has(i + 1) && i + 1 !== currentStep);
   });
-  atras.hidden = pasoActual === 1;
-  siguiente.textContent = pasoActual === pasos.length ? 'Ver mis ayudas' : 'Siguiente';
-  if (foco) {
-    const legend = pasos[pasoActual - 1].querySelector('legend');
+  back.hidden = currentStep === 1;
+  next.textContent = currentStep === steps.length ? 'Ver mis ayudas' : 'Siguiente';
+  if (focus) {
+    const legend = steps[currentStep - 1].querySelector('legend');
     form.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
     legend.setAttribute('tabindex', '-1');
     legend.focus({ preventScroll: true });
   }
 }
 
-botonesPaso.forEach((b) => b.addEventListener('click', () => irA(Number(b.dataset.ir))));
-atras.addEventListener('click', () => irA(pasoActual - 1));
-siguiente.addEventListener('click', () => (pasoActual === pasos.length ? mostrarResultados() : irA(pasoActual + 1)));
-saltar.addEventListener('click', mostrarResultados);
+stepButtons.forEach((b) => b.addEventListener('click', () => goTo(Number(b.dataset.ir))));
+back.addEventListener('click', () => goTo(currentStep - 1));
+next.addEventListener('click', () => (currentStep === steps.length ? showResults() : goTo(currentStep + 1)));
+skip.addEventListener('click', showResults);
 
 // ── Contadores − / + ────────────────────────────────────────────────────
 form.addEventListener('click', (e) => {
-  const b = e.target.closest('[data-sumar], [data-restar]');
+  const b = e.target.closest('[data-increment], [data-decrement]');
   if (!b) return;
-  const input = document.getElementById(b.dataset.sumar ?? b.dataset.restar);
+  const input = document.getElementById(b.dataset.increment ?? b.dataset.decrement);
   const v = Number(input.value) || 0;
-  const n = b.dataset.sumar ? v + 1 : v - 1;
+  const n = b.dataset.increment ? v + 1 : v - 1;
   input.value = Math.min(Math.max(n, Number(input.min) || 0), Number(input.max) || 99);
   input.dispatchEvent(new Event('input', { bubbles: true }));
 });
 
 // ── Personas a cargo ────────────────────────────────────────────────────
-function plantillaPersona(i) {
+function personTemplate(i) {
   const n = i + 1;
   return `
   <div class="persona" data-persona="${n}">
     <h3>Persona ${n}</h3>
     <div class="persona-campos">
       <label>¿Quién es?
-        <select name="p${n}-relacion">
+        <select name="p${n}-relationship">
           <option value="padre">Mi padre o mi madre</option>
           <option value="hijo">Mi hijo o hija</option>
-          <option value="pareja">Mi pareja</option>
+          <option value="partner">Mi pareja</option>
           <option value="otro">Otro familiar</option>
         </select>
       </label>
       <label>Edad
-        <input name="p${n}-edad" type="number" inputmode="numeric" min="0" max="120" class="corto">
+        <input name="p${n}-age" type="number" inputmode="numeric" min="0" max="120" class="corto">
       </label>
       <label>Discapacidad
-        <select name="p${n}-discapacidad">
+        <select name="p${n}-disability">
           <option value="no">No tiene</option>
           <option value="sin">Tiene limitaciones, sin certificado</option>
           <option value="33">Del 33 % al 64 %</option>
@@ -103,7 +103,7 @@ function plantillaPersona(i) {
         </select>
       </label>
       <label>Dependencia
-        <select name="p${n}-dependencia">
+        <select name="p${n}-dependency">
           <option value="no">No necesita ayuda diaria</option>
           <option value="necesita">Necesita ayuda, sin reconocer</option>
           <option value="tramite">Pedida, en trámite</option>
@@ -113,275 +113,275 @@ function plantillaPersona(i) {
         </select>
       </label>
     </div>
-    <label class="casilla"><input type="checkbox" name="p${n}-convive" checked><span>Vive conmigo</span></label>
-    <label class="casilla"><input type="checkbox" name="p${n}-cuidoYo" checked><span>La cuido yo (o alguien de la familia)</span></label>
+    <label class="casilla"><input type="checkbox" name="p${n}-livesWith" checked><span>Vive conmigo</span></label>
+    <label class="casilla"><input type="checkbox" name="p${n}-iCare" checked><span>La cuido yo (o alguien de la familia)</span></label>
   </div>`;
 }
 
-function ajustarPersonas() {
-  const n = Number(form.numCuidados.value) || 0;
-  const actuales = personasCaja.children.length;
-  for (let i = actuales; i < n; i++) personasCaja.insertAdjacentHTML('beforeend', plantillaPersona(i));
-  for (let i = actuales; i > n; i--) personasCaja.lastElementChild.remove();
+function adjustPeople() {
+  const n = Number(form.caredForCount.value) || 0;
+  const currentOnes = peopleBox.children.length;
+  for (let i = currentOnes; i < n; i++) peopleBox.insertAdjacentHTML('beforeend', personTemplate(i));
+  for (let i = currentOnes; i > n; i--) peopleBox.lastElementChild.remove();
 }
 
 // ── Leer el formulario ──────────────────────────────────────────────────
-const valor = (nombre) => form.elements[nombre]?.value ?? '';
-const radio = (nombre) => form.querySelector(`input[name="${nombre}"]:checked`)?.value ?? null;
-const siNo = (nombre) => {
-  const v = radio(nombre);
+const fieldValue = (name) => form.elements[name]?.value ?? '';
+const radio = (name) => form.querySelector(`input[name="${name}"]:checked`)?.value ?? null;
+const yesNo = (name) => {
+  const v = radio(name);
   return v === 'si' ? true : v === 'no' ? false : null;
 };
-const entero = (nombre, def = 0) => {
-  const n = parseInt(valor(nombre), 10);
-  return Number.isFinite(n) && n >= 0 ? n : def;
+const integer = (name, definition = 0) => {
+  const n = parseInt(fieldValue(name), 10);
+  return Number.isFinite(n) && n >= 0 ? n : definition;
 };
 // ¿La pregunta está en juego? Solo cuentan las que se esconden por no aplicar, no las de otros pasos.
-const visible = (el) => !el.closest('[data-si][hidden]');
+const visible = (el) => !el.closest('[data-show-if][hidden]');
 
-export function leerPerfil() {
-  const p = perfilVacio();
-  p.edad = valor('edad') === '' ? null : entero('edad', null);
-  p.ccaa = valor('ccaa') || null;
-  p.madridCapital = p.ccaa === 'madrid' ? siNo('madridCapital') : null;
-  p.ciudad = CIUDADES[p.ccaa] && siNo('enCiudad') ? CIUDADES[p.ccaa].id : null;
-  p.residencia = radio('residencia') || null;
-  p.situacion = radio('situacion');
-  p.emprender = form.emprender.checked;
-  p.retornado = form.retornado.checked;
-  p.pareja = radio('pareja') === 'si';
-  p.adultos = Math.max(1, entero('adultos', 1));
-  p.hijos = { menor3: entero('hijos-menor3'), de3a5: entero('hijos-de3a5'), de6a17: entero('hijos-de6a17') };
-  p.bebe = form.bebe.checked;
-  p.monoparental = form.monoparental.checked && visible(form.monoparental);
-  p.familiaNumerosa = visible(form.familiaNumerosa) ? valor('familiaNumerosa') : 'no';
-  p.viudo = form.viudo.checked;
-  p.ingresosHogar = leerNumero(valor('ingresosHogar'));
-  p.ingresosPropios = visible(form.ingresosPropios) ? leerNumero(valor('ingresosPropios')) : p.ingresosHogar;
-  const patrimonio = radio('patrimonio');
-  p.patrimonioAlto = patrimonio === 'alto' ? true : patrimonio === 'bajo' ? false : null;
-  p.vivienda = radio('vivienda');
-  p.discapacidad = valor('discapacidad');
-  p.dependencia = valor('dependencia');
-  p.cuidados = [...personasCaja.children].map((el, i) => {
+export function readProfile() {
+  const p = emptyProfile();
+  p.age = fieldValue('age') === '' ? null : integer('age', null);
+  p.region = fieldValue('region') || null;
+  p.madridCity = p.region === 'madrid' ? yesNo('madridCity') : null;
+  p.city = CITIES[p.region] && yesNo('inCity') ? CITIES[p.region].id : null;
+  p.residence = radio('residence') || null;
+  p.situation = radio('situation');
+  p.startingBusiness = form.startingBusiness.checked;
+  p.returnee = form.returnee.checked;
+  p.partner = radio('partner') === 'si';
+  p.adults = Math.max(1, integer('adults', 1));
+  p.children = { under3: integer('children-under3'), age3to5: integer('children-age3to5'), age6to17: integer('children-age6to17') };
+  p.baby = form.baby.checked;
+  p.singleParent = form.singleParent.checked && visible(form.singleParent);
+  p.largeFamily = visible(form.largeFamily) ? fieldValue('largeFamily') : 'no';
+  p.widowed = form.widowed.checked;
+  p.householdIncome = parseNumber(fieldValue('householdIncome'));
+  p.ownIncome = visible(form.ownIncome) ? parseNumber(fieldValue('ownIncome')) : p.householdIncome;
+  const wealth = radio('wealth');
+  p.highWealth = wealth === 'alto' ? true : wealth === 'bajo' ? false : null;
+  p.housing = radio('housing');
+  p.disability = fieldValue('disability');
+  p.dependency = fieldValue('dependency');
+  p.caredFor = [...peopleBox.children].map((el, i) => {
     const n = i + 1;
-    const edad = valor(`p${n}-edad`);
+    const age = fieldValue(`p${n}-age`);
     return {
-      relacion: valor(`p${n}-relacion`),
-      edad: edad === '' ? null : Number(edad),
-      discapacidad: valor(`p${n}-discapacidad`),
-      dependencia: valor(`p${n}-dependencia`),
-      convive: form.elements[`p${n}-convive`].checked,
-      cuidoYo: form.elements[`p${n}-cuidoYo`].checked,
+      relationship: fieldValue(`p${n}-relationship`),
+      age: age === '' ? null : Number(age),
+      disability: fieldValue(`p${n}-disability`),
+      dependency: fieldValue(`p${n}-dependency`),
+      livesWith: form.elements[`p${n}-livesWith`].checked,
+      iCare: form.elements[`p${n}-iCare`].checked,
     };
   });
-  p.enfermedadGraveHijo = form.enfermedadGraveHijo.checked && visible(form.enfermedadGraveHijo);
-  p.pension = valor('pension');
-  const contributiva = ['jubilacion', 'viudedad', 'incapacidad'].includes(p.pension);
-  p.pensionMes = contributiva ? leerNumero(valor('pensionMes')) : null;
-  p.pensionDesde2021 = contributiva ? siNo('pensionDesde2021') : null;
-  p.hijosTenidos = contributiva ? entero('hijosTenidos') : 0;
-  p.cotizado15 = visible(form.querySelector('[name="cotizado15"]')) ? siNo('cotizado15') : null;
-  p.cotizadoUnAño = visible(form.querySelector('[name="cotizadoUnAño"]')) ? siNo('cotizadoUnAño') : null;
-  p.urgencias = Object.fromEntries(['comida', 'casaRiesgo', 'sinCasa', 'violencia', 'soledad'].map((k) => [k, form.elements[`u-${k}`].checked]));
+  p.childSeriousIllness = form.childSeriousIllness.checked && visible(form.childSeriousIllness);
+  p.pension = fieldValue('pension');
+  const contributory = ['jubilacion', 'viudedad', 'incapacidad'].includes(p.pension);
+  p.pensionMonthly = contributory ? parseNumber(fieldValue('pensionMonthly')) : null;
+  p.pensionSince2021 = contributory ? yesNo('pensionSince2021') : null;
+  p.childrenBorn = contributory ? integer('childrenBorn') : 0;
+  p.contributed15 = visible(form.querySelector('[name="contributed15"]')) ? yesNo('contributed15') : null;
+  p.contributedOneYear = visible(form.querySelector('[name="contributedOneYear"]')) ? yesNo('contributedOneYear') : null;
+  p.urgent = Object.fromEntries(['food', 'housingAtRisk', 'homeless', 'violence', 'soledad'].map((k) => [k, form.elements[`u-${k}`].checked]));
   return p;
 }
 
 // ── Preguntas que solo salen cuando hacen falta ─────────────────────────
-function actualizarCondiciones() {
-  const p = leerPerfil();
-  const n = totalHijos(p);
-  const enParo = p.situacion === 'paro-cobrando' || p.situacion === 'paro-sin';
-  const pideCotizado = (enParo && (p.edad ?? 0) >= 50) || (p.pension === 'no' && (p.edad ?? 0) >= 58);
-  const reglas = {
-    madrid: p.ccaa === 'madrid',
-    ciudad: Boolean(CIUDADES[p.ccaa]),
-    monoparental: !p.pareja && n > 0,
-    'familia-numerosa': n >= 2 || (n >= 1 && p.bebe),
-    'ingresos-propios': p.adultos > 1 || p.pareja,
-    hijos: n > 0,
-    'pension-contributiva': ['jubilacion', 'viudedad', 'incapacidad'].includes(p.pension),
-    'paro-sin': p.situacion === 'paro-sin',
-    cotizado15: pideCotizado,
-    'nada-paso5': p.pension === 'no' && !enParo && !pideCotizado,
+function updateConditions() {
+  const p = readProfile();
+  const n = totalChildren(p);
+  const unemployed = p.situation === 'paro-cobrando' || p.situation === 'paro-sin';
+  const asksContributions = (unemployed && (p.age ?? 0) >= 50) || (p.pension === 'no' && (p.age ?? 0) >= 58);
+  const rules = {
+    madrid: p.region === 'madrid',
+    city: Boolean(CITIES[p.region]),
+    'single-parent': !p.partner && n > 0,
+    'large-family': n >= 2 || (n >= 1 && p.baby),
+    'own-income': p.adults > 1 || p.partner,
+    children: n > 0,
+    'contributory-pension': ['jubilacion', 'viudedad', 'incapacidad'].includes(p.pension),
+    'unemployed-no-benefit': p.situation === 'paro-sin',
+    'contributed-15': asksContributions,
+    'nothing-in-step-5': p.pension === 'no' && !unemployed && !asksContributions,
   };
-  for (const el of form.querySelectorAll('[data-si]')) el.hidden = !reglas[el.dataset.si];
-  if (CIUDADES[p.ccaa]) document.getElementById('nombre-ciudad').textContent = `la ciudad de ${CIUDADES[p.ccaa].nombre}`;
+  for (const el of form.querySelectorAll('[data-show-if]')) el.hidden = !rules[el.dataset.showIf];
+  if (CITIES[p.region]) document.getElementById('nombre-ciudad').textContent = `la ciudad de ${CITIES[p.region].name}`;
   // Una persona sola con hijos: casi siempre es monoparental (se puede desmarcar)
-  if (reglas.monoparental && !monoparentalTocado && radio('pareja') === 'no' && p.adultos === 1) form.monoparental.checked = true;
+  if (rules['single-parent'] && !singleParentTouched && radio('partner') === 'no' && p.adults === 1) form.singleParent.checked = true;
 }
 
-form.monoparental.addEventListener('change', () => (monoparentalTocado = true));
+form.singleParent.addEventListener('change', () => (singleParentTouched = true));
 
 form.addEventListener('change', (e) => {
   const t = e.target;
-  if (t.name === 'situacion' && t.value === 'pensionista' && form.pension.value === 'no') form.pension.value = 'jubilacion';
-  if (t.name === 'pareja' && t.value === 'si' && (Number(form.adultos.value) || 1) < 2) form.adultos.value = 2;
-  if (t.name === 'numCuidados') ajustarPersonas();
-  alCambiar();
+  if (t.name === 'situation' && t.value === 'pensionista' && form.pension.value === 'no') form.pension.value = 'jubilacion';
+  if (t.name === 'partner' && t.value === 'si' && (Number(form.adults.value) || 1) < 2) form.adults.value = 2;
+  if (t.name === 'caredForCount') adjustPeople();
+  onChange();
 });
-form.addEventListener('input', alCambiar);
+form.addEventListener('input', onChange);
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-  mostrarResultados();
+  showResults();
 });
 
-function alCambiar() {
-  actualizarCondiciones();
-  if (!resultados.hidden) pintar();
-  guardar();
+function onChange() {
+  updateConditions();
+  if (!results.hidden) render();
+  save();
 }
 
 // ── Resultados ──────────────────────────────────────────────────────────
-function mostrarResultados() {
-  actualizarCondiciones();
-  pintarTelefonos();
-  pintar();
-  resultados.hidden = false;
-  resultados.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-  resultados.focus({ preventScroll: true });
-  guardar();
+function showResults() {
+  updateConditions();
+  renderPhones();
+  render();
+  results.hidden = false;
+  results.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  results.focus({ preventScroll: true });
+  save();
 }
 
-function pintar() {
-  const p = leerPerfil();
-  const todos = evaluar(p).sort((x, y) => (x.estado === y.estado ? ORDEN[x.id] - ORDEN[y.id] : x.estado === 'si' ? -1 : 1));
-  const nSi = todos.filter((r) => r.estado === 'si').length;
-  const nQuizas = todos.length - nSi;
-  document.getElementById('n-si').firstChild.textContent = nSi;
-  document.getElementById('n-quizas').firstChild.textContent = nQuizas;
-  document.getElementById('resultados-texto').textContent = todos.length
-    ? `Con lo que has contestado salen ${todos.length} ${todos.length === 1 ? 'ayuda' : 'ayudas'}. Pulsa cada una para ver cómo se pide, paso a paso.`
+function render() {
+  const p = readProfile();
+  const all = evaluate(p).sort((x, y) => (x.status === y.status ? ORDER[x.id] - ORDER[y.id] : x.status === 'si' ? -1 : 1));
+  const nYes = all.filter((r) => r.status === 'si').length;
+  const nMaybe = all.length - nYes;
+  document.getElementById('n-si').firstChild.textContent = nYes;
+  document.getElementById('n-quizas').firstChild.textContent = nMaybe;
+  document.getElementById('resultados-texto').textContent = all.length
+    ? `Con lo que has contestado salen ${all.length} ${all.length === 1 ? 'ayuda' : 'ayudas'}. Pulsa cada una para ver cómo se pide, paso a paso.`
     : 'Con lo que has contestado no sale ninguna ayuda. Prueba a completar más preguntas: los ingresos y quién vive contigo cambian mucho el resultado.';
 
   // Lo que podría entrar en casa: lo que ya entra + cada ayuda, en una barra
-  pintarDinero(p, todos);
+  renderMoney(p, all);
 
   // Por dónde empezar
-  const primeras = porDondeEmpezar(todos);
-  const empezar = document.getElementById('empezar');
-  empezar.hidden = !primeras.length;
-  document.getElementById('empezar-lista').innerHTML = primeras
+  const first = whereToStart(all);
+  const begin = document.getElementById('empezar');
+  begin.hidden = !first.length;
+  document.getElementById('empezar-lista').innerHTML = first
     .map((r) => {
-      const t = tramiteDe(r.id, p.ccaa);
-      return `<li><a href="#ayuda-${r.id}" data-abrir="${r.id}"><strong>${esc(POR_ID[r.id].nombre)}</strong></a><span>${esc(t.pasos[0])}</span></li>`;
+      const t = procedureOf(r.id, p.region);
+      return `<li><a href="#ayuda-${r.id}" data-open-page="${r.id}"><strong>${esc(BY_ID[r.id].name)}</strong></a><span>${esc(t.steps[0])}</span></li>`;
     })
     .join('');
 
   // Papeles de todas las ayudas que salen
-  const papeles = papelesPara(todos.map((r) => r.id));
+  const papeles = papersFor(all.map((r) => r.id));
   document.getElementById('papeles-bloque').hidden = !papeles.length;
   document.getElementById('papeles').innerHTML = papeles
-    .map(({ doc, ayudas }) => `<li><strong>${esc(DOCUMENTOS[doc].nombre)}</strong>. ${esc(DOCUMENTOS[doc].ayuda)} <small>Para: ${ayudas.map((id) => esc(POR_ID[id].nombre)).join(', ')}.</small></li>`)
+    .map(({ doc, benefits }) => `<li><strong>${esc(DOCUMENTS[doc].name)}</strong>. ${esc(DOCUMENTS[doc].benefit)} <small>Para: ${benefits.map((id) => esc(BY_ID[id].name)).join(', ')}.</small></li>`)
     .join('');
 
-  const visibles = todos.filter((r) => filtro === 'todas' || r.estado === filtro);
-  if (!visibles.length) {
-    lista.innerHTML = todos.length ? '<p class="vacio">Nada con este filtro.</p>' : '';
+  const visibleOnes = all.filter((r) => activeFilter === 'todas' || r.status === activeFilter);
+  if (!visibleOnes.length) {
+    list.innerHTML = all.length ? '<p class="vacio">Nada con este filtro.</p>' : '';
     return;
   }
-  lista.innerHTML = CATEGORIAS.map((c) => {
-    const delGrupo = visibles.filter((r) => POR_ID[r.id].categoria === c.id);
-    if (!delGrupo.length) return '';
+  list.innerHTML = CATEGORIES.map((c) => {
+    const inGroup = visibleOnes.filter((r) => BY_ID[r.id].category === c.id);
+    if (!inGroup.length) return '';
     return `<section class="grupo grupo-${c.id}" aria-labelledby="g-${c.id}">
-      <h3 class="grupo-titulo" id="g-${c.id}"><span class="insignia">${icono(c.icono)}</span>${esc(c.nombre)}</h3>
-      <ul class="lista-ayudas">${delGrupo.map((r) => tarjeta(r.id, { resultado: r, ccaa: p.ccaa, seguimiento: seguimiento[r.id] ?? '', perfil: p })).join('')}</ul>
+      <h3 class="grupo-titulo" id="g-${c.id}"><span class="insignia">${icon(c.icon)}</span>${esc(c.name)}</h3>
+      <ul class="lista-ayudas">${inGroup.map((r) => benefitCard(r.id, { result: r, region: p.region, tracking: tracking[r.id] ?? '', profile: p })).join('')}</ul>
     </section>`;
   }).join('');
 }
 
-const COLORES = ['var(--s-smi)', 'var(--s-pnc)', 'var(--s-imv)', 'var(--s-iprem)', 'var(--acento)', 'var(--calido-fuerte)', 'var(--quizas)', 'var(--tenue)'];
+const COLORS = ['var(--s-smi)', 'var(--s-pnc)', 'var(--s-imv)', 'var(--s-iprem)', 'var(--acento)', 'var(--calido-fuerte)', 'var(--quizas)', 'var(--tenue)'];
 
-function pintarDinero(p, todos) {
-  const caja = document.getElementById('dinero');
-  const d = dineroEstimado(todos);
-  if (!d.mes && !d.año) {
-    caja.hidden = true;
+function renderMoney(p, all) {
+  const box = document.getElementById('dinero');
+  const d = estimatedMoney(all);
+  if (!d.monthly && !d.yearly) {
+    box.hidden = true;
     return;
   }
-  caja.hidden = false;
-  const ahora = p.ingresosHogar != null ? Math.round(p.ingresosHogar / 12) : 0;
-  const total = ahora + d.mes;
-  const trozos = [
-    ...(ahora && d.mes ? [{ nombre: 'Lo que ya entra', cifra: ahora, color: 'var(--linea)', ya: true }] : []),
-    ...d.partes.map((x, i) => ({ nombre: POR_ID[x.id].nombre, cifra: x.mes, color: COLORES[i % COLORES.length] })),
+  box.hidden = false;
+  const now = p.householdIncome != null ? Math.round(p.householdIncome / 12) : 0;
+  const total = now + d.monthly;
+  const chunks = [
+    ...(now && d.monthly ? [{ name: 'Lo que ya entra', figure: now, color: 'var(--linea)', already: true }] : []),
+    ...d.parts.map((x, i) => ({ name: BY_ID[x.id].name, figure: x.monthly, color: COLORS[i % COLORS.length] })),
   ];
-  document.getElementById('dinero-total').innerHTML = d.mes
-    ? `Hasta <strong>${euros(d.mes)} más al mes</strong>${ahora ? `: de ${euros(ahora)} a unos ${euros(total)}` : ''}${d.año ? `, y <strong>${euros(d.año)} al año</strong> en pagos y deducciones` : ''}.`
-    : `<strong>${euros(d.año)} al año</strong> en pagos y deducciones.`;
-  const barra = document.getElementById('dinero-barra');
-  barra.hidden = !d.mes;
-  barra.setAttribute('aria-label', trozos.map((t) => `${t.nombre}: ${euros(t.cifra)} al mes`).join('. '));
-  barra.innerHTML = trozos.map((t) => `<span style="flex:${t.cifra} 1 0;background:${t.color}"${t.ya ? ' class="ya"' : ''}></span>`).join('');
+  document.getElementById('dinero-total').innerHTML = d.monthly
+    ? `Hasta <strong>${euros(d.monthly)} más al mes</strong>${now ? `: de ${euros(now)} a unos ${euros(total)}` : ''}${d.yearly ? `, y <strong>${euros(d.yearly)} al año</strong> en pagos y deducciones` : ''}.`
+    : `<strong>${euros(d.yearly)} al año</strong> en pagos y deducciones.`;
+  const bar = document.getElementById('dinero-barra');
+  bar.hidden = !d.monthly;
+  bar.setAttribute('aria-label', chunks.map((t) => `${t.name}: ${euros(t.figure)} al mes`).join('. '));
+  bar.innerHTML = chunks.map((t) => `<span style="flex:${t.figure} 1 0;background:${t.color}"${t.already ? ' class="ya"' : ''}></span>`).join('');
   document.getElementById('dinero-leyenda').innerHTML = [
-    ...trozos.map((t) => `<li><i style="background:${t.color}"></i>${esc(t.nombre)} <strong>${euros(t.cifra)}</strong><small>al mes</small></li>`),
-    ...d.alAño.map((x) => `<li><i class="anual"></i>${esc(POR_ID[x.id].nombre)} <strong>${euros(x.año)}</strong><small>al año</small></li>`),
+    ...chunks.map((t) => `<li><i style="background:${t.color}"></i>${esc(t.name)} <strong>${euros(t.figure)}</strong><small>al mes</small></li>`),
+    ...d.perYear.map((x) => `<li><i class="anual"></i>${esc(BY_ID[x.id].name)} <strong>${euros(x.yearly)}</strong><small>al año</small></li>`),
   ].join('');
 }
 
 // Abrir una ayuda desde «Por dónde empezar»
 document.getElementById('empezar-lista').addEventListener('click', (e) => {
-  const a = e.target.closest('[data-abrir]');
+  const a = e.target.closest('[data-open-page]');
   if (!a) return;
-  const d = document.querySelector(`#ayuda-${a.dataset.abrir} details`);
+  const d = document.querySelector(`#ayuda-${a.dataset.openPage} details`);
   if (d) d.open = true;
 });
 
 // Seguimiento: cómo va cada ayuda
-lista.addEventListener('change', (e) => {
-  const s = e.target.closest('[data-seguir]');
+list.addEventListener('change', (e) => {
+  const s = e.target.closest('[data-track]');
   if (!s) return;
-  if (s.value) seguimiento[s.dataset.seguir] = s.value;
-  else delete seguimiento[s.dataset.seguir];
-  guardar();
-  pintar();
-  document.querySelector(`#ayuda-${s.dataset.seguir} details`)?.setAttribute('open', '');
+  if (s.value) tracking[s.dataset.track] = s.value;
+  else delete tracking[s.dataset.track];
+  save();
+  render();
+  document.querySelector(`#ayuda-${s.dataset.track} details`)?.setAttribute('open', '');
 });
 
-for (const b of document.querySelectorAll('[data-filtro]')) {
+for (const b of document.querySelectorAll('[data-active-filter]')) {
   b.addEventListener('click', () => {
-    filtro = b.dataset.filtro;
-    document.querySelectorAll('[data-filtro]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    pintar();
+    activeFilter = b.dataset.activeFilter;
+    document.querySelectorAll('[data-active-filter]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    render();
   });
 }
 
-document.getElementById('cambiar').addEventListener('click', () => irA(1));
+document.getElementById('cambiar').addEventListener('click', () => goTo(1));
 document.getElementById('imprimir').addEventListener('click', () => print());
 document.getElementById('compartir').addEventListener('click', () => {
-  const p = leerPerfil();
-  const ids = porDondeEmpezar(evaluar(p), 99).concat(evaluar(p)).map((r) => r.id).filter((id, i, a) => a.indexOf(id) === i);
-  if (ids.length) compartir(ids);
+  const p = readProfile();
+  const ids = whereToStart(evaluate(p), 99).concat(evaluate(p)).map((r) => r.id).filter((id, i, a) => a.indexOf(id) === i);
+  if (ids.length) share(ids);
 });
-const idsResultado = () => {
-  const r = evaluar(leerPerfil());
-  return porDondeEmpezar(r, 99).concat(r).map((x) => x.id).filter((id, i, a) => a.indexOf(id) === i);
+const resultIds = () => {
+  const r = evaluate(readProfile());
+  return whereToStart(r, 99).concat(r).map((x) => x.id).filter((id, i, a) => a.indexOf(id) === i);
 };
-document.getElementById('calendario').addEventListener('click', () => descargarCalendario(idsResultado()));
+document.getElementById('calendario').addEventListener('click', () => downloadCalendar(resultIds()));
 
 // Guardar en un enlace: las respuestas van dentro del enlace (después de #), que no llega a ningún servidor
-const estadoEnlace = document.getElementById('enlace-estado');
+const linkStatus = document.getElementById('enlace-estado');
 document.getElementById('enlace-respuestas').addEventListener('click', async () => {
-  const url = `${location.origin}${location.pathname}#r=${aEnlace(respuestas())}`;
+  const url = `${location.origin}${location.pathname}#r=${toLink(answers())}`;
   try {
     await navigator.clipboard.writeText(url);
-    estadoEnlace.textContent = 'Enlace copiado. Guárdalo en tus notas o mándatelo. Quien lo abra verá tus respuestas.';
+    linkStatus.textContent = 'Enlace copiado. Guárdalo en tus notas o mándatelo. Quien lo abra verá tus respuestas.';
   } catch {
-    estadoEnlace.innerHTML = `Copia este enlace y guárdalo: <a href="${esc(url)}">enlace con tus respuestas</a>.`;
+    linkStatus.innerHTML = `Copia este enlace y guárdalo: <a href="${esc(url)}">enlace con tus respuestas</a>.`;
   }
 });
 
 // Modo profesional: para servicios sociales y entidades que orientan a varias personas
 const PRO = 'pro' in document.documentElement.dataset;
-const caja = document.getElementById('pro');
+const box = document.getElementById('pro');
 if (PRO) {
-  caja.hidden = false;
-  const cabecera = () => {
+  box.hidden = false;
+  const header = () => {
     const ref = document.getElementById('pro-ref').value.trim();
     document.getElementById('pro-cabecera').textContent = `Orientación sobre ayudas · ${new Date().toLocaleDateString('es-ES')}${ref ? ` · Caso ${ref}` : ''} · ayudas.bendi.dev`;
   };
-  document.getElementById('pro-ref').addEventListener('input', cabecera);
-  cabecera();
+  document.getElementById('pro-ref').addEventListener('input', header);
+  header();
 }
 
 document.getElementById('borrar').addEventListener('click', () => {
@@ -389,124 +389,124 @@ document.getElementById('borrar').addEventListener('click', () => {
     document.getElementById('pro-ref').value = '';
     document.getElementById('pro-notas').value = '';
   }
-  estadoEnlace.textContent = '';
+  linkStatus.textContent = '';
   form.reset();
-  personasCaja.replaceChildren();
-  monoparentalTocado = false;
-  visitados = new Set([1]);
-  seguimiento = {};
+  peopleBox.replaceChildren();
+  singleParentTouched = false;
+  visited = new Set([1]);
+  tracking = {};
   try {
-    localStorage.removeItem(CLAVE);
-    localStorage.removeItem(CLAVE_SEGUIR);
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(TRACKING_KEY);
   } catch {}
-  resultados.hidden = true;
-  actualizarCondiciones();
-  irA(1);
+  results.hidden = true;
+  updateConditions();
+  goTo(1);
 });
 // Al imprimir, todas las ayudas abiertas
-addEventListener('beforeprint', () => resultados.querySelectorAll('details').forEach((d) => (d.open = true)));
+addEventListener('beforeprint', () => results.querySelectorAll('details').forEach((d) => (d.open = true)));
 
 // ── Recordar respuestas (solo si se marca) ──────────────────────────────
-function respuestas() {
-  const datos = {};
+function answers() {
+  const data = {};
   for (const el of form.elements) {
     if (!el.name) continue;
     if (el.type === 'radio') {
-      if (el.checked) datos[el.name] = el.value;
-    } else if (el.type === 'checkbox') datos[el.name] = el.checked;
-    else datos[el.name] = el.value;
+      if (el.checked) data[el.name] = el.value;
+    } else if (el.type === 'checkbox') data[el.name] = el.checked;
+    else data[el.name] = el.value;
   }
-  return datos;
+  return data;
 }
 
-function rellenar(datos) {
+function fill(data) {
   form.reset();
-  personasCaja.replaceChildren();
-  if (datos.numCuidados) {
-    form.numCuidados.value = datos.numCuidados;
-    ajustarPersonas();
+  peopleBox.replaceChildren();
+  if (data.caredForCount) {
+    form.caredForCount.value = data.caredForCount;
+    adjustPeople();
   }
-  for (const [nombre, v] of Object.entries(datos)) {
-    const campo = form.elements[nombre];
-    if (!campo) continue;
-    if (campo instanceof RadioNodeList) {
-      for (const r of campo) r.checked = r.value === v;
-    } else if (campo.type === 'checkbox') campo.checked = Boolean(v);
-    else campo.value = v;
+  for (const [name, v] of Object.entries(data)) {
+    const field = form.elements[name];
+    if (!field) continue;
+    if (field instanceof RadioNodeList) {
+      for (const r of field) r.checked = r.value === v;
+    } else if (field.type === 'checkbox') field.checked = Boolean(v);
+    else field.value = v;
   }
-  monoparentalTocado = 'monoparental' in datos;
-  actualizarCondiciones();
+  singleParentTouched = 'singleParent' in data;
+  updateConditions();
 }
 
-function guardar() {
+function save() {
   try {
-    if (recordar.checked) {
-      localStorage.setItem(CLAVE, JSON.stringify(respuestas()));
-      localStorage.setItem(CLAVE_SEGUIR, JSON.stringify(seguimiento));
+    if (remember.checked) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(answers()));
+      localStorage.setItem(TRACKING_KEY, JSON.stringify(tracking));
     }
   } catch {}
 }
 
-recordar.addEventListener('change', () => {
+remember.addEventListener('change', () => {
   try {
-    if (recordar.checked) guardar();
+    if (remember.checked) save();
     else {
-      localStorage.removeItem(CLAVE);
-      localStorage.removeItem(CLAVE_SEGUIR);
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(TRACKING_KEY);
     }
   } catch {}
 });
 
 // ── Ejemplos ────────────────────────────────────────────────────────────
-const EJEMPLOS = {
-  familia: { edad: '29', ccaa: 'madrid', madridCapital: 'si', residencia: 'si', situacion: 'cuenta-ajena', pareja: 'si', adultos: '2', 'hijos-de3a5': '1', bebe: true, ingresosHogar: '28.000', patrimonio: 'bajo', vivienda: 'alquiler' },
-  jubilada: { edad: '74', ccaa: 'madrid', madridCapital: 'si', residencia: 'si', 'u-soledad': true, situacion: 'pensionista', pareja: 'no', adultos: '1', viudo: true, ingresosHogar: '10.500', patrimonio: 'bajo', vivienda: 'propia', pension: 'viudedad', pensionMes: '720', pensionDesde2021: 'si', hijosTenidos: '3' },
+const EXAMPLES = {
+  familia: { age: '29', region: 'madrid', madridCity: 'si', residence: 'si', situation: 'cuenta-ajena', partner: 'si', adults: '2', 'children-age3to5': '1', baby: true, householdIncome: '28.000', wealth: 'bajo', housing: 'alquiler' },
+  jubilada: { age: '74', region: 'madrid', madridCity: 'si', residence: 'si', 'u-soledad': true, situation: 'pensionista', partner: 'no', adults: '1', widowed: true, householdIncome: '10.500', wealth: 'bajo', housing: 'propia', pension: 'viudedad', pensionMonthly: '720', pensionSince2021: 'si', childrenBorn: '3' },
   cuidador: {
-    edad: '52', ccaa: 'castilla-leon', residencia: 'si', situacion: 'cuenta-ajena', pareja: 'si', adultos: '3', 'hijos-de6a17': '1', ingresosHogar: '38.000', ingresosPropios: '21.000', vivienda: 'hipoteca',
-    numCuidados: '1', 'p1-relacion': 'padre', 'p1-edad': '84', 'p1-discapacidad': '65', 'p1-dependencia': '2', 'p1-convive': true, 'p1-cuidoYo': true,
+    age: '52', region: 'castilla-leon', residence: 'si', situation: 'cuenta-ajena', partner: 'si', adults: '3', 'children-age6to17': '1', householdIncome: '38.000', ownIncome: '21.000', housing: 'hipoteca',
+    caredForCount: '1', 'p1-relacion': 'padre', 'p1-edad': '84', 'p1-discapacidad': '65', 'p1-dependencia': '2', 'p1-convive': true, 'p1-cuidoYo': true,
   },
-  paro: { edad: '55', ccaa: 'valencia', residencia: 'si', 'u-comida': true, situacion: 'paro-sin', pareja: 'si', adultos: '2', ingresosHogar: '9.000', ingresosPropios: '0', patrimonio: 'bajo', vivienda: 'alquiler', cotizado15: 'si', cotizadoUnAño: 'no' },
+  paro: { age: '55', region: 'valencia', residence: 'si', 'u-food': true, situation: 'paro-sin', partner: 'si', adults: '2', householdIncome: '9.000', ownIncome: '0', wealth: 'bajo', housing: 'alquiler', contributed15: 'si', contributedOneYear: 'no' },
 };
 
-for (const b of document.querySelectorAll('[data-ejemplo]')) {
+for (const b of document.querySelectorAll('[data-example]')) {
   b.addEventListener('click', () => {
-    rellenar(EJEMPLOS[b.dataset.ejemplo]);
-    visitados = new Set([1, 2, 3, 4, 5, 6]);
-    irA(1, { foco: false });
-    mostrarResultados();
+    fill(EXAMPLES[b.dataset.example]);
+    visited = new Set([1, 2, 3, 4, 5, 6]);
+    goTo(1, { focus: false });
+    showResults();
   });
 }
 
 // ── Necesito ayuda hoy ──────────────────────────────────────────────────
-function pintarTelefonos() {
-  const madrid = form.ccaa.value === 'madrid';
-  const claves = ['emergencias', 'violencia', 'crisis', 'cruzRoja', ...(madrid ? ['madrid012', 'linea010', 'mayoresMadrid'] : []), 'imv'];
-  document.getElementById('telefonos-hoy').innerHTML = claves.map(botonTelefono).join('');
+function renderPhones() {
+  const madrid = form.region.value === 'madrid';
+  const keys = ['emergencias', 'violencia', 'crisis', 'cruzRoja', ...(madrid ? ['madrid012', 'linea010', 'mayoresMadrid'] : []), 'imv'];
+  document.getElementById('telefonos-hoy').innerHTML = keys.map(phoneButton).join('');
 }
-form.ccaa.addEventListener('change', pintarTelefonos);
+form.region.addEventListener('change', renderPhones);
 
 // ── Arranque ────────────────────────────────────────────────────────────
 try {
-  const guardadas = localStorage.getItem(CLAVE);
-  if (guardadas) {
-    rellenar(JSON.parse(guardadas));
-    seguimiento = JSON.parse(localStorage.getItem(CLAVE_SEGUIR) ?? '{}');
-    recordar.checked = true;
+  const savedAnswers = localStorage.getItem(STORAGE_KEY);
+  if (savedAnswers) {
+    fill(JSON.parse(savedAnswers));
+    tracking = JSON.parse(localStorage.getItem(TRACKING_KEY) ?? '{}');
+    remember.checked = true;
   }
 } catch {}
 // Si se abre un enlace con respuestas (#r=…), se rellenan y se quitan de la barra de direcciones
-const desdeEnlace = location.hash.startsWith('#r=') ? deEnlace(location.hash.slice(3)) : null;
-if (desdeEnlace) {
-  rellenar(desdeEnlace);
+const fromLinkAnswers = location.hash.startsWith('#r=') ? fromLink(location.hash.slice(3)) : null;
+if (fromLinkAnswers) {
+  fill(fromLinkAnswers);
   history.replaceState(null, '', location.pathname + location.search);
 }
-actualizarCondiciones();
-pintarTelefonos();
-pintarEvolucion(document.getElementById('evolucion'));
-document.getElementById('n-ayudas').textContent = AYUDAS.length;
-for (const el of document.querySelectorAll('[data-icono]')) el.innerHTML = icono(el.dataset.icono);
-irA(1, { foco: false });
-if (desdeEnlace) {
-  visitados = new Set([1, 2, 3, 4, 5, 6]);
-  mostrarResultados();
+updateConditions();
+renderPhones();
+renderHistory(document.getElementById('evolucion'));
+document.getElementById('n-ayudas').textContent = BENEFITS.length;
+for (const el of document.querySelectorAll('[data-icon]')) el.innerHTML = icon(el.dataset.icon);
+goTo(1, { focus: false });
+if (fromLinkAnswers) {
+  visited = new Set([1, 2, 3, 4, 5, 6]);
+  showResults();
 }

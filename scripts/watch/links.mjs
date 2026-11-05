@@ -3,66 +3,66 @@
 // Uso: node scripts/enlaces.mjs   (sale con error si algún enlace está roto)
 
 import { readFile, writeFile } from 'node:fs/promises';
-import { AYUDAS, COMUNIDADES } from '../../site/assets/js/data/benefits.js';
-import { FUENTES_CIFRAS } from '../../site/assets/js/data/figures.js';
+import { BENEFITS, REGIONS } from '../../site/assets/js/data/benefits.js';
+import { FIGURE_SOURCES } from '../../site/assets/js/data/figures.js';
 
-const raiz = new URL('../../site/', import.meta.url);
+const root = new URL('../../site/', import.meta.url);
 const urls = new Map(); // url → dónde aparece
 
-const anotar = (url, donde) => {
+const addUrl = (url, where) => {
   if (!url || !/^https:\/\//.test(url)) return;
   if (!urls.has(url)) urls.set(url, new Set());
-  urls.get(url).add(donde);
+  urls.get(url).add(where);
 };
 
-for (const a of AYUDAS) anotar(a.enlace.url, `ayuda ${a.id}`);
-for (const c of COMUNIDADES) anotar(c.url, `comunidad ${c.id}`);
-for (const f of FUENTES_CIFRAS) anotar(f.url, `cifra «${f.tema}»`);
-for (const pagina of ['index.html', 'mayores/index.html', 'catalogo/index.html', 'fuentes/index.html']) {
-  const html = await readFile(new URL(pagina, raiz), 'utf8');
+for (const a of BENEFITS) addUrl(a.link.url, `ayuda ${a.id}`);
+for (const c of REGIONS) addUrl(c.url, `comunidad ${c.id}`);
+for (const f of FIGURE_SOURCES) addUrl(f.url, `cifra «${f.topic}»`);
+for (const page of ['index.html', 'mayores/index.html', 'catalogo/index.html', 'fuentes/index.html']) {
+  const html = await readFile(new URL(page, root), 'utf8');
   for (const [, url] of html.matchAll(/href="(https:\/\/[^"]+)"/g)) {
     if (/github\.com\/(sponsors|serbenda\/ayudas\/issues)|bendi\.dev|goatcounter/.test(url)) continue;
-    anotar(url, pagina);
+    addUrl(url, page);
   }
 }
 
 const UA = 'Mozilla/5.0 (compatible; ayudas-enlaces/1.0; +https://ayudas.bendi.dev/fuentes/)';
 
-async function comprobar(url) {
-  for (let intento = 1; intento <= 2; intento++) {
+async function check(url) {
+  for (let attempt = 1; attempt <= 2; attempt++) {
     try {
       const r = await fetch(url, { redirect: 'follow', headers: { 'user-agent': UA, accept: 'text/html,*/*' }, signal: AbortSignal.timeout(20000) });
       await r.body?.cancel();
-      if (r.ok) return { url, ok: true, estado: r.status };
+      if (r.ok) return { url, ok: true, status: r.status };
       // Muchas webs públicas cortan a los robots: eso no es un enlace roto
-      if ([401, 403, 405, 429].includes(r.status)) return { url, ok: true, dudoso: true, estado: r.status };
-      if (intento === 2) return { url, ok: false, estado: r.status };
+      if ([401, 403, 405, 429].includes(r.status)) return { url, ok: true, doubtful: true, status: r.status };
+      if (attempt === 2) return { url, ok: false, status: r.status };
     } catch (e) {
-      if (intento === 2) return { url, ok: false, estado: e.name === 'TimeoutError' ? 'sin respuesta en 20 s' : e.cause?.code ?? e.message };
+      if (attempt === 2) return { url, ok: false, status: e.name === 'TimeoutError' ? 'sin respuesta en 20 s' : e.cause?.code ?? e.message };
     }
     await new Promise((r) => setTimeout(r, 3000));
   }
 }
 
-const resultados = [];
-const cola = [...urls.keys()];
+const results = [];
+const queue = [...urls.keys()];
 await Promise.all(
   Array.from({ length: 6 }, async () => {
-    while (cola.length) resultados.push(await comprobar(cola.shift()));
+    while (queue.length) results.push(await check(queue.shift()));
   }),
 );
 
-const rotos = resultados.filter((r) => !r.ok);
-for (const r of resultados.sort((a, b) => a.url.localeCompare(b.url))) {
-  const marca = !r.ok ? '✗' : r.dudoso ? '?' : '✓';
-  console.log(`${marca} ${r.estado} ${r.url}`);
+const broken = results.filter((r) => !r.ok);
+for (const r of results.sort((a, b) => a.url.localeCompare(b.url))) {
+  const mark = !r.ok ? '✗' : r.doubtful ? '?' : '✓';
+  console.log(`${mark} ${r.status} ${r.url}`);
 }
 
-const informe = rotos.map((r) => `- ${r.url} (${r.estado}) — en ${[...urls.get(r.url)].join(', ')}`).join('\n');
-await writeFile(new URL('enlaces-rotos.md', raiz), rotos.length ? `Estos enlaces oficiales no responden:\n\n${informe}\n` : '');
+const report = broken.map((r) => `- ${r.url} (${r.status}) — en ${[...urls.get(r.url)].join(', ')}`).join('\n');
+await writeFile(new URL('enlaces-rotos.md', root), broken.length ? `Estos enlaces oficiales no responden:\n\n${report}\n` : '');
 
-console.log(`\n${resultados.length} enlaces, ${rotos.length} rotos, ${resultados.filter((r) => r.dudoso).length} que no dejan comprobar a los robots.`);
-if (rotos.length) {
-  for (const r of rotos) console.log(`::warning::Enlace roto: ${r.url} (${r.estado})`);
+console.log(`\n${results.length} enlaces, ${broken.length} rotos, ${results.filter((r) => r.doubtful).length} que no dejan comprobar a los robots.`);
+if (broken.length) {
+  for (const r of broken) console.log(`::warning::Enlace roto: ${r.url} (${r.status})`);
   process.exit(1);
 }

@@ -5,33 +5,33 @@ import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 
-const TIPOS = {
+const TYPES = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
   '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json',
   '.xml': 'application/xml', '.txt': 'text/plain',
 };
 
-export async function arrancar(raiz = process.env.RAIZ_WEB ?? new URL('../../_site/', import.meta.url).pathname) {
-  const servidor = createServer(async (req, res) => {
-    const pedido = decodeURIComponent(new URL(req.url, 'http://x').pathname);
-    let ruta = normalize(join(raiz, pedido));
-    if (!ruta.startsWith(normalize(raiz))) { res.writeHead(403).end(); return; }
+export async function start(root = process.env.SITE_ROOT ?? new URL('../../_site/', import.meta.url).pathname) {
+  const server = createServer(async (req, res) => {
+    const requested = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+    let routePath = normalize(join(root, requested));
+    if (!routePath.startsWith(normalize(root))) { res.writeHead(403).end(); return; }
     try {
-      if ((await stat(ruta)).isDirectory()) ruta = join(ruta, 'index.html');
-      res.writeHead(200, { 'Content-Type': TIPOS[extname(ruta)] ?? 'application/octet-stream', 'Cache-Control': 'max-age=600' });
-      res.end(await readFile(ruta));
+      if ((await stat(routePath)).isDirectory()) routePath = join(routePath, 'index.html');
+      res.writeHead(200, { 'Content-Type': TYPES[extname(routePath)] ?? 'application/octet-stream', 'Cache-Control': 'max-age=600' });
+      res.end(await readFile(routePath));
     } catch {
       // Como GitHub Pages: la página 404 propia, con su código
       try {
-        res.writeHead(404, { 'Content-Type': TIPOS['.html'] }).end(await readFile(join(raiz, '404.html')));
+        res.writeHead(404, { 'Content-Type': TYPES['.html'] }).end(await readFile(join(root, '404.html')));
       } catch {
         res.writeHead(404, { 'Content-Type': 'text/plain' }).end('no encontrado');
       }
     }
   });
-  await new Promise((ok) => servidor.listen(0, '127.0.0.1', ok));
+  await new Promise((ok) => server.listen(0, '127.0.0.1', ok));
   return {
-    base: `http://127.0.0.1:${servidor.address().port}/`,
-    cerrar: () => new Promise((ok) => servidor.close(ok)),
+    base: `http://127.0.0.1:${server.address().port}/`,
+    close: () => new Promise((ok) => server.close(ok)),
   };
 }
