@@ -112,7 +112,7 @@ export function tarjeta(id, { resultado = null, ccaa = null, seguimiento, abiert
         </dl>
         ${t.ojo?.length ? `<div class="ojo"><h4>Importante</h4><ul>${t.ojo.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
         ${terminos.length ? `<details class="glosario"><summary>Palabras difíciles de esta ayuda</summary><dl>${terminos.map((k) => `<div><dt>${esc(k)}</dt><dd>${esc(GLOSARIO[k])}</dd></div>`).join('')}</dl></details>` : ''}
-        <p class="ayuda-pie"><span>${esc(a.ambito)} · ${esc(a.organismo)}</span>${seguir}${enlace.url ? `<a class="boton secundario" href="${esc(enlace.url)}" rel="noopener" target="_blank">Web oficial<span class="oculto"> (${esc(enlace.texto)}, se abre en otra pestaña)</span></a>` : ''}</p>
+        <p class="ayuda-pie"><span>${esc(a.ambito)} · ${esc(a.organismo)}</span>${seguir}<a class="boton secundario" href="/ayuda/${id}/">Ficha para guardar<span class="oculto"> de ${esc(a.nombre)}</span></a>${enlace.url ? `<a class="boton secundario" href="${esc(enlace.url)}" rel="noopener" target="_blank">Web oficial<span class="oculto"> (${esc(enlace.texto)}, se abre en otra pestaña)</span></a>` : ''}</p>
       </div>
     </details>
   </li>`;

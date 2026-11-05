@@ -20,6 +20,8 @@ export function perfilVacio() {
     edad: null,
     ccaa: null,
     situacion: null,
+    emprender: false,
+    retornado: false,
     pareja: false,
     adultos: 1,
     hijos: { menor3: 0, de3a5: 0, de6a17: 0 },
@@ -662,6 +664,60 @@ const REGLAS = {
     if (!motivos.length && PENSIONES_CONTRIBUTIVAS.includes(p.pension)) motivos.push('Como pensionista pagas el 10 %, con un tope al mes según tus ingresos.');
     if (!motivos.length) return null;
     return { estado: 'si', motivos, comprobar: ['Se aplica solo. Pregunta en la farmacia si pagas de más.'] };
+  },
+
+  'tarifa-plana-autonomos'(p) {
+    if (!p.emprender) return null;
+    const C = CIFRAS.autonomos;
+    return {
+      estado: 'quizas',
+      motivos: ['Quieres hacerte autónomo o montar un negocio.'],
+      comprobar: ['Que no hayas sido autónomo en los últimos 2 años (3 si ya tuviste la tarifa plana).', 'Pedirla en el mismo momento del alta: después no se puede.'],
+      importe: { texto: `Pagas ${mes(C.tarifaPlana)} de cuota el primer año` },
+    };
+  },
+
+  'cese-actividad'(p) {
+    if (p.situacion !== 'autonomo') return null;
+    return {
+      estado: 'quizas',
+      motivos: ['Eres autónomo: si tienes que cerrar sin quererlo, tienes un paro propio.'],
+      comprobar: ['Haber cotizado por cese de actividad los últimos 12 meses seguidos.', 'Pedirlo a tu mutua antes de que acabe el mes siguiente al cierre.'],
+    };
+  },
+
+  'subsidio-retornados'(p) {
+    if (!p.retornado) return null;
+    const S = CIFRAS.subsidio;
+    if (p.ingresosPropios != null && p.ingresosPropios / 12 > S.limiteRentasMes) return null;
+    return {
+      estado: 'quizas',
+      motivos: ['Has vuelto a España en el último año después de trabajar fuera.', ...(p.ingresosPropios != null ? [`Tus ingresos no pasan de ${mes(S.limiteRentasMes)}.`] : [])],
+      comprobar: ['Tener la nacionalidad española.', 'Haber trabajado fuera al menos 12 meses en los últimos 6 años, fuera de la Unión Europea y Suiza.', ...(p.ingresosPropios == null ? [`No tener ingresos de más de ${mes(S.limiteRentasMes)}.`] : [])],
+      importe: { mes: S.primeros6Meses, texto: `${mes(S.primeros6Meses)} al principio` },
+    };
+  },
+
+  'aval-ico-vivienda'(p) {
+    if (p.vivienda !== 'alquiler' && p.vivienda !== 'familia' && p.vivienda !== 'otra') return null;
+    const joven = p.edad != null && p.edad >= 18 && p.edad <= CIFRAS.avalIco.edad;
+    if (!joven && totalHijos(p) === 0) return null;
+    if (p.patrimonioAlto === true) return null;
+    return {
+      estado: 'quizas',
+      motivos: [joven ? `Tienes ${p.edad} años y no tienes casa propia.` : 'Tienes hijos menores y no tienes casa propia.'],
+      comprobar: ['Si piensas comprar tu primera casa.', `Ingresos de hasta ${año(CIFRAS.avalIco.ingresosPersona)} por persona.`, 'Que tu banco dé estos avales: no todos lo hacen.'],
+    };
+  },
+
+  ortoprotesica(p) {
+    const alguien = personas(p).some((x) => (x.discapacidad && x.discapacidad !== 'no') || (x.dependencia && x.dependencia !== 'no'));
+    if (!alguien) return null;
+    return {
+      estado: 'quizas',
+      motivos: ['En casa hay una persona con discapacidad o dependencia.'],
+      comprobar: ['Que el médico especialista de la sanidad pública lo recete.'],
+    };
   },
 
   'bono-cultural-joven'(p) {

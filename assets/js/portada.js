@@ -11,6 +11,8 @@ import { icono } from './iconos.js';
 import { tarjeta, botonTelefono, esc } from './tarjeta.js';
 import { pintarEvolucion } from './evolucion.js';
 import { compartir } from './compartir.js';
+import { descargarCalendario } from './recordatorios.js';
+import { aEnlace, deEnlace } from './enlace.js';
 
 const form = document.getElementById('cuestionario');
 const pasos = [...form.querySelectorAll('.paso')];
@@ -143,6 +145,8 @@ export function leerPerfil() {
   p.madridCapital = p.ccaa === 'madrid' ? siNo('madridCapital') : null;
   p.residencia = radio('residencia') || null;
   p.situacion = radio('situacion');
+  p.emprender = form.emprender.checked;
+  p.retornado = form.retornado.checked;
   p.pareja = radio('pareja') === 'si';
   p.adultos = Math.max(1, entero('adultos', 1));
   p.hijos = { menor3: entero('hijos-menor3'), de3a5: entero('hijos-de3a5'), de6a17: entero('hijos-de6a17') };
@@ -345,7 +349,43 @@ document.getElementById('compartir').addEventListener('click', () => {
   const ids = porDondeEmpezar(evaluar(p), 99).concat(evaluar(p)).map((r) => r.id).filter((id, i, a) => a.indexOf(id) === i);
   if (ids.length) compartir(ids);
 });
+const idsResultado = () => {
+  const r = evaluar(leerPerfil());
+  return porDondeEmpezar(r, 99).concat(r).map((x) => x.id).filter((id, i, a) => a.indexOf(id) === i);
+};
+document.getElementById('calendario').addEventListener('click', () => descargarCalendario(idsResultado()));
+
+// Guardar en un enlace: las respuestas van dentro del enlace (después de #), que no llega a ningún servidor
+const estadoEnlace = document.getElementById('enlace-estado');
+document.getElementById('enlace-respuestas').addEventListener('click', async () => {
+  const url = `${location.origin}${location.pathname}#r=${aEnlace(respuestas())}`;
+  try {
+    await navigator.clipboard.writeText(url);
+    estadoEnlace.textContent = 'Enlace copiado. Guárdalo en tus notas o mándatelo. Quien lo abra verá tus respuestas.';
+  } catch {
+    estadoEnlace.innerHTML = `Copia este enlace y guárdalo: <a href="${esc(url)}">enlace con tus respuestas</a>.`;
+  }
+});
+
+// Modo profesional: para servicios sociales y entidades que orientan a varias personas
+const PRO = 'pro' in document.documentElement.dataset;
+const caja = document.getElementById('pro');
+if (PRO) {
+  caja.hidden = false;
+  const cabecera = () => {
+    const ref = document.getElementById('pro-ref').value.trim();
+    document.getElementById('pro-cabecera').textContent = `Orientación sobre ayudas · ${new Date().toLocaleDateString('es-ES')}${ref ? ` · Caso ${ref}` : ''} · ayudas.bendi.dev`;
+  };
+  document.getElementById('pro-ref').addEventListener('input', cabecera);
+  cabecera();
+}
+
 document.getElementById('borrar').addEventListener('click', () => {
+  if (PRO) {
+    document.getElementById('pro-ref').value = '';
+    document.getElementById('pro-notas').value = '';
+  }
+  estadoEnlace.textContent = '';
   form.reset();
   personasCaja.replaceChildren();
   monoparentalTocado = false;
@@ -450,9 +490,19 @@ try {
     recordar.checked = true;
   }
 } catch {}
+// Si se abre un enlace con respuestas (#r=…), se rellenan y se quitan de la barra de direcciones
+const desdeEnlace = location.hash.startsWith('#r=') ? deEnlace(location.hash.slice(3)) : null;
+if (desdeEnlace) {
+  rellenar(desdeEnlace);
+  history.replaceState(null, '', location.pathname + location.search);
+}
 actualizarCondiciones();
 pintarTelefonos();
 pintarEvolucion(document.getElementById('evolucion'));
 document.getElementById('n-ayudas').textContent = AYUDAS.length;
 for (const el of document.querySelectorAll('[data-icono]')) el.innerHTML = icono(el.dataset.icono);
 irA(1, { foco: false });
+if (desdeEnlace) {
+  visitados = new Set([1, 2, 3, 4, 5, 6]);
+  mostrarResultados();
+}

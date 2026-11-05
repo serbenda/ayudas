@@ -49,11 +49,14 @@ Es hermana de [hucha](https://github.com/serbenda/hucha) (a dónde va el dinero 
 | **Tus ayudas** (`/`) | Cuestionario en 6 pasos y la lista de ayudas que te salen, con **por dónde empezar**, los **papeles** que necesitas juntos, el seguimiento de cada ayuda y una **hoja para imprimir**. Accesos por tema, botón «Necesito ayuda hoy» con teléfonos y un gráfico de cómo han subido las ayudas desde 2018. |
 | **Mayores** (`/mayores/`) | Para personas mayores o con poca soltura con el móvil: una pregunta cada vez, botones grandes, frases cortas, **lectura en voz alta** y los pasos de cada ayuda explicados. |
 | **Todas las ayudas** (`/catalogo/`) | Todas las fichas, con buscador (sin tildes) y filtro por tema. Elige tu comunidad y los enlaces apuntan a su web. |
+| **Mapa** (`/mapa/`) | Mapa de España: pulsas tu comunidad (o la eliges en una lista) y salen cómo se llama allí la renta mínima, las ayudas propias y las que tramita, con sus pasos. |
+| **Fichas** (`/ayuda/<id>/` y `/comunidad/<id>/`) | Una página por ayuda y por comunidad, con preguntas frecuentes para buscadores. Se generan al publicar con `scripts/paginas.mjs`, que también hace el `sitemap.xml`. |
+| **Entidades** (`/entidades/`) | Para servicios sociales y ONG: modo profesional (referencia del caso y notas que se imprimen, todo en local) y código para insertar el cuestionario, la página de mayores o el mapa en otra web (`embed.js`). |
 | **Fuentes** (`/fuentes/`) | Cómo funciona, la tabla de cifras de 2026 con su fuente, dónde se piden las ayudas y cómo avisar de un error. |
 
 ## Qué ayudas recoge
 
-58 fichas en ocho temas. Cada una explica **cómo se pide paso a paso** (dónde, a quién llamar, qué papeles, cuánto tardan y qué hacer si dicen que no), con los pasos de la Comunidad de Madrid cuando son distintos. Los trámites están en [`assets/js/tramites.js`](assets/js/tramites.js) y los teléfonos, papeles y palabras difíciles en [`assets/js/guia.js`](assets/js/guia.js).
+63 fichas en ocho temas. Cada una explica **cómo se pide paso a paso** (dónde, a quién llamar, qué papeles, cuánto tardan y qué hacer si dicen que no), con los pasos de la Comunidad de Madrid cuando son distintos. Los trámites están en [`assets/js/tramites.js`](assets/js/tramites.js) y los teléfonos, papeles y palabras difíciles en [`assets/js/guia.js`](assets/js/guia.js).
 
 - **Si lo necesitas ya:** emergencia social, comida, violencia de género (016), desahucio, sin hogar, soledad y sanidad sin papeles.
 - **Comunidad y Ayuntamiento de Madrid:** RMI, Tarjeta Familias, agua de Canal de Isabel II, vivienda social, escuelas infantiles gratis, teleasistencia (900 111 065), transporte gratis desde 65 años.
@@ -64,6 +67,10 @@ Es hermana de [hucha](https://github.com/serbenda/hucha) (a dónde va el dinero 
 - **Discapacidad y dependencia:** reconocimiento de la dependencia, prestación por cuidados en el entorno familiar, servicios de la dependencia, cotización gratis para cuidadores, certificado de discapacidad, asignación por hijo a cargo, PNC de invalidez, ventajas fiscales y de aparcamiento.
 - **Vivienda y suministros:** bono social de la luz y térmico, ayuda al alquiler (general y para jóvenes), complemento de alquiler para PNC.
 - **Deducciones en la renta:** maternidad y guardería, familia numerosa, monoparental, familiar con discapacidad, mínimo por discapacidad, deducciones autonómicas.
+- **Autónomos y emprender:** tarifa plana de 80 €, paro de los autónomos (cese de actividad).
+- **Vuelta a España:** subsidio para emigrantes retornados.
+- **Comprar casa:** aval del ICO para la primera vivienda (jóvenes y familias con hijos).
+- **Salud:** sillas de ruedas, prótesis y audífonos de la sanidad pública; medicinas gratis o más baratas.
 - **Otras:** becas y abogado de oficio gratuito.
 
 ## Cómo se decide qué te sale
@@ -106,7 +113,9 @@ Todas las cifras están en un único sitio, [`assets/js/cifras.js`](assets/js/ci
 - **Letra grande y fácil**, **alto contraste** y **escuchar** (lectura en voz alta) en todas las páginas.
 - Se instala en el móvil como una app y funciona sin conexión.
 - **Enviar a un familiar**: manda solo la lista de ayudas y un enlace con los pasos (`/catalogo/?ver=…`), nunca las respuestas.
-- Pasos propios para la Comunidad de Madrid, Andalucía, Cataluña y la Comunitat Valenciana en las ayudas que gestionan ellas.
+- Pasos de la renta mínima de las 17 comunidades y de Ceuta y Melilla, y pasos propios de la Comunidad de Madrid, Andalucía, Cataluña y la Comunitat Valenciana en otras ayudas.
+- **Avisos en mi calendario**: descarga un `.ics` con las fechas que no hay que dejar pasar (declaración de la pensión no contributiva, campaña de la renta, convocatoria del alquiler, renovación del bono social).
+- **Guardar en un enlace**: las respuestas van en el enlace después de `#`, que el navegador no envía a ningún servidor.
 
 ## Privacidad
 

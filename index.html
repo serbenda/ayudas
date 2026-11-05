@@ -19,7 +19,7 @@
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
   <link rel="stylesheet" href="vendor/fuentes/archivo.css">
   <link rel="stylesheet" href="assets/css/estilos.css">
-  <script>try{var d=document.documentElement.dataset;if(localStorage.getItem('ayudas:facil')==='1')d.facil='';if(localStorage.getItem('ayudas:contraste')==='1')d.contraste=''}catch(e){}</script>
+  <script>(function(){var d=document.documentElement.dataset,q=location.search;if(/[?&]widget=1/.test(q))d.widget='';try{if(localStorage.getItem('ayudas:facil')==='1')d.facil='';if(localStorage.getItem('ayudas:contraste')==='1')d.contraste='';if(/[?&]pro=1/.test(q))localStorage.setItem('ayudas:pro','1');if(/[?&]pro=0/.test(q))localStorage.removeItem('ayudas:pro');if(localStorage.getItem('ayudas:pro')==='1')d.pro=''}catch(e){}})()</script>
 </head>
 <body>
   <header class="envoltorio cabecera">
@@ -34,6 +34,7 @@
       <a href="./" aria-current="page"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z M5.6 5.6l3.6 3.6 M14.8 14.8l3.6 3.6 M18.4 5.6l-3.6 3.6 M9.2 14.8l-3.6 3.6"/></svg><span>Tus ayudas</span></a>
       <a href="mayores/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z M9 21l2-6 M11 15l1-6 3 3 M12 9l-3 3 M17 12v9 M17 12a1.5 1.5 0 0 0-3 0"/></svg><span>Mayores</span></a>
       <a href="catalogo/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6h12 M8 12h12 M8 18h12 M4 6h.01 M4 12h.01 M4 18h.01"/></svg><span>Todas las ayudas</span></a>
+      <a href="mapa/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z M9 4v14 M15 6v14"/></svg><span>Mapa</span></a>
       <a href="fuentes/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2Z M4 20a2 2 0 0 0 2 2h13v-4"/></svg><span>Fuentes</span></a>
     </nav>
   </header>
@@ -86,6 +87,7 @@
           <li><a href="catalogo/?tema=cuidados" class="tema"><span class="tema-icono" data-icono="cuidados"></span><strong>Cuidar a alguien</strong><span>Dependencia y discapacidad</span></a></li>
           <li><a href="catalogo/?tema=casa" class="tema"><span class="tema-icono" data-icono="casa"></span><strong>Casa y facturas</strong><span>Alquiler, luz, agua</span></a></li>
           <li><a href="catalogo/?tema=dinero" class="tema"><span class="tema-icono" data-icono="monedas"></span><strong>Sin trabajo o pocos ingresos</strong><span>Paro, IMV, rentas</span></a></li>
+          <li><a href="mapa/" class="tema"><span class="tema-icono" data-icono="mapa"></span><strong>Las de mi comunidad</strong><span>Pulsa en el mapa donde vives</span></a></li>
         </ul>
       </nav>
       <div class="ejemplos" role="group" aria-label="Probar con un ejemplo">
@@ -149,6 +151,8 @@
               <label class="opcion"><input type="radio" name="situacion" value="otra"><span>Otra (cuido de la casa, etc.)</span></label>
             </div>
           </div>
+          <label class="casilla"><input type="checkbox" name="emprender"><span>Quiero hacerme autónomo o montar un negocio</span></label>
+          <label class="casilla"><input type="checkbox" name="retornado"><span>He vuelto a España en el último año, después de trabajar fuera</span></label>
         </fieldset>
 
         <!-- 2. Tu hogar -->
@@ -361,6 +365,15 @@
           </div>
         </div>
       </div>
+      <section class="pro" id="pro" aria-labelledby="t-pro" hidden>
+        <h3 id="t-pro">Modo profesional</h3>
+        <p class="solo-imprimir" id="pro-cabecera"></p>
+        <div class="pro-campos">
+          <label>Referencia del caso <small>Sin nombres ni DNI: un número o unas iniciales.</small><input id="pro-ref" type="text" maxlength="40" autocomplete="off"></label>
+          <label>Notas para la entrevista <small>Se imprimen con la orientación. No salen de este aparato.</small><textarea id="pro-notas" rows="4"></textarea></label>
+        </div>
+        <p class="nota no-imprimir">Al terminar con cada persona, pulsa «Empezar de cero»: se borran respuestas y notas. <a href="?pro=0">Salir del modo profesional</a>.</p>
+      </section>
       <section class="empezar" id="empezar" aria-labelledby="t-empezar" hidden>
         <h3 id="t-empezar">Por dónde empezar</h3>
         <ol id="empezar-lista"></ol>
@@ -375,9 +388,12 @@
         <button type="button" class="boton secundario" id="cambiar">Cambiar mis respuestas</button>
         <button type="button" class="boton" id="compartir">Enviar a un familiar</button>
         <button type="button" class="boton secundario" id="imprimir">Imprimir o guardar en PDF</button>
+        <button type="button" class="boton secundario" id="calendario">Avisos en mi calendario</button>
+        <button type="button" class="boton secundario" id="enlace-respuestas">Guardar en un enlace</button>
         <button type="button" class="boton texto" id="borrar">Empezar de cero</button>
       </div>
-      <p class="nota">«Enviar a un familiar» manda solo la lista de ayudas y un enlace con los pasos. No envía tus respuestas.</p>
+      <p class="nota" id="enlace-estado" role="status"></p>
+      <p class="nota">«Enviar a un familiar» manda solo la lista de ayudas y un enlace con los pasos. No envía tus respuestas. «Avisos en mi calendario» descarga las fechas importantes (como la declaración de la pensión no contributiva o la campaña de la renta) para tu móvil. «Guardar en un enlace» mete tus respuestas dentro del enlace, para volver otro día o desde otro aparato: no se guardan en ningún sitio, pero quien tenga el enlace las verá.</p>
       <div class="aviso" style="margin-top:1.75rem">
         <p><strong>Vuelve a mirarlo cada año</strong> o cuando cambie algo en casa: las cifras suben cada enero y tu situación también cambia.</p>
         <p><strong>Es una orientación, no una resolución.</strong> Quien decide si te corresponde una ayuda es el organismo que la gestiona, con tus datos reales. Las cifras son las de 2026; algunas ayudas dependen de convocatorias que abren y cierran.</p>
@@ -414,7 +430,7 @@
       </div>
       <a class="apoyo-boton" href="https://github.com/sponsors/serbenda" rel="noopener">Apoyar en GitHub Sponsors</a>
     </div>
-    <p>Web sin anuncios ni cookies, con datos oficiales. <a href="fuentes/">Fuentes y condiciones</a>. <a href="fuentes/#t-error">¿Ves un error o falta una ayuda?</a> Hermana de <a href="https://hucha.bendi.dev/">hucha</a> y <a href="https://bolsillo.bendi.dev/">bolsillo</a>.</p>
+    <p>Web sin anuncios ni cookies, con datos oficiales. <a href="fuentes/">Fuentes y condiciones</a>. <a href="entidades/">Para servicios sociales y entidades</a>. <a href="fuentes/#t-error">¿Ves un error o falta una ayuda?</a> Hermana de <a href="https://hucha.bendi.dev/">hucha</a> y <a href="https://bolsillo.bendi.dev/">bolsillo</a>.</p>
   </footer>
 
   <script type="module" src="assets/js/portada.js"></script>
