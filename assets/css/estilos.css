@@ -845,3 +845,18 @@ section + .empezar { margin-top: 1.75rem; }
   .ajuste-voz > summary, .ajuste-idioma > summary { display: flex; width: 100%; }
   .ajuste-voz-panel, .ajuste-idioma-panel { position: absolute; left: 0; right: 0; width: auto; margin-top: 0; }
 }
+
+/* Palabras difíciles: subrayado de puntos; al pulsar sale la explicación debajo */
+button.termino { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: help; text-decoration: underline dotted var(--acento); text-decoration-thickness: 2px; text-underline-offset: 3px; display: inline; }
+button.termino:hover, button.termino[aria-expanded='true'] { color: var(--acento); }
+button.termino:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; border-radius: 2px; }
+.definicion { display: block; margin: 0.4rem 0 0.6rem; padding: 0.65rem 0.85rem; background: var(--acento-suave); border-left: 4px solid var(--acento); border-radius: var(--radio); font-size: 0.95rem; line-height: 1.45; color: var(--tinta); }
+.definicion a { margin-inline-start: 0.25rem; white-space: nowrap; }
+@media print { button.termino { text-decoration: none; } .definicion { display: none; } }
+/* Página de palabras */
+.palabras { display: grid; gap: 0.6rem; margin: 1.5rem 0 0; }
+.palabras > div { background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio); padding: 0.85rem 1.1rem; scroll-margin-top: 1rem; }
+.palabras > div:target { border-color: var(--acento); box-shadow: inset 4px 0 0 var(--acento); }
+.palabras dt { font-weight: 700; font-size: 1.1rem; }
+.palabras dd { margin: 0.25rem 0 0; }
+#buscar-palabra { margin-top: 1rem; }

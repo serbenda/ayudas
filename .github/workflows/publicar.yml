@@ -38,7 +38,7 @@ jobs:
       - name: Preparar la web
         run: |
           mkdir -p _site
-          cp -r index.html 404.html mayores catalogo mapa entidades fuentes assets vendor manifest.webmanifest sw.js embed.js robots.txt CNAME .nojekyll _site/
+          cp -r index.html 404.html mayores catalogo mapa entidades palabras fuentes assets vendor manifest.webmanifest sw.js embed.js robots.txt CNAME .nojekyll _site/
           # Una página por ayuda y por comunidad (para buscadores) y el mapa del sitio con todas
           node scripts/paginas.mjs _site
           # Versión en estilos y scripts: al publicar, nadie mezcla HTML nuevo con CSS o JS viejos

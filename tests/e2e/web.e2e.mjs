@@ -67,7 +67,7 @@ async function sinDesbordar(pagina, donde) {
   assert.ok(sobra <= 1, `${donde}: la página se sale ${sobra} px por la derecha`);
 }
 
-for (const [ruta, nombre] of [['', 'portada'], ['mayores/', 'mayores'], ['catalogo/', 'todas las ayudas'], ['mapa/#galicia', 'mapa'], ['entidades/', 'entidades'], ['ayuda/imv/', 'ficha del IMV'], ['comunidad/madrid/', 'página de Madrid'], ['comunidad/', 'comunidades'], ['en/', 'guía en inglés'], ['va/', 'guía en valenciano'], ['eu/', 'guía en euskera'], ['fuentes/', 'fuentes']]) {
+for (const [ruta, nombre] of [['', 'portada'], ['mayores/', 'mayores'], ['catalogo/', 'todas las ayudas'], ['mapa/#galicia', 'mapa'], ['entidades/', 'entidades'], ['ayuda/imv/', 'ficha del IMV'], ['comunidad/madrid/', 'página de Madrid'], ['comunidad/', 'comunidades'], ['palabras/', 'palabras difíciles'], ['en/', 'guía en inglés'], ['va/', 'guía en valenciano'], ['eu/', 'guía en euskera'], ['fuentes/', 'fuentes']]) {
   test(`${nombre}: sin errores, sin desbordar y accesible en móvil, tablet y ordenador`, async () => {
     for (const [variante, opciones] of VARIANTES) {
       const { pagina, errores, contexto } = await abrir(ruta, opciones);
@@ -173,6 +173,19 @@ test('guardar en un enlace y modo profesional', async () => {
   const descarga = otra.waitForEvent('download');
   await otra.click('#calendario');
   assert.equal((await descarga).suggestedFilename(), 'ayudas-recordatorios.ics');
+  assert.deepEqual(propios(errores), []);
+  await contexto.close();
+});
+
+test('palabras difíciles: al pulsar una sale qué significa, y se esconde al volver a pulsar', async () => {
+  const { pagina, errores, contexto } = await abrir('ayuda/imv/', { ...MOVIL, colorScheme: 'light' });
+  const palabra = pagina.locator('button.termino').first();
+  await palabra.click();
+  assert.equal(await palabra.getAttribute('aria-expanded'), 'true');
+  assert.ok((await pagina.textContent('.definicion')).length > 20);
+  await accesible(pagina, 'ficha con una palabra abierta');
+  await palabra.click();
+  assert.equal(await pagina.locator('.definicion').count(), 0);
   assert.deepEqual(propios(errores), []);
   await contexto.close();
 });

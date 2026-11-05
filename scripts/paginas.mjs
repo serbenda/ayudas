@@ -37,7 +37,7 @@ const preguntas = (lista) => ({
 });
 const migas = (pasos) => `<nav class="migas" aria-label="Estás en"><ol>${pasos.map(([t, u]) => (u ? `<li><a href="${u}">${esc(t)}</a></li>` : `<li aria-current="page">${esc(t)}</li>`)).join('')}</ol></nav>`;
 
-const rutas = ['/', '/mayores/', '/catalogo/', '/mapa/', '/entidades/', '/fuentes/', '/comunidad/', ...Object.keys(IDIOMAS).map((c) => `/${c}/`)];
+const rutas = ['/', '/mayores/', '/catalogo/', '/mapa/', '/entidades/', '/palabras/', '/fuentes/', '/comunidad/', ...Object.keys(IDIOMAS).map((c) => `/${c}/`)];
 
 for (const a of AYUDAS) {
   const t = tramiteDe(a.id, null);

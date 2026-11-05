@@ -1,6 +1,7 @@
 // Código común a todas las páginas: contador de visitas y enlaces para avisar de errores.
 
 import { hablar, parar, hablando, puedeHablar, voces, vozPara, prepararAjustes } from './voz.js';
+import { GLOSARIO } from './guia.js';
 
 // Funciona sin conexión e instalable en el móvil: guarda la web en el navegador
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
@@ -130,3 +131,38 @@ document.addEventListener('keydown', (e) => {
     abierto.querySelector('summary').focus();
   }
 });
+
+// Palabras difíciles: al pulsar una palabra marcada sale debajo qué significa; al volver a pulsar, se esconde
+{
+  let n = 0;
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('button.termino');
+    if (!b) return;
+    e.preventDefault();
+    const abierta = b.getAttribute('aria-expanded') === 'true';
+    document.querySelectorAll('button.termino[aria-expanded="true"]').forEach((o) => {
+      o.setAttribute('aria-expanded', 'false');
+      document.getElementById(o.getAttribute('aria-controls'))?.remove();
+    });
+    if (abierta) return;
+    const def = GLOSARIO[b.dataset.termino];
+    if (!def) return;
+    const id = `def-${++n}`;
+    const caja = document.createElement('span');
+    caja.className = 'definicion';
+    caja.id = id;
+    caja.setAttribute('role', 'note');
+    caja.innerHTML = `<strong></strong> <span></span> <a href="/palabras/#${encodeURIComponent(b.dataset.termino)}">Más palabras</a>`;
+    caja.querySelector('strong').textContent = `${b.textContent}:`;
+    caja.querySelector('span').textContent = def;
+    // La explicación va al final de la frase, para no cortarla
+    (b.closest('li, p, dd, dt') ?? b.parentElement).append(caja);
+    b.setAttribute('aria-controls', id);
+    b.setAttribute('aria-expanded', 'true');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const b = document.querySelector('button.termino[aria-expanded="true"]');
+    if (b) b.click();
+  });
+}
