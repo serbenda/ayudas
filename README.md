@@ -56,7 +56,7 @@ Es hermana de [hucha](https://github.com/serbenda/hucha) (a dónde va el dinero 
 
 ## Qué ayudas recoge
 
-63 fichas en ocho temas. Cada una explica **cómo se pide paso a paso** (dónde, a quién llamar, qué papeles, cuánto tardan y qué hacer si dicen que no), con los pasos de la Comunidad de Madrid cuando son distintos. Los trámites están en [`assets/js/tramites.js`](assets/js/tramites.js) y los teléfonos, papeles y palabras difíciles en [`assets/js/guia.js`](assets/js/guia.js).
+68 fichas en ocho temas. Cada una explica **cómo se pide paso a paso** (dónde, a quién llamar, qué papeles, cuánto tardan y qué hacer si dicen que no), con los pasos de la Comunidad de Madrid cuando son distintos. Los trámites están en [`assets/js/tramites.js`](assets/js/tramites.js) y los teléfonos, papeles y palabras difíciles en [`assets/js/guia.js`](assets/js/guia.js).
 
 - **Si lo necesitas ya:** emergencia social, comida, violencia de género (016), desahucio, sin hogar, soledad y sanidad sin papeles.
 - **Comunidad y Ayuntamiento de Madrid:** RMI, Tarjeta Familias, agua de Canal de Isabel II, vivienda social, escuelas infantiles gratis, teleasistencia (900 111 065), transporte gratis desde 65 años.
@@ -67,6 +67,7 @@ Es hermana de [hucha](https://github.com/serbenda/hucha) (a dónde va el dinero 
 - **Discapacidad y dependencia:** reconocimiento de la dependencia, prestación por cuidados en el entorno familiar, servicios de la dependencia, cotización gratis para cuidadores, certificado de discapacidad, asignación por hijo a cargo, PNC de invalidez, ventajas fiscales y de aparcamiento.
 - **Vivienda y suministros:** bono social de la luz y térmico, ayuda al alquiler (general y para jóvenes), complemento de alquiler para PNC.
 - **Deducciones en la renta:** maternidad y guardería, familia numerosa, monoparental, familiar con discapacidad, mínimo por discapacidad, deducciones autonómicas.
+- **Grandes ciudades:** Fondo de Infancia de Barcelona, ayuda por nacimiento de València, ayudas de urgencia de Zaragoza, cuidado de niños gratis en Málaga y Ayudas de Emergencia Social de Euskadi.
 - **Autónomos y emprender:** tarifa plana de 80 €, paro de los autónomos (cese de actividad).
 - **Vuelta a España:** subsidio para emigrantes retornados.
 - **Comprar casa:** aval del ICO para la primera vivienda (jóvenes y familias con hijos).
@@ -113,6 +114,8 @@ Todas las cifras están en un único sitio, [`assets/js/cifras.js`](assets/js/ci
 - **Letra grande y fácil**, **alto contraste** y **escuchar** (lectura en voz alta) en todas las páginas.
 - Se instala en el móvil como una app y funciona sin conexión.
 - **Enviar a un familiar**: manda solo la lista de ayudas y un enlace con los pasos (`/catalogo/?ver=…`), nunca las respuestas.
+- **Por comunidad:** cuánto da la renta mínima en cada una (cifras del Ministerio de Derechos Sociales y de cada comunidad), quién valora la dependencia y la discapacidad y dónde se empieza, y sus deducciones del IRPF (con cantidades en Andalucía, Cataluña, Galicia y Madrid).
+- **Guías en otros idiomas** (`/ca/`, `/gl/`, `/eu/`, `/en/`, `/ar/`, `/ro/`): por dónde empezar, teléfonos de urgencia, las ayudas principales con su nombre oficial y una frase en castellano para enseñar en la ventanilla. El árabe va de derecha a izquierda.
 - Pasos de la renta mínima de las 17 comunidades y de Ceuta y Melilla, y pasos propios de la Comunidad de Madrid, Andalucía, Cataluña y la Comunitat Valenciana en otras ayudas.
 - **Avisos en mi calendario**: descarga un `.ics` con las fechas que no hay que dejar pasar (declaración de la pensión no contributiva, campaña de la renta, convocatoria del alquiler, renovación del bono social).
 - **Guardar en un enlace**: las respuestas van en el enlace después de `#`, que el navegador no envía a ningún servidor.

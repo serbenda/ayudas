@@ -1,12 +1,14 @@
 // La ficha de una ayuda, igual en todas las páginas: qué es, por qué te sale, cómo se pide paso a paso,
 // papeles, teléfonos, plazos y qué hacer si te dicen que no.
 
-import { POR_ID, enlaceDe } from './ayudas.js';
+import { POR_ID, COMUNIDADES, enlaceDe } from './ayudas.js';
 import { tramiteDe } from './tramites.js';
 import { DOCUMENTOS, TELEFONOS, GLOSARIO, terminosEn, tel } from './guia.js';
 import { icono } from './iconos.js';
 import { EJEMPLOS, TABLAS } from './ejemplos.js';
 import { umbralDe, miembros } from './reglas.js';
+import { cuantiaRenta } from './comunidades.js';
+import { deduccionesDe } from './deducciones.js';
 import { euros } from './formato.js';
 
 export const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -70,6 +72,18 @@ export function cajaEjemplo(id) {
  * @param {string} id
  * @param {{ resultado?: object, ccaa?: string|null, seguimiento?: string, abierta?: boolean, perfil?: object }} op
  */
+// Deducciones de la comunidad elegida: las cantidades que tenemos comprobadas y el resto, por su nombre
+function bloqueDeducciones(ccaa) {
+  const d = deduccionesDe(ccaa);
+  if (!d) return '';
+  const nombre = esc(COMUNIDADES.find((c) => c.id === ccaa)?.nombre ?? '');
+  if (d.foral) return `<p><strong>En ${nombre}</strong> el IRPF es foral: sus deducciones están en <a href="${d.foral.url}" rel="noopener">${esc(d.foral.nombre)}</a>.</p>`;
+  return `<div class="deducciones"><p><strong>En ${nombre}:</strong></p>
+    ${d.cifras.length ? `<ul>${d.cifras.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+    ${d.otras.length ? `<p>${d.cifras.length ? 'También hay deducciones por' : 'Hay deducciones por'}: ${d.otras.map((x) => esc(x[0].toLowerCase() + x.slice(1))).join(', ')}.</p>` : ''}
+    <p><a href="${d.url}" rel="noopener">Cantidades y requisitos de cada una, en la Agencia Tributaria</a></p></div>`;
+}
+
 export function tarjeta(id, { resultado = null, ccaa = null, seguimiento, abierta = false, perfil = null } = {}) {
   const a = POR_ID[id];
   const t = tramiteDe(id, ccaa);
@@ -97,7 +111,7 @@ export function tarjeta(id, { resultado = null, ccaa = null, seguimiento, abiert
         <button type="button" class="escuchar" data-leer="${esc([a.nombre, r?.importe?.texto ?? '', ...t.facil, 'Cómo se pide.', ...t.pasos].filter(Boolean).join('. '))}">${icono('altavoz')} Escuchar esta ayuda</button>
         ${r?.motivos.length ? `<div><h4>¿Por qué me sale?</h4><ul class="motivos">${r.motivos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul>${perfil ? barraUmbral(umbralDe(id, perfil)) : ''}</div>` : ''}
         ${r?.comprobar.length ? `<div><h4>¿Qué tengo que comprobar?</h4><ul class="comprobar">${r.comprobar.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
-        <div><h4>¿Cuánto dan?</h4><p>${esc(a.cuantia)}</p>${barrasTabla(TABLAS[id]?.(), id === 'imv' && perfil ? Math.min(miembros(perfil), 5) - 1 : -1)}${cajaEjemplo(id)}</div>
+        <div><h4>¿Cuánto dan?</h4><p>${esc(a.cuantia)}</p>${id === 'deducciones-ccaa' ? bloqueDeducciones(ccaa) : ''}${id === 'renta-minima' && cuantiaRenta(ccaa) ? `<p><strong>En ${esc(COMUNIDADES.find((c) => c.id === ccaa)?.nombre ?? '')}:</strong> ${esc(cuantiaRenta(ccaa))}</p>` : ''}${barrasTabla(TABLAS[id]?.(), id === 'imv' && perfil ? Math.min(miembros(perfil), 5) - 1 : -1)}${cajaEjemplo(id)}</div>
         <div class="solo-normal"><h4>¿Quién puede pedirla?</h4><ul>${a.requisitos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>
         <div class="como">
           <h4>¿Cómo la pido? Paso a paso</h4>

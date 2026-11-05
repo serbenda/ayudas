@@ -7,6 +7,7 @@
 // · 'quizas': puede corresponderte, pero depende de algo que no hemos preguntado o no has contestado.
 
 import { CIFRAS } from './cifras.js';
+import { RENTA_CCAA } from './comunidades.js';
 import { euros, porcentaje } from './formato.js';
 
 const PENSIONES_CONTRIBUTIVAS = ['jubilacion', 'viudedad', 'incapacidad'];
@@ -44,6 +45,7 @@ export function perfilVacio() {
     cotizado15: null,
     cotizadoUnAño: null,
     madridCapital: null,
+    ciudad: null, // 'barcelona' | 'valencia' | 'zaragoza' | 'malaga' si vive en esa ciudad
     residencia: null, // 'si' (española, UE o permiso) | 'tramite' | 'no'
     urgencias: { comida: false, casaRiesgo: false, sinCasa: false, violencia: false, soledad: false },
   };
@@ -159,12 +161,15 @@ const REGLAS = {
 
   'renta-minima'(p) {
     if (p.ccaa === 'madrid') return null;
+    const r = RENTA_CCAA[p.ccaa];
+    const nombre = r ? `En tu comunidad se llama ${r.nombre}.` : null;
+    const importe = r?.importe ? { texto: `Hasta ${mes(r.importe)} (una persona)` } : undefined;
     const anual = rentaGarantizada(p) * 12;
     if (p.ingresosHogar != null && p.ingresosHogar < anual) {
-      return { estado: 'quizas', motivos: ['Vuestros ingresos son bajos y tu comunidad puede tener una renta propia que complementa el IMV.'], comprobar: ['Los requisitos de empadronamiento de tu comunidad.'] };
+      return { estado: 'quizas', motivos: ['Vuestros ingresos son bajos y tu comunidad puede tener una renta propia que complementa el IMV.', ...(nombre ? [nombre] : [])], comprobar: ['Los requisitos de empadronamiento de tu comunidad.', ...(r?.nota ? [r.nota] : [])], importe };
     }
     if (p.ingresosHogar == null && p.situacion === 'paro-sin') {
-      return { estado: 'quizas', motivos: ['Estás en paro sin cobrar prestación.'], comprobar: ['Los ingresos del hogar y el empadronamiento.'] };
+      return { estado: 'quizas', motivos: ['Estás en paro sin cobrar prestación.', ...(nombre ? [nombre] : [])], comprobar: ['Los ingresos del hogar y el empadronamiento.', ...(r?.nota ? [r.nota] : [])], importe };
     }
     return null;
   },
@@ -599,7 +604,53 @@ const REGLAS = {
       estado: 'quizas',
       motivos: ['Vives en la Comunidad de Madrid.', p.ingresosHogar != null ? 'Vuestros ingresos son bajos.' : 'Estás en una situación de ingresos bajos.'],
       comprobar: ['Pide antes el Ingreso Mínimo Vital: la RMI lo complementa.', 'La cuantía exacta te la dicen en servicios sociales.'],
+      importe: { texto: `Hasta ${mes(RENTA_CCAA.madrid.importe)} (una persona)` },
     };
+  },
+
+  'aes-euskadi'(p) {
+    if (p.ccaa !== 'pais-vasco') return null;
+    const apurado = p.urgencias.comida || p.urgencias.casaRiesgo || (p.ingresosHogar != null && p.ingresosHogar < rentaGarantizada(p) * 12) || p.situacion === 'paro-sin';
+    if (!apurado) return null;
+    return {
+      estado: 'quizas',
+      motivos: ['Vives en Euskadi y tenéis pocos ingresos o un gasto que no podéis pagar.'],
+      comprobar: ['Llevar al menos 6 meses empadronado en tu municipio.', 'Que sea un gasto concreto: alquiler, luz, comida, deudas, muebles o arreglos.'],
+    };
+  },
+
+  'fons-infancia-barcelona'(p) {
+    if (p.ciudad !== 'barcelona' || totalHijos(p) === 0) return null;
+    return {
+      estado: 'quizas',
+      motivos: ['Vives en Barcelona y tienes hijos menores.'],
+      comprobar: ['Ser usuario de los servicios sociales del Ayuntamiento.', 'Los ingresos del hogar: hay un límite según cuántos sois.', 'Que esté abierta la convocatoria (en 2026, del 13 de mayo al 22 de junio).'],
+      importe: { texto: 'Desde 600 € al año' },
+    };
+  },
+
+  'natalidad-valencia'(p) {
+    if (p.ciudad !== 'valencia' || !p.bebe) return null;
+    return {
+      estado: 'si',
+      motivos: ['Vives en València y esperáis un bebé o ha llegado hace poco.'],
+      comprobar: ['Pedirla en los 2 meses siguientes al nacimiento o la adopción.'],
+      importe: { texto: '400 € por hijo' },
+    };
+  },
+
+  'urgencia-zaragoza'(p) {
+    if (p.ciudad !== 'zaragoza') return null;
+    const apurado = p.urgencias.comida || p.urgencias.casaRiesgo || (p.ingresosHogar != null && p.ingresosHogar < rentaGarantizada(p) * 12) || p.situacion === 'paro-sin';
+    if (!apurado) return null;
+    return { estado: 'quizas', motivos: ['Vives en Zaragoza y tenéis pocos ingresos o una urgencia.'], comprobar: ['Pedir cita en tu centro municipal de servicios sociales.'] };
+  },
+
+  'nos-cuidamos-malaga'(p) {
+    if (p.ciudad !== 'malaga') return null;
+    const pequenos = p.hijos.menor3 + p.hijos.de3a5 > 0 || p.bebe;
+    if (!pequenos && p.hijos.de6a17 === 0) return null;
+    return { estado: 'quizas', motivos: ['Vives en Málaga y tienes hijos pequeños.'], comprobar: ['Que los niños tengan de 4 meses a 10 años.', 'Que esté abierta la edición del año (en 2026, de julio a septiembre).'] };
   },
 
   'tarjeta-familias'(p) {
@@ -693,7 +744,7 @@ const REGLAS = {
     return {
       estado: 'quizas',
       motivos: ['Has vuelto a España en el último año después de trabajar fuera.', ...(p.ingresosPropios != null ? [`Tus ingresos no pasan de ${mes(S.limiteRentasMes)}.`] : [])],
-      comprobar: ['Tener la nacionalidad española.', 'Haber trabajado fuera al menos 12 meses en los últimos 6 años, fuera de la Unión Europea y Suiza.', ...(p.ingresosPropios == null ? [`No tener ingresos de más de ${mes(S.limiteRentasMes)}.`] : [])],
+      comprobar: ['Tener la nacionalidad española.', 'Haber trabajado fuera al menos 12 meses en los últimos 6 años, fuera del Espacio Económico Europeo o en un país sin convenio de paro con España.', ...(p.ingresosPropios == null ? [`No tener ingresos de más de ${mes(S.limiteRentasMes)}.`] : [])],
       importe: { mes: S.primeros6Meses, texto: `${mes(S.primeros6Meses)} al principio` },
     };
   },
