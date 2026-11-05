@@ -1,0 +1,22 @@
+{
+  "name": "ayudas: qué ayudas públicas te pueden corresponder",
+  "short_name": "ayudas",
+  "description": "Contesta unas preguntas y mira qué ayudas públicas te pueden corresponder en España y cómo se piden, paso a paso.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f1ec",
+  "theme_color": "#1f6b68",
+  "icons": [
+    { "src": "assets/img/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/img/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/img/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "shortcuts": [
+    { "name": "Personas mayores", "url": "mayores/" },
+    { "name": "Todas las ayudas", "url": "catalogo/" },
+    { "name": "Necesito ayuda hoy", "url": "./#ayuda-hoy" }
+  ]
+}

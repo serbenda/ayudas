@@ -2,16 +2,19 @@
   "name": "ayudas",
   "private": true,
   "type": "module",
-  "description": "Qué ayudas públicas te pueden corresponder en España, contestando unas preguntas. Sin registro y sin que tus datos salgan del navegador.",
+  "description": "Find out which public benefits you may be entitled to in Spain by answering a few questions. No sign-up, and your data never leaves the browser.",
   "scripts": {
-    "test": "node --test tests/*.test.js",
-    "dev": "npx --yes serve .",
-    "enlaces": "node scripts/enlaces.mjs",
-    "fuente": "npm install --no-save --no-package-lock @fontsource-variable/archivo@5 && node scripts/vendor.mjs",
-    "e2e": "node --test tests/e2e/*.e2e.mjs",
-    "herramientas": "npm install --no-save --no-package-lock playwright@1 @axe-core/playwright@4",
-    "boe": "node scripts/boe.mjs",
-    "paginas": "node scripts/paginas.mjs"
+    "test": "node --test tests/unit/*.test.js",
+    "test:e2e": "node --test tests/e2e/*.e2e.mjs",
+    "build": "node scripts/build/build.mjs",
+    "dev": "npx --yes serve site",
+    "font": "npm install --no-save --no-package-lock @fontsource-variable/archivo@5 && node scripts/build/vendor-font.mjs",
+    "tools": "npm install --no-save --no-package-lock playwright@1 @axe-core/playwright@4",
+    "watch:links": "node scripts/watch/links.mjs",
+    "watch:boe": "node scripts/watch/boe.mjs",
+    "watch:calls": "node scripts/watch/calls.mjs",
+    "watch:review": "node scripts/watch/review.mjs",
+    "watch:january": "node scripts/watch/january.mjs"
   },
   "engines": {
     "node": ">=20"

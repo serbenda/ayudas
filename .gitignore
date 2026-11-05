@@ -1,6 +1,6 @@
 _site/
 node_modules/
-vendor/
+site/vendor/
 enlaces-rotos.md
 boe-novedades.md
 revisar.md
