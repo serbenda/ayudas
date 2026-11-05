@@ -789,8 +789,9 @@ section + .start { margin-top: 1.75rem; }
 .voice-setting > summary { list-style: none; cursor: pointer; }
 .voice-setting > summary::-webkit-details-marker { display: none; }
 .voice-setting-panel { position: absolute; right: 0; top: calc(100% + 0.4rem); z-index: 5; width: min(22rem, calc(100vw - 2rem)); display: grid; gap: 0.75rem; padding: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 10px 30px rgb(0 0 0 / 0.12); }
+.voice-setting-panel > *, .voice-setting-panel label { min-width: 0; }
 .voice-setting-panel label { display: grid; gap: 0.3rem; font-weight: 600; }
-.voice-setting-panel select { font: inherit; padding: 0.6rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); color: var(--ink); max-width: 100%; }
+.voice-setting-panel select { font: inherit; padding: 0.6rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); color: var(--ink); width: 100%; min-width: 0; max-width: 100%; text-overflow: ellipsis; }
 .voice-setting-panel .checkbox { display: flex; grid-template-columns: none; }
 .voice-setting-panel .note { margin: 0; font-size: 0.85rem; }
 @media (max-width: 40rem) { .voice-setting { width: 100%; } .voice-setting > summary { display: block; text-align: center; } .voice-setting-panel { position: static; width: 100%; margin-top: 0.5rem; } }
