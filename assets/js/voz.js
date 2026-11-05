@@ -3,7 +3,7 @@
 // si se eligen bien (Edge: voces «Natural» de Microsoft; iPhone y Mac: «mejoradas» o «premium»; Chrome y Android: Google).
 // Se lee frase a frase: suena con pausas más naturales y evita que Chrome se corte en los textos largos.
 
-const ACENTO = { es: 'es-ES', en: 'en-GB', ca: 'ca-ES', gl: 'gl-ES', eu: 'eu-ES', ar: 'ar-SA', ro: 'ro-RO' };
+const ACENTO = { es: 'es-ES', en: 'en-GB', ca: 'ca-ES', gl: 'gl-ES', eu: 'eu-ES' };
 // Si no hay voz en gallego, catalán o euskera, se lee con una voz en castellano
 const RESERVA = { ca: 'es', gl: 'es', eu: 'es' };
 // Voces de mala calidad o de broma (macOS, eSpeak…)
@@ -43,7 +43,7 @@ export function mejorVoz(voces, lang) {
 export function frases(texto) {
   return String(texto)
     .replace(/\s+/g, ' ')
-    .split(/(?<=[.!?:;؟])\s+(?=\S)/u)
+    .split(/(?<=[.!?:;])\s+(?=\S)/u)
     .flatMap((f) => (f.length > 220 ? f.split(/(?<=,)\s+/) : [f]))
     .map((f) => f.trim())
     .filter(Boolean);

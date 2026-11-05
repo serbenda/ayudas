@@ -102,7 +102,8 @@ test('guías en otros idiomas: completas y con los mismos apartados', async () =
     for (const k of ['112', '016', '024', 'cruz']) assert.ok(t.tel[k], `${codigo} ${k}`);
     assert.ok(!/undefined|NaN/.test(JSON.stringify(t)), codigo);
   }
-  assert.equal(IDIOMAS.ar.dir, 'rtl');
+  assert.deepEqual(Object.keys(IDIOMAS), ['ca', 'va', 'gl', 'eu', 'en']);
+  assert.match(IDIOMAS.va.ayudas.map(([n]) => n).join(), /Renta Valenciana/);
 });
 
 test('voz: elige la más humana de cada navegador y lee frase a frase', async () => {

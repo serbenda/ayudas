@@ -99,14 +99,14 @@ pagina({
 });
 
 
-// Guías en otros idiomas: misma cabecera con los textos traducidos, lang y dir (árabe de derecha a izquierda)
+// Guías en otros idiomas: misma cabecera con los textos traducidos, y su idioma
 const TELEFONOS_HOY = [['112', '112'], ['016', '016'], ['024', '024'], ['900 107 917', 'cruz']];
 for (const [codigo, t] of Object.entries(IDIOMAS)) {
   let html = plantilla
     .replace('<html lang="es">', `<html lang="${t.lang}" dir="${t.dir}">`)
     .replace(/<title>.*?<\/title>/, `<title>${esc(t.titulo)} · ayudas</title>`)
     .replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${esc(t.descripcion)}">`)
-    .replace(/<link rel="canonical" href=".*?">/, `<link rel="canonical" href="${WEB}/${codigo}/">\n${Object.values(IDIOMAS).map((o) => `  <link rel="alternate" hreflang="${o.lang}" href="${WEB}/${o.lang}/">`).join('\n')}\n  <link rel="alternate" hreflang="es" href="${WEB}/">`)
+    .replace(/<link rel="canonical" href=".*?">/, `<link rel="canonical" href="${WEB}/${codigo}/">\n${Object.entries(IDIOMAS).map(([c, o]) => `  <link rel="alternate" hreflang="${o.lang}" href="${WEB}/${c}/">`).join('\n')}\n  <link rel="alternate" hreflang="es" href="${WEB}/">`)
     .replace('<span>Tus ayudas</span>', `<span>${esc(t.nav.inicio)}</span>`)
     .replace('<span>Mayores</span>', `<span>${esc(t.nav.mayores)}</span>`)
     .replace('<span>Todas las ayudas</span>', `<span>${esc(t.nav.catalogo)}</span>`)
@@ -143,8 +143,8 @@ for (const [codigo, t] of Object.entries(IDIOMAS)) {
 }
 
 function otrosIdiomas(actual) {
-  return [['es', 'Español', '/'], ...Object.entries(IDIOMAS).map(([c, o]) => [c, o.nombre, `/${c}/`])]
-    .filter(([c]) => c !== actual)
+  return [['es', 'Español', '/'], ...Object.entries(IDIOMAS).map(([c, o]) => [o.lang, o.nombre, `/${c}/`])]
+    .filter(([c]) => c !== (IDIOMAS[actual]?.lang ?? actual))
     .map(([c, n, u]) => `<a href="${u}" hreflang="${c}" lang="${c}">${esc(n)}</a>`)
     .join(' · ');
 }

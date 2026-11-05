@@ -67,7 +67,7 @@ async function sinDesbordar(pagina, donde) {
   assert.ok(sobra <= 1, `${donde}: la página se sale ${sobra} px por la derecha`);
 }
 
-for (const [ruta, nombre] of [['', 'portada'], ['mayores/', 'mayores'], ['catalogo/', 'todas las ayudas'], ['mapa/#galicia', 'mapa'], ['entidades/', 'entidades'], ['ayuda/imv/', 'ficha del IMV'], ['comunidad/madrid/', 'página de Madrid'], ['comunidad/', 'comunidades'], ['en/', 'guía en inglés'], ['ar/', 'guía en árabe'], ['eu/', 'guía en euskera'], ['fuentes/', 'fuentes']]) {
+for (const [ruta, nombre] of [['', 'portada'], ['mayores/', 'mayores'], ['catalogo/', 'todas las ayudas'], ['mapa/#galicia', 'mapa'], ['entidades/', 'entidades'], ['ayuda/imv/', 'ficha del IMV'], ['comunidad/madrid/', 'página de Madrid'], ['comunidad/', 'comunidades'], ['en/', 'guía en inglés'], ['va/', 'guía en valenciano'], ['eu/', 'guía en euskera'], ['fuentes/', 'fuentes']]) {
   test(`${nombre}: sin errores, sin desbordar y accesible en móvil, tablet y ordenador`, async () => {
     for (const [variante, opciones] of VARIANTES) {
       const { pagina, errores, contexto } = await abrir(ruta, opciones);
