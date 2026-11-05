@@ -121,6 +121,7 @@ for (const [codigo, t] of Object.entries(IDIOMAS)) {
     <section aria-labelledby="titular">
       <h1 class="titular titular-ficha" id="titular">${esc(t.titulo)}</h1>
       <p class="entradilla">${esc(t.entradilla)}</p>
+      <p><button type="button" class="escuchar" data-leer="${esc([t.titulo, t.entradilla, t.pasosTitulo, ...t.pasos, t.ayudasTitulo, ...t.ayudas.map(([n, x]) => `${n}. ${x}`)].join(' '))}">${icono('altavoz')} ${esc(t.escuchar)}</button></p>
       <section class="ayuda-hoy" aria-labelledby="t-hoy">
         <h2 id="t-hoy">${esc(t.hoy)}</h2>
         <div class="llamadas">${TELEFONOS_HOY.map(([n, k]) => `<a class="llamar" href="tel:${n.replace(/\s/g, '')}"><span class="llamar-icono">${icono('telefono')}</span><span><strong dir="ltr">${n}</strong><small>${esc(t.tel[k])}</small></span></a>`).join('')}</div>
@@ -131,6 +132,7 @@ for (const [codigo, t] of Object.entries(IDIOMAS)) {
       <dl class="guia-ayudas">${t.ayudas.map(([n, x]) => `<div><dt lang="es" dir="ltr">${esc(n)}</dt><dd>${esc(x)}</dd></div>`).join('')}</dl>
       <h2 class="seccion-titulo">${esc(t.frase)}</h2>
       <p class="frase-ventanilla" lang="es" dir="ltr">${esc(FRASE)}</p>
+      <p><button type="button" class="escuchar" data-lang="es" data-leer="${esc(FRASE)}">${icono('altavoz')} ${esc(t.escucharFrase)}</button></p>
       <p>${esc(t.usar)}</p>
       <p class="ficha-acciones"><a class="boton" href="/" hreflang="es">${esc(t.boton)}</a> <a class="boton secundario" href="/mapa/" hreflang="es">${esc(t.mapa)}</a></p>
     </section>

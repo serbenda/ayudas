@@ -112,6 +112,7 @@ Todas las cifras están en un único sitio, [`assets/js/cifras.js`](assets/js/ci
 ## Accesibilidad
 
 - **Letra grande y fácil**, **alto contraste** y **escuchar** (lectura en voz alta) en todas las páginas.
+- **Voz más humana** ([`assets/js/voz.js`](assets/js/voz.js)): elige la mejor voz de cada navegador (Edge: voces «Natural» de Microsoft; iPhone y Mac: «mejoradas» o «premium»; Chrome y Android: Google) y descarta las robóticas. Lee frase a frase, con pausas y sin cortarse en textos largos. El botón «Voz» deja elegir otra y leer más despacio. Las guías se leen en su idioma (inglés, árabe, rumano…) y la frase para la ventanilla, en castellano.
 - Se instala en el móvil como una app y funciona sin conexión.
 - **Enviar a un familiar**: manda solo la lista de ayudas y un enlace con los pasos (`/catalogo/?ver=…`), nunca las respuestas.
 - **Por comunidad:** cuánto da la renta mínima en cada una (cifras del Ministerio de Derechos Sociales y de cada comunidad), quién valora la dependencia y la discapacidad y dónde se empieza, y sus deducciones del IRPF (con cantidades en Andalucía, Cataluña, Galicia y Madrid).

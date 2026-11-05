@@ -793,3 +793,16 @@ section + .empezar { margin-top: 1.75rem; }
 .frase-ventanilla { font-size: 1.35rem; font-weight: 600; line-height: 1.45; background: var(--acento-suave); border-left: 5px solid var(--acento); border-radius: var(--radio); padding: 1rem 1.2rem; max-width: var(--medida); }
 [dir='rtl'] .frase-ventanilla { text-align: left; }
 .idiomas-pie a { white-space: nowrap; }
+
+/* Ajuste de voz */
+.ajuste-voz { position: relative; }
+.ajuste-voz > summary { list-style: none; cursor: pointer; }
+.ajuste-voz > summary::-webkit-details-marker { display: none; }
+.ajuste-voz-panel { position: absolute; right: 0; top: calc(100% + 0.4rem); z-index: 5; width: min(22rem, calc(100vw - 2rem)); display: grid; gap: 0.75rem; padding: 1rem; background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio); box-shadow: 0 10px 30px rgb(0 0 0 / 0.12); }
+.ajuste-voz-panel label { display: grid; gap: 0.3rem; font-weight: 600; }
+.ajuste-voz-panel select { font: inherit; padding: 0.6rem; border: 1px solid var(--linea); border-radius: var(--radio); background: var(--papel); color: var(--tinta); max-width: 100%; }
+.ajuste-voz-panel .casilla { display: flex; grid-template-columns: none; }
+.ajuste-voz-panel .nota { margin: 0; font-size: 0.85rem; }
+@media (max-width: 40rem) { .ajuste-voz { width: 100%; } .ajuste-voz > summary { display: block; text-align: center; } .ajuste-voz-panel { position: static; width: 100%; margin-top: 0.5rem; } }
+.escuchar.hablando { background: var(--acento); color: var(--papel); }
+@media print { .ajuste-voz { display: none; } }
