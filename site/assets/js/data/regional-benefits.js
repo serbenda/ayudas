@@ -5,7 +5,7 @@
 
 const children = (p) => p.children.under3 + p.children.age3to5 + p.children.age6to17;
 const hasSmallChildren = (p) => p.baby || p.children.under3 > 0;
-const quizas = (reasons, check, payment) => ({ status: 'quizas', reasons, check, ...(payment ? { payment: { text: payment } } : {}) });
+const maybe = (reasons, check, payment) => ({ status: 'quizas', reasons, check, ...(payment ? { payment: { text: payment } } : {}) });
 
 export const REGIONAL_BENEFITS = [
   {
@@ -15,7 +15,7 @@ export const REGIONAL_BENEFITS = [
     amount: '1.200 € el primer año (100 € al mes). El doble desde el tercer hijo y un 25 % más si vivís en un concello de menos de 5.000 habitantes. Para familias muy vulnerables, se puede alargar hasta los 4 años del niño.',
     requirements: ['Nacimiento, adopción o acogida permanente de un niño menor de 3 años.', 'También embarazadas desde la semana 21.', 'Vivir en Galicia.', 'Ingresos de la familia por debajo del límite de la convocatoria.'],
     link: { text: 'Sede de la Xunta: Tarxeta Benvida', url: 'https://sede.xunta.gal/' },
-    rule: (p) => (p.region === 'galicia' && hasSmallChildren(p) ? quizas(['Vives en Galicia y tienes un bebé o lo esperas.'], ['Los ingresos de la familia: hay un límite.', 'Que esté abierta la convocatoria del año (en 2026 se publicó en febrero).'], '100 € al mes el primer año') : null),
+    rule: (p) => (p.region === 'galicia' && hasSmallChildren(p) ? maybe(['Vives en Galicia y tienes un bebé o lo esperas.'], ['Los ingresos de la familia: hay un límite.', 'Que esté abierta la convocatoria del año (en 2026 se publicó en febrero).'], '100 € al mes el primer año') : null),
     procedure: {
       easy: ['Dinero para el bebé durante su primer año.', 'Lo da la Xunta en una tarjeta.'],
       steps: [
@@ -37,7 +37,7 @@ export const REGIONAL_BENEFITS = [
     amount: '200 € al mes por cada hijo hasta los 4 años. 100 € al mes de los 4 a los 7 años en familias con tres hijos o más o monoparentales. El doble si el niño tiene discapacidad del 33 % o dependencia.',
     requirements: ['Estar empadronado en Euskadi al menos el último año (o 5 años de los últimos 10).', 'Vivir con el niño y tener su custodia.', 'Las familias monoparentales, estar en el censo de familias monoparentales del Gobierno Vasco.'],
     link: { text: 'euskadi.eus: ayudas mensuales a familias con hijas o hijos', url: 'https://www.euskadi.eus/ayudas-mensuales-a-familias-con-hijas-o-hijos/web01-a2famil/es/' },
-    rule: (p) => (p.region === 'pais-vasco' && (hasSmallChildren(p) || p.children.age3to5 > 0) ? quizas(['Vives en Euskadi y tienes hijos pequeños.'], ['Llevar al menos un año empadronado en Euskadi.', 'Si ya la cobrabas hasta los 3 años, pedir la ampliación hasta los 4: no es automática.'], '200 € al mes por hijo') : null),
+    rule: (p) => (p.region === 'pais-vasco' && (hasSmallChildren(p) || p.children.age3to5 > 0) ? maybe(['Vives en Euskadi y tienes hijos pequeños.'], ['Llevar al menos un año empadronado en Euskadi.', 'Si ya la cobrabas hasta los 3 años, pedir la ampliación hasta los 4: no es automática.'], '200 € al mes por hijo') : null),
     procedure: {
       easy: ['200 € al mes por cada hijo hasta los 4 años.', 'Lo da el Gobierno Vasco.'],
       steps: [
@@ -59,7 +59,7 @@ export const REGIONAL_BENEFITS = [
     amount: 'Hasta 1.500 € por niño y curso.',
     requirements: ['Vivir en Asturias.', 'Haber pedido plaza en una escuela infantil pública de 0 a 3 años y no tenerla.', 'Ingresos de los padres de hasta 45.000 € al año.', 'Tener gastos de cuidado (o haber reducido la jornada para cuidar).'],
     link: { text: 'Sede del Principado (AYUD0450T01)', url: 'https://sede.asturias.es/' },
-    rule: (p) => (p.region === 'asturias' && hasSmallChildren(p) && !(p.householdIncome > 45000) ? quizas(['Vives en Asturias y tienes un niño menor de 3 años.'], ['Haber pedido plaza en una escuela infantil pública y no tenerla.', 'Que esté abierta la convocatoria (en 2026, del 8 de agosto al 15 de septiembre).'], 'Hasta 1.500 € por niño') : null),
+    rule: (p) => (p.region === 'asturias' && hasSmallChildren(p) && !(p.householdIncome > 45000) ? maybe(['Vives en Asturias y tienes un niño menor de 3 años.'], ['Haber pedido plaza en una escuela infantil pública y no tenerla.', 'Que esté abierta la convocatoria (en 2026, del 8 de agosto al 15 de septiembre).'], 'Hasta 1.500 € por niño') : null),
     procedure: {
       easy: ['Hasta 1.500 € para el cuidado de tu hijo pequeño.', 'Si no tienes plaza en la escuela infantil pública.'],
       steps: [
@@ -81,7 +81,7 @@ export const REGIONAL_BENEFITS = [
     amount: 'De 500 € a 2.500 € por hijo, según los ingresos y cuántos hijos tengáis. Más si el niño tiene discapacidad del 33 % o más.',
     requirements: ['Hijo nacido o adoptado en 2026.', 'Los padres y el niño, empadronados en Castilla y León.', 'Residencia legal en España.'],
     link: { text: 'Trámites de la Junta de Castilla y León', url: 'https://www.tramitacastillayleon.jcyl.es/' },
-    rule: (p) => (p.region === 'castilla-leon' && p.baby ? quizas(['Vives en Castilla y León y ha nacido o va a nacer un bebé.'], ['Pedirla en los 3 meses siguientes al nacimiento o la adopción.'], 'De 500 € a 2.500 €') : null),
+    rule: (p) => (p.region === 'castilla-leon' && p.baby ? maybe(['Vives en Castilla y León y ha nacido o va a nacer un bebé.'], ['Pedirla en los 3 meses siguientes al nacimiento o la adopción.'], 'De 500 € a 2.500 €') : null),
     procedure: {
       easy: ['Dinero para las cosas del bebé.', 'En una tarjeta para comprar en tiendas.'],
       steps: [
@@ -104,7 +104,7 @@ export const REGIONAL_BENEFITS = [
     amount: '500 € por hijo, en un solo pago.',
     requirements: ['Llevar al menos un año empadronado en un pueblo, pedanía o entidad local de menos de 3.000 habitantes.', 'Vivir con el niño y tener su custodia.', 'Residencia legal en España.'],
     link: { text: 'Junta de Extremadura: ayudas por natalidad', url: 'https://www.juntaex.es/w/0702824' },
-    rule: (p) => (p.region === 'extremadura' && p.baby ? quizas(['Vives en Extremadura y ha nacido o va a nacer un bebé.'], ['Vivir en un pueblo de menos de 3.000 habitantes desde hace un año.', 'Que esté abierta la convocatoria (en 2026, del 7 de agosto al 30 de septiembre).'], '500 €') : null),
+    rule: (p) => (p.region === 'extremadura' && p.baby ? maybe(['Vives en Extremadura y ha nacido o va a nacer un bebé.'], ['Vivir en un pueblo de menos de 3.000 habitantes desde hace un año.', 'Que esté abierta la convocatoria (en 2026, del 7 de agosto al 30 de septiembre).'], '500 €') : null),
     procedure: {
       easy: ['500 € por cada bebé.', 'Si vives en un pueblo pequeño de Extremadura.'],
       steps: [
@@ -125,7 +125,7 @@ export const REGIONAL_BENEFITS = [
     amount: 'Hasta 4.000 € por familia si contratas a alguien para cuidar en casa. Hasta 1.000 € por hijo para servicios antes o después del colegio y para campamentos y escuelas de verano.',
     requirements: ['Hijos menores de 14 años (de 21 si tienen discapacidad).', 'Vivir en Baleares y trabajar (por cuenta ajena o autónomo).', 'Ingresos de hasta 30.000 € al año por persona de la familia.'],
     link: { text: 'Govern balear: Xec Cangur', url: 'https://www.caib.es/webgoib/w/nou-xec-cangur' },
-    rule: (p) => (p.region === 'baleares' && children(p) > 0 && (p.situation === 'cuenta-ajena' || p.situation === 'autonomo') ? quizas(['Vives en Baleares, trabajas y tienes hijos.'], ['Guardar las facturas del cuidado.', 'Pedirla en el plazo de cada programa: se da por orden de llegada.'], 'Hasta 1.000 € por hijo') : null),
+    rule: (p) => (p.region === 'baleares' && children(p) > 0 && (p.situation === 'cuenta-ajena' || p.situation === 'autonomo') ? maybe(['Vives en Baleares, trabajas y tienes hijos.'], ['Guardar las facturas del cuidado.', 'Pedirla en el plazo de cada programa: se da por orden de llegada.'], 'Hasta 1.000 € por hijo') : null),
     procedure: {
       easy: ['Ayuda para pagar el cuidado de tus hijos.', 'Si trabajas y vives en Baleares.'],
       steps: [
@@ -163,7 +163,7 @@ export const REGIONAL_BENEFITS = [
     amount: 'Una cantidad al año que se cobra junto a la pensión. La fija la Generalitat cada año.',
     requirements: ['Cobrar una pensión no contributiva de jubilación o invalidez.', 'Vivir legalmente en Cataluña.', 'No trabajar ni vivir en una residencia pública.', 'No tener casi otros ingresos además de la pensión.'],
     link: { text: 'gencat.cat: prestación complementaria a la PNC', url: 'https://web.gencat.cat/' },
-    rule: (p) => (p.region === 'cataluna' && p.pension === 'pnc' ? quizas(['Cobras una pensión no contributiva y vives en Cataluña.'], ['Que no tengas otros ingresos además de la pensión.']) : null),
+    rule: (p) => (p.region === 'cataluna' && p.pension === 'pnc' ? maybe(['Cobras una pensión no contributiva y vives en Cataluña.'], ['Que no tengas otros ingresos además de la pensión.']) : null),
     procedure: {
       easy: ['Dinero que se suma a tu pensión no contributiva.', 'Lo da la Generalitat.'],
       steps: ['Pídela en gencat.cat con certificado o idCat Mòbil, o en una oficina de registro con cita previa.', 'Si no te manejas con internet, pide ayuda en los servicios sociales de tu ayuntamiento.', 'Para saber cómo va, llama al 012.'],
@@ -180,7 +180,7 @@ export const REGIONAL_BENEFITS = [
     amount: 'Tercer hijo: 600 € al año por cada hijo menor de 3 años (sin contar al recién nacido), con límite de ingresos. Partos múltiples: de 1.200 € a 4.800 € al año según el número de hijos.',
     requirements: ['Estar empadronados en Andalucía.', 'Tercer hijo o siguientes, con al menos otro hijo menor de 3 años; o un parto o adopción múltiple.', 'Para el tercer hijo, ingresos por debajo del límite.'],
     link: { text: 'Junta de Andalucía: ayudas por menores y partos múltiples', url: 'https://www.juntadeandalucia.es/' },
-    rule: (p) => (p.region === 'andalucia' && p.baby && children(p) >= 3 && p.children.under3 >= 1 ? quizas(['Vives en Andalucía y llega tu tercer hijo (o siguiente) con otro hijo menor de 3 años.'], ['Los ingresos de la familia: hay un límite.', 'Pedirla en el año siguiente al nacimiento.'], '600 € al año por hijo menor de 3') : null),
+    rule: (p) => (p.region === 'andalucia' && p.baby && children(p) >= 3 && p.children.under3 >= 1 ? maybe(['Vives en Andalucía y llega tu tercer hijo (o siguiente) con otro hijo menor de 3 años.'], ['Los ingresos de la familia: hay un límite.', 'Pedirla en el año siguiente al nacimiento.'], '600 € al año por hijo menor de 3') : null),
     procedure: {
       easy: ['Dinero por el tercer hijo o por gemelos, trillizos…', 'Lo da la Junta de Andalucía.'],
       steps: ['Pídela en la web de la Junta de Andalucía (con Cl@ve o certificado) o en una oficina de registro.', 'Lleva el libro de familia y el padrón de todos.', 'Dudas: 955 012 012.'],
@@ -197,7 +197,7 @@ export const REGIONAL_BENEFITS = [
     amount: '1.000 € por familia (2.000 € para familias vulnerables con hijos con necesidades especiales).',
     requirements: ['Ser familia numerosa o monoparental con el título en vigor.', 'Vivir en la Comunitat Valenciana.', 'Cumplir los requisitos de ingresos de la convocatoria.'],
     link: { text: 'Generalitat Valenciana', url: 'https://www.gva.es/' },
-    rule: (p) => (p.region === 'valencia' && (p.largeFamily !== 'no' || p.singleParent) ? quizas(['Vives en la Comunitat Valenciana y sois familia numerosa o monoparental.'], ['Tener el título de familia numerosa o monoparental.', 'Que esté abierta la convocatoria y los requisitos de ingresos.'], '1.000 €') : null),
+    rule: (p) => (p.region === 'valencia' && (p.largeFamily !== 'no' || p.singleParent) ? maybe(['Vives en la Comunitat Valenciana y sois familia numerosa o monoparental.'], ['Tener el título de familia numerosa o monoparental.', 'Que esté abierta la convocatoria y los requisitos de ingresos.'], '1.000 €') : null),
     procedure: {
       easy: ['1.000 € para familias numerosas o monoparentales.', 'Lo da la Generalitat.'],
       steps: ['Ten en vigor el título de familia numerosa o monoparental.', 'Mira en gva.es si está abierta la convocatoria (Decretos 145/2025 y 146/2025).', 'Pídela en la sede electrónica de la Generalitat o con ayuda de los servicios sociales de tu ayuntamiento.'],
@@ -214,7 +214,7 @@ export const REGIONAL_BENEFITS = [
     amount: 'Una cantidad por cada hijo menor de 18 años que vive en casa. La fija la convocatoria de cada año.',
     requirements: ['Ser familia numerosa con el título en vigor.', 'Vivir en Castilla-La Mancha.', 'Cumplir los requisitos del Decreto 80/2012.'],
     link: { text: 'Sede de la Junta (jccm.es)', url: 'https://www.jccm.es/' },
-    rule: (p) => (p.region === 'castilla-mancha' && p.largeFamily !== 'no' ? quizas(['Vives en Castilla-La Mancha y sois familia numerosa.'], ['Si la cobraste a finales de 2025, no hace falta volver a pedirla mientras sigas cumpliendo.']) : null),
+    rule: (p) => (p.region === 'castilla-mancha' && p.largeFamily !== 'no' ? maybe(['Vives en Castilla-La Mancha y sois familia numerosa.'], ['Si la cobraste a finales de 2025, no hace falta volver a pedirla mientras sigas cumpliendo.']) : null),
     procedure: {
       easy: ['Dinero por cada hijo si sois familia numerosa.', 'Lo da la Junta de Castilla-La Mancha.'],
       steps: ['Rellena la solicitud en jccm.es con firma electrónica, o llévala a un registro de la Consejería de Bienestar Social.', 'Date de alta en notifica.jccm.es para recibir los avisos.', 'Para hijos de 6 a 16 años, pon los datos de su colegio.'],
@@ -231,7 +231,7 @@ export const REGIONAL_BENEFITS = [
     amount: 'Hasta 2.500 €, una vez al año, según los ingresos por persona de la familia.',
     requirements: ['Familia numerosa de categoría especial, familia monoparental o con trillizos (o más) menores de 6 años.', 'Todos empadronados en la Región de Murcia.', 'Ingresos por persona de hasta el IPREM.', 'Justificar los gastos con facturas.'],
     link: { text: 'Sede de la Región de Murcia', url: 'https://sede.carm.es/web/pagina?IDCONTENIDO=2792&IDTIPO=240&RASTRO=c%24m40288' },
-    rule: (p) => (p.region === 'murcia' && (p.largeFamily === 'especial' || p.singleParent) ? quizas(['Vives en la Región de Murcia y sois familia monoparental o numerosa especial.'], ['Los ingresos por persona: hasta el IPREM.', 'Que esté abierta la convocatoria (en 2026, del 1 al 15 de octubre).'], 'Hasta 2.500 €') : null),
+    rule: (p) => (p.region === 'murcia' && (p.largeFamily === 'especial' || p.singleParent) ? maybe(['Vives en la Región de Murcia y sois familia monoparental o numerosa especial.'], ['Los ingresos por persona: hasta el IPREM.', 'Que esté abierta la convocatoria (en 2026, del 1 al 15 de octubre).'], 'Hasta 2.500 €') : null),
     procedure: {
       easy: ['Hasta 2.500 € para gastos de los hijos.', 'Para familias con pocos ingresos.'],
       steps: ['Si sois monoparentales sin título, pide antes el reconocimiento de familia monoparental (procedimiento 4202).', 'Pide la ayuda en sede.carm.es con Cl@ve o certificado, o en un registro con cita previa.', 'Guarda las facturas de 2026: hay que justificarlas antes del 31 de marzo de 2027. No valen los tiques.'],
@@ -248,7 +248,7 @@ export const REGIONAL_BENEFITS = [
     amount: 'Segundo hijo: 900 € (ingresos de hasta 24.000 €), 600 € (hasta 44.000 €) o 400 € (hasta 70.000 €). Pueblos de hasta 5.000 habitantes: 100 € al mes por cada hijo menor de 3 años.',
     requirements: ['Vivir y estar empadronada en Cantabria.', 'Ingresos de la familia de hasta 70.000 € al año.', 'Para los 100 € al mes, vivir en un municipio de hasta 5.000 habitantes.'],
     link: { text: 'Servicios Sociales de Cantabria', url: 'https://www.serviciossocialescantabria.org/' },
-    rule: (p) => (p.region === 'cantabria' && hasSmallChildren(p) && !(p.householdIncome > 70000) ? quizas(['Vives en Cantabria y tienes un bebé o un hijo menor de 3 años.'], ['El pago único es por el segundo hijo.', 'Los 100 € al mes, si vives en un pueblo de hasta 5.000 habitantes.']) : null),
+    rule: (p) => (p.region === 'cantabria' && hasSmallChildren(p) && !(p.householdIncome > 70000) ? maybe(['Vives en Cantabria y tienes un bebé o un hijo menor de 3 años.'], ['El pago único es por el segundo hijo.', 'Los 100 € al mes, si vives en un pueblo de hasta 5.000 habitantes.']) : null),
     procedure: {
       easy: ['Dinero por el segundo hijo y, en pueblos pequeños, 100 € al mes.', 'Lo da el Gobierno de Cantabria.'],
       steps: ['Pídela en sede.cantabria.es o en los servicios sociales de tu ayuntamiento.', 'Lleva el libro de familia, el padrón y la declaración de la renta.', 'Si tienes dudas, pregunta en servicios sociales: las condiciones cambiaron en 2026.'],
@@ -265,7 +265,7 @@ export const REGIONAL_BENEFITS = [
     amount: '100 € al mes por cada hijo menor de 3 años.',
     requirements: ['Vivir en Navarra.', 'Ingresos de hasta 45.000 € al año (una persona con ingresos) o 70.000 € (si ganan dos o más).', 'No cobrar el IMV ni la Renta Garantizada.'],
     link: { text: 'navarra.es: ayudas a familias con menores de 0 a 3 años', url: 'https://www.navarra.es/es/tramites/on/-/line/ayudas-economicas-de-apoyo-a-familias-con-menores-de-0-a-3-anos' },
-    rule: (p) => (p.region === 'navarra' && hasSmallChildren(p) && !(p.householdIncome > 70000) ? quizas(['Vives en Navarra y tienes un hijo menor de 3 años.'], ['No es compatible con el IMV ni con la Renta Garantizada.', 'Que esté abierta la convocatoria del año.'], '100 € al mes por hijo') : null),
+    rule: (p) => (p.region === 'navarra' && hasSmallChildren(p) && !(p.householdIncome > 70000) ? maybe(['Vives en Navarra y tienes un hijo menor de 3 años.'], ['No es compatible con el IMV ni con la Renta Garantizada.', 'Que esté abierta la convocatoria del año.'], '100 € al mes por hijo') : null),
     procedure: {
       easy: ['100 € al mes por cada hijo menor de 3 años.', 'Lo da el Gobierno de Navarra.'],
       steps: ['Pídela en navarra.es (trámite «Ayudas económicas de apoyo a familias con menores de 0 a 3 años»).', 'También en persona, en los servicios sociales de base o en el registro del Departamento de Derechos Sociales.'],
@@ -282,7 +282,7 @@ export const REGIONAL_BENEFITS = [
     amount: 'Una cantidad al mes por niño que se descuenta de la cuota. La fija cada curso. En pueblos de menos de 5.000 habitantes vale para los tres cursos; en los demás, para el de 2 a 3 años.',
     requirements: ['Toda la familia empadronada en La Rioja.', 'Niño matriculado en una escuela infantil municipal o privada autorizada de La Rioja.', 'Que vaya a la escuela de forma habitual.'],
     link: { text: 'Gobierno de La Rioja: Bono Infantil', url: 'https://www.larioja.org/' },
-    rule: (p) => (p.region === 'rioja' && (hasSmallChildren(p) || p.children.age3to5 > 0) ? quizas(['Vives en La Rioja y tienes un hijo de 0 a 3 años.'], ['Que vaya a una escuela infantil de La Rioja: la ayuda se pide a través de la escuela.']) : null),
+    rule: (p) => (p.region === 'rioja' && (hasSmallChildren(p) || p.children.age3to5 > 0) ? maybe(['Vives en La Rioja y tienes un hijo de 0 a 3 años.'], ['Que vaya a una escuela infantil de La Rioja: la ayuda se pide a través de la escuela.']) : null),
     procedure: {
       easy: ['Te ayudan a pagar la escuela infantil.', 'Lo gestiona la propia escuela.'],
       steps: ['Matricula al niño en una escuela infantil de La Rioja que tenga el Bono Infantil.', 'Pregunta en la escuela: ella pide la ayuda y te la descuenta de la cuota.', 'Lleva el libro de familia y el padrón.'],
@@ -299,7 +299,7 @@ export const REGIONAL_BENEFITS = [
     amount: 'Con tres hijos o más (o dos si uno tiene discapacidad del 33 %), una ayuda cada año. Con dos, un pago único el año del nacimiento. La cantidad depende de los ingresos y la fija la convocatoria.',
     requirements: ['Parto o adopción múltiple.', 'Vivir en Aragón con residencia legal.', 'Cumplir los requisitos de ingresos de la convocatoria.'],
     link: { text: 'aragon.es: ayudas por partos o adopciones múltiples', url: 'https://www.aragon.es/tramitador/-/tramite/solicitud-ayudas-partos-adopciones-multiples-1' },
-    rule: (p) => (p.region === 'aragon' && p.baby ? quizas(['Vives en Aragón y ha nacido o va a nacer un bebé.'], ['Solo si es un parto o una adopción múltiple (gemelos, trillizos…).']) : null),
+    rule: (p) => (p.region === 'aragon' && p.baby ? maybe(['Vives en Aragón y ha nacido o va a nacer un bebé.'], ['Solo si es un parto o una adopción múltiple (gemelos, trillizos…).']) : null),
     procedure: {
       easy: ['Ayuda si tienes gemelos, trillizos o más.', 'Lo da el Gobierno de Aragón.'],
       steps: ['Mira en aragon.es si está abierta la convocatoria del año.', 'Pídela en el tramitador de aragon.es con Cl@ve o certificado, o en una oficina de registro.', 'Dudas: Servicio de Infancia, 976 715 629, de 9 a 14 h.'],

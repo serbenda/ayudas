@@ -4,7 +4,7 @@
 
 export const REGIONAL_ASSESSMENT = {
   andalucia: {
-    disability: { who: 'el Centro de Valoración y Orientación (CVO) de tu provincia', web: 'juntadeandalucia.es', telefono: 'andalucia' },
+    disability: { who: 'el Centro de Valoración y Orientación (CVO) de tu provincia', web: 'juntadeandalucia.es', phone: 'andalucia' },
   },
   aragon: {
     dependency: { starts: 'los servicios sociales de tu comarca o ayuntamiento', who: 'el Instituto Aragonés de Servicios Sociales (IASS)', web: 'aragon.es' },
@@ -15,8 +15,8 @@ export const REGIONAL_ASSESSMENT = {
     disability: { who: 'los centros de valoración de Oviedo, Gijón y Avilés', web: 'asturias.es' },
   },
   baleares: {
-    dependency: { starts: 'los servicios sociales de tu ayuntamiento o un punto de atención de la Dirección General de Dependencia (Mallorca, Menorca, Ibiza o Formentera)', who: 'la Dirección General de Atención a la Dependencia del Govern', web: 'caib.es', telefono: 'balearesDependencia' },
-    disability: { who: 'los centros de valoración de Palma, Inca, Manacor, Maó e Ibiza', web: 'caib.es', telefono: 'balearesDependencia' },
+    dependency: { starts: 'los servicios sociales de tu ayuntamiento o un punto de atención de la Dirección General de Dependencia (Mallorca, Menorca, Ibiza o Formentera)', who: 'la Dirección General de Atención a la Dependencia del Govern', web: 'caib.es', phone: 'balearesDependencia' },
+    disability: { who: 'los centros de valoración de Palma, Inca, Manacor, Maó e Ibiza', web: 'caib.es', phone: 'balearesDependencia' },
   },
   canarias: {
     dependency: { starts: 'los servicios sociales de tu ayuntamiento', who: 'el Gobierno de Canarias', web: 'sede.gobiernodecanarias.org' },
@@ -35,12 +35,12 @@ export const REGIONAL_ASSESSMENT = {
     disability: { who: 'el centro base de tu provincia (Albacete, Ciudad Real, Cuenca, Guadalajara, Toledo o Talavera)', web: 'jccm.es' },
   },
   cataluna: {
-    dependency: { starts: 'los servicios sociales básicos de tu ayuntamiento', who: 'el Servei de Valoració de la Dependència (SEVAD) de la Generalitat', web: 'gencat.cat', telefono: 'cataluna' },
-    disability: { who: 'los CAD (Centres d\'Atenció a Persones amb Discapacitat) de la Generalitat', web: 'gencat.cat', telefono: 'cataluna' },
+    dependency: { starts: 'los servicios sociales básicos de tu ayuntamiento', who: 'el Servei de Valoració de la Dependència (SEVAD) de la Generalitat', web: 'gencat.cat', phone: 'cataluna' },
+    disability: { who: 'los CAD (Centres d\'Atenció a Persones amb Discapacitat) de la Generalitat', web: 'gencat.cat', phone: 'cataluna' },
   },
   valencia: {
-    dependency: { starts: 'los servicios sociales de tu ayuntamiento', who: 'la Conselleria de Servicios Sociales', web: 'gva.es', telefono: 'valencia' },
-    disability: { who: 'los Centros de Valoración y Orientación de Discapacidades de Alicante, Castellón o Valencia', web: 'gva.es', telefono: 'valencia' },
+    dependency: { starts: 'los servicios sociales de tu ayuntamiento', who: 'la Conselleria de Servicios Sociales', web: 'gva.es', phone: 'valencia' },
+    disability: { who: 'los Centros de Valoración y Orientación de Discapacidades de Alicante, Castellón o Valencia', web: 'gva.es', phone: 'valencia' },
   },
   extremadura: {
     dependency: { starts: 'los servicios sociales de tu ayuntamiento', who: 'el SEPAD (Servicio Extremeño de Promoción de la Autonomía y Atención a la Dependencia)', web: 'juntaex.es' },

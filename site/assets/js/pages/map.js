@@ -18,7 +18,7 @@ export function mapSvg() {
     return `<g class="zone" data-region="${c.id}" tabindex="0" role="button" aria-pressed="false" aria-label="${esc(c.name)}">
       <title>${esc(c.name)}</title><path d="${SHAPES[c.id]}"/>${dot}</g>`;
   }).join('');
-  return `<svg class="map-svg" viewBox="0 0 ${MAP.width} ${MAP.high}" role="group" aria-label="Mapa de España por comunidades">
+  return `<svg class="map-svg" viewBox="0 0 ${MAP.width} ${MAP.height}" role="group" aria-label="Mapa de España por comunidades">
     <rect class="box" x="${k.x}" y="${k.y}" width="${k.w}" height="${k.h}" rx="8"/>
     ${zones}
   </svg>`;

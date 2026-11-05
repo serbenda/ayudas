@@ -60,8 +60,8 @@ test('recordatorios .ics: válido, con la fecha siguiente y solo los que tocan',
 });
 
 test('enlace con respuestas: ida y vuelta, y rechaza lo raro', () => {
-  const data = { age: '72', region: 'galicia', widowed: true, 'cotizadoUnAño': 'si', empty: '', no: false };
-  assert.deepEqual(fromLink(toLink(data)), { age: '72', region: 'galicia', widowed: true, 'cotizadoUnAño': 'si' });
+  const data = { age: '72', region: 'galicia', widowed: true, 'contributedOneYear': 'si', empty: '', no: false };
+  assert.deepEqual(fromLink(toLink(data)), { age: '72', region: 'galicia', widowed: true, 'contributedOneYear': 'si' });
   assert.equal(fromLink('esto no es base64 ¿'), null);
   assert.equal(fromLink(toLink({ a: 1 }).slice(0, 3)), null);
   assert.deepEqual(fromLink(Buffer.from(JSON.stringify({ '<x>': 'y', ok: { a: 1 } })).toString('base64url')), {});

@@ -96,7 +96,7 @@ export const BENEFITS = [
     scope: 'Estatal',
     agency: 'SEPE',
     summary: 'Un subsidio que se cobra hasta la edad de jubilación y cotiza para la pensión.',
-    amount: `${euros(C.allowance.mayores52)} al mes, y la Seguridad Social cotiza por ti para la jubilación.`,
+    amount: `${euros(C.allowance.over52)} al mes, y la Seguridad Social cotiza por ti para la jubilación.`,
     requirements: [
       'Tener 52 años o más y estar en paro.',
       'Haber cotizado al menos 15 años en tu vida (2 de ellos en los últimos 15).',

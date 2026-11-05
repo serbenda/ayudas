@@ -821,9 +821,9 @@ for (const [region, v] of Object.entries(REGIONAL_ASSESSMENT)) {
     const t = PROCEDURES[id];
     t.stepsByRegion ??= {};
     t.stepsByRegion[region] ??= steps(v[key]);
-    if (v[key].telefono) {
+    if (v[key].phone) {
       t.phonesByRegion ??= {};
-      t.phonesByRegion[region] ??= [v[key].telefono];
+      t.phonesByRegion[region] ??= [v[key].phone];
     }
   }
 }
@@ -838,10 +838,10 @@ function phonesOf(id, t, region) {
 
 export function procedureOf(id, region) {
   const t = PROCEDURES[id] ?? { easy: [], steps: [], documents: [] };
-  const madrid = region === 'madrid';
+  const inMadrid = region === 'madrid';
   return {
     ...t,
-    steps: t.stepsByRegion?.[region] || (madrid && t.madridSteps) || t.steps || [],
+    steps: t.stepsByRegion?.[region] || (inMadrid && t.madridSteps) || t.steps || [],
     phones: phonesOf(id, t, region),
     documents: t.documentsByRegion?.[region] || t.documents || [],
     response: t.responseByRegion?.[region] || t.response,
@@ -851,12 +851,12 @@ export function procedureOf(id, region) {
 
 /** Todos los papeles que hacen falta para un conjunto de ayudas, con las ayudas que los piden */
 export function papersFor(ids) {
-  const papeles = new Map();
+  const papers = new Map();
   for (const id of ids) {
     for (const d of PROCEDURES[id]?.documents ?? []) {
-      if (!papeles.has(d)) papeles.set(d, []);
-      papeles.get(d).push(id);
+      if (!papers.has(d)) papers.set(d, []);
+      papers.get(d).push(id);
     }
   }
-  return [...papeles.entries()].map(([doc, benefits]) => ({ doc, benefits })).sort((a, b) => b.benefits.length - a.benefits.length);
+  return [...papers.entries()].map(([doc, benefits]) => ({ doc, benefits })).sort((a, b) => b.benefits.length - a.benefits.length);
 }

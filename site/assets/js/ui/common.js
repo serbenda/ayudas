@@ -31,8 +31,8 @@ const sourcePage = (() => {
   }
 })();
 const TEMPLATES = {
-  failure: { title: 'Algo no funciona: ', body: ['**¿Qué pasa?** (página en blanco, un botón que no hace nada…)', '', '', '---', `Página: ${sourcePage}`, `Navegador: ${navigator.userAgent}`, `Pantalla: ${innerWidth}×${innerHeight}`] },
-  datum: { title: 'Dato: ', body: ['**¿Qué cifra o requisito no cuadra?**', '', '', '**Enlace a la fuente oficial (si lo tienes):**', '', '', '---', `Página: ${sourcePage}`] },
+  bug: { title: 'Algo no funciona: ', body: ['**¿Qué pasa?** (página en blanco, un botón que no hace nada…)', '', '', '---', `Página: ${sourcePage}`, `Navegador: ${navigator.userAgent}`, `Pantalla: ${innerWidth}×${innerHeight}`] },
+  data: { title: 'Dato: ', body: ['**¿Qué cifra o requisito no cuadra?**', '', '', '**Enlace a la fuente oficial (si lo tienes):**', '', '', '---', `Página: ${sourcePage}`] },
   missing: { title: 'Falta una ayuda: ', body: ['**¿Qué ayuda falta?** (nombre, quién la da y para quién es)', '', '', '**Enlace oficial:**', '', '', '---', `Página: ${sourcePage}`] },
 };
 for (const a of document.querySelectorAll('a[data-notice]')) {
@@ -113,7 +113,7 @@ if ('widget' in document.documentElement.dataset) {
   footer.innerHTML = 'Con datos oficiales de <a href="https://ayudas.bendi.dev/" target="_blank" rel="noopener">ayudas.bendi.dev</a>. Tus respuestas no salen de este aparato.';
   document.querySelector('main')?.append(footer);
   if (parent !== window) {
-    const notify = () => parent.postMessage({ benefits: 'altura', height: document.documentElement.scrollHeight }, '*');
+    const notify = () => parent.postMessage({ ayudas: 'altura', altura: document.documentElement.scrollHeight }, '*');
     new ResizeObserver(notify).observe(document.body);
     addEventListener('load', notify);
   }

@@ -24,7 +24,7 @@ const QUESTIONS = [
     text: '¿Dónde vives?',
     options: [['En la ciudad de Madrid', 'capital'], ['En otro pueblo de la Comunidad de Madrid', 'madrid'], ['En otra comunidad', 'otra']],
   },
-  { id: 'region', text: '¿En qué comunidad vives?', type: 'lista', si: (r) => r.where === 'otra' },
+  { id: 'region', text: '¿En qué comunidad vives?', type: 'list', showIf: (r) => r.where === 'otra' },
   { id: 'livingWith', text: '¿Con quién vives?', options: [['Vivo solo o sola', 'solo'], ['Con mi pareja', 'pareja'], ['Con otros familiares', 'familia']] },
   {
     id: 'pension',
@@ -34,45 +34,45 @@ const QUESTIONS = [
   {
     id: 'pensionMonthly',
     text: '¿Cuánto cobras de pensión al mes, más o menos?',
-    benefit: 'Lo pone en la carta de la Seguridad Social o en tu banco.',
-    si: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension),
+    help: 'Lo pone en la carta de la Seguridad Social o en tu banco.',
+    showIf: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension),
     options: [['Menos de 700 €', 650], ['De 700 a 900 €', 800], ['De 900 a 1.100 €', 1000], ['De 1.100 a 1.500 €', 1300], ['Más de 1.500 €', 1800], ['No lo sé', null]],
   },
-  { id: 'since2021', text: '¿Empezaste a cobrar la pensión en 2021 o después?', si: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension), options: [['Sí', true], ['No, antes', false], ['No lo sé', null]] },
-  { id: 'children', text: '¿Cuántos hijos has tenido?', si: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension), options: [['Ninguno', 0], ['1', 1], ['2', 2], ['3', 3], ['4 o más', 4]] },
+  { id: 'since2021', text: '¿Empezaste a cobrar la pensión en 2021 o después?', showIf: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension), options: [['Sí', true], ['No, antes', false], ['No lo sé', null]] },
+  { id: 'children', text: '¿Cuántos hijos has tenido?', showIf: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension), options: [['Ninguno', 0], ['1', 1], ['2', 2], ['3', 3], ['4 o más', 4]] },
   {
     id: 'income',
     text: '¿Tienes algún dinero que te entre cada mes?',
-    si: (r) => r.pension === 'no',
+    showIf: (r) => r.pension === 'no',
     options: [['No, nada', 0], ['Menos de 500 € al mes', 4000], ['Más de 500 € al mes', 9000], ['No lo sé', null]],
   },
   {
     id: 'household',
     text: '¿Cuánto dinero entra en casa al mes, entre todos?',
-    benefit: 'Suma pensiones, sueldos y otras ayudas de las personas que viven contigo.',
-    si: (r) => r.livingWith !== 'solo',
+    help: 'Suma pensiones, sueldos y otras ayudas de las personas que viven contigo.',
+    showIf: (r) => r.livingWith !== 'solo',
     options: [['Menos de 800 €', 700 * 12], ['De 800 a 1.200 €', 1000 * 12], ['De 1.200 a 2.000 €', 1600 * 12], ['Más de 2.000 €', 2500 * 12], ['No lo sé', null]],
   },
-  { id: 'widowed', text: '¿Ha fallecido tu marido, tu mujer o tu pareja?', si: (r) => r.pension !== 'viudedad' && r.livingWith !== 'pareja', options: [['Sí', true], ['No', false]] },
+  { id: 'widowed', text: '¿Ha fallecido tu marido, tu mujer o tu pareja?', showIf: (r) => r.pension !== 'viudedad' && r.livingWith !== 'pareja', options: [['Sí', true], ['No', false]] },
   {
     id: 'dailyHelp',
     text: '¿Necesitas ayuda de otra persona para asearte, vestirte o comer?',
     options: [['No', 'no'], ['Sí, pero no lo he pedido', 'necesita'], ['Lo he pedido y estoy esperando', 'tramite'], ['Sí, ya tengo el grado de dependencia', 'grado']],
   },
-  { id: 'grade', text: '¿Qué grado de dependencia tienes?', si: (r) => r.dailyHelp === 'grado', options: [['Grado I', '1'], ['Grado II', '2'], ['Grado III', '3'], ['No me acuerdo', '1']] },
+  { id: 'grade', text: '¿Qué grado de dependencia tienes?', showIf: (r) => r.dailyHelp === 'grado', options: [['Grado I', '1'], ['Grado II', '2'], ['Grado III', '3'], ['No me acuerdo', '1']] },
   {
     id: 'disability',
     text: '¿Tienes certificado de discapacidad?',
     options: [['No', 'no'], ['No, pero tengo problemas de salud que me limitan', 'sin'], ['Sí, de menos del 65 %', '33'], ['Sí, del 65 % o más', '65']],
   },
   { id: 'youCare', text: '¿Cuidas de alguien de tu familia que necesita ayuda?', options: [['No', 'no'], ['Sí, a mi pareja', 'pareja'], ['Sí, a un hijo o hija', 'hijo'], ['Sí, a otra persona', 'otro']] },
-  { id: 'careGrade', text: '¿Esa persona tiene la dependencia reconocida?', si: (r) => r.youCare && r.youCare !== 'no', options: [['Sí', '2'], ['No', 'necesita'], ['Lo hemos pedido', 'tramite']] },
+  { id: 'careGrade', text: '¿Esa persona tiene la dependencia reconocida?', showIf: (r) => r.youCare && r.youCare !== 'no', options: [['Sí', '2'], ['No', 'necesita'], ['Lo hemos pedido', 'tramite']] },
   { id: 'housing', text: '¿Tu casa es de alquiler?', options: [['Sí, pago alquiler', 'alquiler'], ['No, es mía', 'propia'], ['Otra situación', 'otra']] },
   { id: 'reaches', text: '¿Te llega el dinero para comer y pagar la luz?', options: [['Sí', 'si'], ['Justo', 'justo'], ['No', 'no']] },
   { id: 'soledad', text: '¿Te sientes solo o sola a menudo?', options: [['Sí', true], ['A veces', false], ['No', false]] },
 ];
 
-const activeQuestions = () => QUESTIONS.filter((q) => !q.si || q.si(answers));
+const activeQuestions = () => QUESTIONS.filter((q) => !q.showIf || q.showIf(answers));
 
 // ── Leer en voz alta ────────────────────────────────────────────────────
 function read(text) {
@@ -87,7 +87,7 @@ function showQuestion(i) {
   if (!q) return showResult();
   const n = i + 1;
   const total = list.length;
-  const options = q.type === 'lista'
+  const options = q.type === 'list'
     ? `<div class="options-large">${REGIONS.filter((c) => c.id !== 'madrid').map((c) => `<button type="button" class="option-large" data-field-value="${c.id}">${esc(c.name)}</button>`).join('')}</div>`
     : `<div class="options-large">${q.options.map(([t, v], k) => `<button type="button" class="option-large" data-position="${k}">${esc(t)}</button>`).join('')}</div>`;
   box.innerHTML = `
@@ -96,7 +96,7 @@ function showQuestion(i) {
       <div class="progress-bar"><i style="width:${Math.round((n / total) * 100)}%"></i></div>
     </div>
     <h2 class="question-large" id="question" tabindex="-1">${esc(q.text)}</h2>
-    ${q.benefit ? `<p class="question-help">${esc(q.benefit)}</p>` : ''}
+    ${q.help ? `<p class="question-help">${esc(q.help)}</p>` : ''}
     ${listenButton('pregunta')}
     ${options}
     <div class="browse">
@@ -104,7 +104,7 @@ function showQuestion(i) {
       <button type="button" class="button text" data-skip>No quiero contestar</button>
     </div>`;
   box.dataset.position = i;
-  box.dataset.text = [q.text, q.benefit ?? '', ...(q.options ?? []).map(([t]) => t)].join('. ');
+  box.dataset.text = [q.text, q.help ?? '', ...(q.options ?? []).map(([t]) => t)].join('. ');
   document.getElementById('question').focus({ preventScroll: false });
 }
 
@@ -168,7 +168,7 @@ function seniorCard(r, region, number) {
   const used = new Set();
   const ex = (text) => markTerms(esc(text), used);
   return `
-  <article class="senior-card${r.urgente ? ' urgent' : ''}" id="m-${r.id}">
+  <article class="senior-card${r.urgent ? ' urgent' : ''}" id="m-${r.id}">
     <h3><span class="number">${number}</span>${esc(a.name)}</h3>
     ${r.payment?.text ? `<p class="how-much">${esc(r.payment.text)}</p>` : ''}
     <ul class="sentences">${t.easy.map((f) => `<li>${ex(f)}</li>`).join('')}</ul>
@@ -190,10 +190,10 @@ function showResult() {
   const all = evaluate(p);
   const first = whereToStart(all, 99);
   const rest = all.filter((r) => !first.includes(r) && r.status === 'si');
-  const quizas = all.filter((r) => !first.includes(r) && r.status === 'quizas');
-  const order = [...first, ...rest, ...quizas];
-  const papeles = papersFor(order.map((r) => r.id)).slice(0, 8);
-  const madrid = p.region === 'madrid';
+  const maybe = all.filter((r) => !first.includes(r) && r.status === 'quizas');
+  const order = [...first, ...rest, ...maybe];
+  const papers = papersFor(order.map((r) => r.id)).slice(0, 8);
+  const inMadrid = p.region === 'madrid';
 
   box.hidden = true;
   result.hidden = false;
@@ -202,9 +202,9 @@ function showResult() {
     <p class="question-help">${order.length ? 'Empieza por la primera. Pulsa «Qué tengo que hacer» para ver los pasos.' : 'Con tus respuestas no sale ninguna. Llama a los servicios sociales de tu ayuntamiento: te orientan gratis.'}</p>
     <p class="tip">${icon('cuidados')} Puedes pedir ayuda a un familiar, a un vecino o a los servicios sociales para hacer los trámites.</p>
     <div class="senior-cards">${order.map((r, i) => seniorCard(r, p.region, i + 1)).join('')}</div>
-    ${papeles.length ? `<section class="seniors-block"><h3>${icon('papeles')} Papeles que conviene tener a mano</h3><ul class="papers">${papeles.map(({ doc }) => `<li><strong>${esc(DOCUMENTS[doc].name)}</strong>. ${esc(DOCUMENTS[doc].benefit)}</li>`).join('')}</ul></section>` : ''}
+    ${papers.length ? `<section class="seniors-block"><h3>${icon('papeles')} Papeles que conviene tener a mano</h3><ul class="papers">${papers.map(({ doc }) => `<li><strong>${esc(DOCUMENTS[doc].name)}</strong>. ${esc(DOCUMENTS[doc].benefit)}</li>`).join('')}</ul></section>` : ''}
     <section class="seniors-block"><h3>${icon('telefono')} Teléfonos que te pueden ayudar</h3>
-      <div class="calls">${[...(madrid ? ['mayoresMadrid', 'madrid012', 'linea010'] : []), 'cruzRoja', 'infoInss', 'emergencias'].map(phoneButton).join('')}</div>
+      <div class="calls">${[...(inMadrid ? ['mayoresMadrid', 'madrid012', 'linea010'] : []), 'cruzRoja', 'infoInss', 'emergencias'].map(phoneButton).join('')}</div>
     </section>
     <div class="browse">
       <button type="button" class="button large" data-share>Enviar a un familiar</button>

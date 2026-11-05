@@ -73,7 +73,7 @@ function people(p) {
 }
 
 function personName(c, i) {
-  const names = { child: 'tu hijo o hija', container: 'tu padre o tu madre', partner: 'tu pareja', another: 'tu familiar' };
+  const names = { hijo: 'tu hijo o hija', padre: 'tu padre o tu madre', pareja: 'tu pareja', otro: 'tu familiar' };
   return `${names[c.relationship] ?? 'la persona'}${i > 0 ? ` (${i + 1}.ª persona)` : ''}`;
 }
 
@@ -214,7 +214,7 @@ const RULES = {
       status: check.length ? 'quizas' : 'si',
       reasons: [`Tienes ${p.age} años y estás en paro.`, ...(p.contributed15 ? ['Has cotizado al menos 15 años.'] : [])],
       check,
-      payment: { monthly: FIGURES.allowance.mayores52, text: monthly(FIGURES.allowance.mayores52) },
+      payment: { monthly: FIGURES.allowance.over52, text: monthly(FIGURES.allowance.over52) },
     };
   },
 
@@ -295,8 +295,8 @@ const RULES = {
     if (members(p) > 1) check.push('Si vives con familia, el límite de ingresos sube y cuentan también los suyos.');
     if (p.ownIncome == null) return { status: 'quizas', reasons: ['Tienes 65 años o más y no cobras pensión.'], check: ['Depende de tus ingresos.', ...check], payment: { monthly: perMonth, text: `Hasta ${monthly(perMonth)}` } };
     if (p.ownIncome >= annual) return null;
-    const cobro = round2(Math.max((annual - p.ownIncome) / 14, perMonth * 0.25));
-    return { status: 'si', reasons: ['Tienes 65 años o más y no cobras pensión.', `Tus ingresos (${yearly(p.ownIncome)}) no llegan a ${yearly(annual)}.`], check, payment: { monthly: cobro, text: `≈ ${monthly(cobro)} (14 pagas)` } };
+    const amount = round2(Math.max((annual - p.ownIncome) / 14, perMonth * 0.25));
+    return { status: 'si', reasons: ['Tienes 65 años o más y no cobras pensión.', `Tus ingresos (${yearly(p.ownIncome)}) no llegan a ${yearly(annual)}.`], check, payment: { monthly: amount, text: `≈ ${monthly(amount)} (14 pagas)` } };
   },
 
   'pnc-invalidez'(p) {
@@ -305,8 +305,8 @@ const RULES = {
     const check = ['Haber vivido en España 5 años.'];
     if (p.ownIncome == null) return { status: 'quizas', reasons: ['Tienes una discapacidad del 65 % o más y no cobras pensión.'], check: ['Depende de tus ingresos.', ...check], payment: { monthly: perMonth, text: `Hasta ${monthly(perMonth)}` } };
     if (p.ownIncome >= annual) return null;
-    const cobro = round2(Math.max((annual - p.ownIncome) / 14, perMonth * 0.25));
-    return { status: 'si', reasons: ['Tienes una discapacidad del 65 % o más y no cobras pensión.', `Tus ingresos no llegan a ${yearly(annual)}.`], check, payment: { monthly: cobro, text: `≈ ${monthly(cobro)} (14 pagas)` } };
+    const amount = round2(Math.max((annual - p.ownIncome) / 14, perMonth * 0.25));
+    return { status: 'si', reasons: ['Tienes una discapacidad del 65 % o más y no cobras pensión.', `Tus ingresos no llegan a ${yearly(annual)}.`], check, payment: { monthly: amount, text: `≈ ${monthly(amount)} (14 pagas)` } };
   },
 
   'pnc-alquiler'(p) {
@@ -467,9 +467,9 @@ const RULES = {
   },
 
   'bono-termico'(p) {
-    const bono = RULES['bono-social'](p);
-    if (!bono) return null;
-    return { status: bono.status, reasons: ['Va unido al bono social de la luz.'], check: ['Tener el bono social de la luz a 31 de diciembre.'], payment: { yearly: FIGURES.socialDiscount.thermalMinimum, text: `Desde ${yearly(FIGURES.socialDiscount.thermalMinimum)}` } };
+    const discount = RULES['bono-social'](p);
+    if (!discount) return null;
+    return { status: discount.status, reasons: ['Va unido al bono social de la luz.'], check: ['Tener el bono social de la luz a 31 de diciembre.'], payment: { yearly: FIGURES.socialDiscount.thermalMinimum, text: `Desde ${yearly(FIGURES.socialDiscount.thermalMinimum)}` } };
   },
 
   'alquiler-joven'(p) {
@@ -559,28 +559,28 @@ const RULES = {
   // ── Si lo necesitas ya ─────────────────────────────────────────────────
   'violencia-genero'(p) {
     if (!p.urgent.violence) return null;
-    return { status: 'si', reasons: ['Has marcado que sufres violencia de género.'], check: ['Llama al 016 aunque no hayas denunciado: te orientan y no sale en la factura.'], payment: { text: '016 · 24 horas' }, urgente: true };
+    return { status: 'si', reasons: ['Has marcado que sufres violencia de género.'], check: ['Llama al 016 aunque no hayas denunciado: te orientan y no sale en la factura.'], payment: { text: '016 · 24 horas' }, urgent: true };
   },
 
   'sin-hogar'(p) {
     if (!p.urgent.homeless) return null;
-    return { status: 'si', reasons: ['Has marcado que no tienes casa.'], check: [], urgente: true };
+    return { status: 'si', reasons: ['Has marcado que no tienes casa.'], check: [], urgent: true };
   },
 
   desahucio(p) {
     if (!p.urgent.housingAtRisk) return null;
-    return { status: 'si', reasons: ['Has marcado que puedes perder tu casa.'], check: ['Si ya te ha llegado una carta del juzgado, pide abogado de oficio hoy mismo.'], urgente: true };
+    return { status: 'si', reasons: ['Has marcado que puedes perder tu casa.'], check: ['Si ya te ha llegado una carta del juzgado, pide abogado de oficio hoy mismo.'], urgent: true };
   },
 
   alimentos(p) {
     if (!p.urgent.food && !p.urgent.homeless) return null;
-    return { status: 'si', reasons: ['Has marcado que no llegas para comer o para pagar lo básico.'], check: [], urgente: true };
+    return { status: 'si', reasons: ['Has marcado que no llegas para comer o para pagar lo básico.'], check: [], urgent: true };
   },
 
   'emergencia-social'(p) {
     const veryLow = p.householdIncome != null && p.householdIncome < guaranteedIncome(p) * 12 * 0.5;
     if (!p.urgent.food && !p.urgent.housingAtRisk && !p.urgent.homeless && !veryLow) return null;
-    return { status: p.urgent.food || p.urgent.housingAtRisk || p.urgent.homeless ? 'si' : 'quizas', reasons: [veryLow && !p.urgent.food ? 'Vuestros ingresos son muy bajos.' : 'No llegas a cubrir lo básico este mes.'], check: ['Pide cita urgente: no esperes a que llegue el IMV.'], urgente: true };
+    return { status: p.urgent.food || p.urgent.housingAtRisk || p.urgent.homeless ? 'si' : 'quizas', reasons: [veryLow && !p.urgent.food ? 'Vuestros ingresos son muy bajos.' : 'No llegas a cubrir lo básico este mes.'], check: ['Pide cita urgente: no esperes a que llegue el IMV.'], urgent: true };
   },
 
   soledad(p) {
@@ -876,21 +876,21 @@ const MONTHLY_SUMMABLE = ['imv', 'capi', 'pnc-jubilacion', 'pnc-invalidez', 'com
 
 /** Cuánto dinero podría entrar: al mes (14 pagas para pensiones, 12 el resto) y al año en pagos o deducciones. Solo «Cumples lo principal». */
 export function estimatedMoney(results) {
-  const si = new Map(results.filter((r) => r.status === 'si').map((r) => [r.id, r]));
+  const yes = new Map(results.filter((r) => r.status === 'si').map((r) => [r.id, r]));
   const parts = [];
   for (const id of MONTHLY_SUMMABLE) {
-    const r = si.get(id);
+    const r = yes.get(id);
     if (!r?.payment?.monthly) continue;
     let figure = r.payment.monthly;
     // El IMV completa hasta un mínimo: el subsidio o la pensión cuentan como ingreso y lo reducen
     if (id === 'imv') {
-      const others = ['subsidio-desempleo', 'subsidio-52', 'pnc-invalidez'].map((k) => si.get(k)?.payment?.monthly ?? 0).reduce((a, b) => a + b, 0);
+      const others = ['subsidio-desempleo', 'subsidio-52', 'pnc-invalidez'].map((k) => yes.get(k)?.payment?.monthly ?? 0).reduce((a, b) => a + b, 0);
       figure = Math.max(0, figure - others);
     }
     if (figure > 0) parts.push({ id, monthly: Math.round(figure * 100) / 100 });
   }
   const perYear = [];
-  for (const r of si.values()) if (r.payment?.yearly) perYear.push({ id: r.id, yearly: r.payment.yearly });
+  for (const r of yes.values()) if (r.payment?.yearly) perYear.push({ id: r.id, yearly: r.payment.yearly });
   return {
     monthly: Math.round(parts.reduce((a, x) => a + x.monthly, 0) * 100) / 100,
     yearly: perYear.reduce((a, x) => a + x.yearly, 0),

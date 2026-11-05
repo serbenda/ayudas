@@ -189,3 +189,29 @@ test('palabras difíciles: al pulsar una sale qué significa, y se esconde al vo
   assert.deepEqual(ownItems(errors), []);
   await context.close();
 });
+
+test('embed.js: each type loads its page, with a title and in widget mode', async () => {
+  const { page, context } = await openPage('');
+  const types = { cuestionario: '', mayores: 'mayores/', mapa: 'mapa/', catalogo: 'catalogo/' };
+  await page.setContent(`${Object.keys(types).map((t) => `<div data-ayudas="${t}"></div>`).join('')}<script src="${base}embed.js"></script>`);
+  const frames = await page.locator('iframe').evaluateAll((fs) => fs.map((f) => [f.src, f.title]));
+  assert.deepEqual(frames.map(([src]) => src), Object.values(types).map((p) => `${base}${p}?widget=1`));
+  for (const [, title] of frames) assert.ok(title, 'every iframe has a title');
+  await context.close();
+});
+
+test('sources: every report link opens a GitHub issue with its template', async () => {
+  const { page, context } = await openPage('fuentes/');
+  const links = await page.locator('a[data-notice]').evaluateAll((as) => as.map((a) => new URL(a.href).searchParams.get('title')));
+  assert.equal(links.length, 3);
+  for (const t of links) assert.ok(t, 'link has a title');
+  await context.close();
+});
+
+test('home: the carer example fills in the person being cared for', async () => {
+  const { page, context } = await openPage('');
+  await page.click('[data-example=cuidador]');
+  assert.equal(await page.locator('[name="p1-relationship"]').inputValue(), 'padre');
+  assert.equal(await page.locator('[name="p1-age"]').inputValue(), '84');
+  await context.close();
+});

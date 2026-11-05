@@ -25,16 +25,16 @@ const SECTIONS = new Set(['1', '3']);
 const asList = (x) => (x == null ? [] : Array.isArray(x) ? x : [x]);
 
 /** Las disposiciones de un sumario que tocan algún tema, con el tema */
-export function search(sumario) {
+export function search(summary) {
   const found = [];
-  for (const diario of asList(sumario?.data?.sumario?.diario)) {
-    for (const seccion of asList(diario.seccion)) {
-      if (!SECTIONS.has(String(seccion.code))) continue;
-      for (const dep of asList(seccion.departamento)) {
-        const items = [...asList(dep.item), ...asList(dep.epigrafe).flatMap((e) => asList(e.item))];
+  for (const journal of asList(summary?.data?.sumario?.diario)) {
+    for (const section of asList(journal.seccion)) {
+      if (!SECTIONS.has(String(section.codigo))) continue;
+      for (const department of asList(section.departamento)) {
+        const items = [...asList(department.item), ...asList(department.epigrafe).flatMap((e) => asList(e.item))];
         for (const item of items) {
-          const topic = TOPICS.find(([, re]) => re.test(item.title ?? ''));
-          if (topic) found.push({ topic: topic[0], id: item.identificador, title: item.title, url: item.url_html, departamento: dep.name });
+          const topic = TOPICS.find(([, re]) => re.test(item.titulo ?? ''));
+          if (topic) found.push({ topic: topic[0], id: item.identificador, title: item.titulo, url: item.url_html, department: department.nombre });
         }
       }
     }
@@ -65,7 +65,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   }
   const text = all.length
     ? `En el BOE de los últimos ${days} días hay disposiciones que pueden cambiar cifras de la web. Revísalas y actualiza \`assets/js/data/figures.js\` si hace falta:\n\n${all
-        .map((x) => `- **${x.topic}** (${x.date.slice(6)}/${x.date.slice(4, 6)}): [${x.title}](${x.url}) — ${x.departamento}`)
+        .map((x) => `- **${x.topic}** (${x.date.slice(6)}/${x.date.slice(4, 6)}): [${x.title}](${x.url}) — ${x.department}`)
         .join('\n')}\n`
     : '';
   await writeFile('boe-novedades.md', text);

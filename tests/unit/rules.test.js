@@ -219,16 +219,16 @@ test('mayor de 65 que vive solo en Madrid capital', () => {
 import { search } from '../../scripts/watch/boe.mjs';
 
 test('BOE: encuentra la revalorización de pensiones y el SMI, con item suelto o en lista', () => {
-  const sumario = {
+  const summary = {
     data: { sumario: { diario: [{ seccion: [
-      { code: '1', name: 'I. Disposiciones generales', departamento: [
-        { name: 'MINISTERIO DE INCLUSIÓN', epigrafe: [{ name: 'Pensiones', item: { identificador: 'BOE-A-2026-1', title: 'Real Decreto 1/2026, sobre revalorización de las pensiones', url_html: 'https://www.boe.es/1' } }] },
-        { name: 'MINISTERIO DE TRABAJO', epigrafe: [{ name: 'SMI', item: [{ identificador: 'BOE-A-2026-2', title: 'Real Decreto por el que se fija el salario mínimo interprofesional para 2027', url_html: 'https://www.boe.es/2' }] }] },
+      { codigo: '1', nombre: 'I. Disposiciones generales', departamento: [
+        { nombre: 'MINISTERIO DE INCLUSIÓN', epigrafe: [{ nombre: 'Pensiones', item: { identificador: 'BOE-A-2026-1', titulo: 'Real Decreto 1/2026, sobre revalorización de las pensiones', url_html: 'https://www.boe.es/1' } }] },
+        { nombre: 'MINISTERIO DE TRABAJO', epigrafe: [{ nombre: 'SMI', item: [{ identificador: 'BOE-A-2026-2', titulo: 'Real Decreto por el que se fija el salario mínimo interprofesional para 2027', url_html: 'https://www.boe.es/2' }] }] },
       ] },
-      { code: '2B', name: 'Oposiciones', departamento: [{ name: 'X', epigrafe: [{ item: { identificador: 'BOE-A-2026-3', title: 'Pensiones: plazas de funcionario', url_html: '' } }] }] },
+      { codigo: '2B', nombre: 'Oposiciones', departamento: [{ nombre: 'X', epigrafe: [{ item: { identificador: 'BOE-A-2026-3', titulo: 'Pensiones: plazas de funcionario', url_html: '' } }] }] },
     ] }] } },
   };
-  const r = search(sumario);
+  const r = search(summary);
   assert.deepEqual(r.map((x) => x.topic), ['Pensiones', 'Salario mínimo']);
   assert.deepEqual(search({}), []);
 });

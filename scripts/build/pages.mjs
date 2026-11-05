@@ -19,10 +19,10 @@ const template = readFileSync(new URL('../../site/catalogo/index.html', import.m
   .replace(' aria-current="page"', '')
   .replace('<script type="module" src="/assets/js/pages/catalogue.js"></script>\n', '');
 
-function page({ routePath, title, descripcion, body, data }) {
+function page({ routePath, title, description, body, data }) {
   const html = template
     .replace(/<title>.*?<\/title>/, `<title>${esc(title)} · ayudas</title>`)
-    .replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${esc(descripcion)}">`)
+    .replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${esc(description)}">`)
     .replace(/<link rel="canonical" href=".*?">/, `<link rel="canonical" href="${SITE_URL}${routePath}">\n  <script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`)
     .replace(/<main class="wrapper">[\s\S]*?<\/main>/, `<main class="wrapper">\n${body}\n  </main>`);
   const folder = join(OUTPUT, routePath);
@@ -47,7 +47,7 @@ for (const a of BENEFITS) {
   page({
     routePath,
     title: `${a.name}: cuánto dan y cómo se pide en 2026`,
-    descripcion: `${a.summary} Qué dan en 2026, quién puede pedirla y cómo se pide, paso a paso.`.slice(0, 300),
+    description: `${a.summary} Qué dan en 2026, quién puede pedirla y cómo se pide, paso a paso.`.slice(0, 300),
     data: questions([
       [`¿Qué es ${a.name}?`, a.summary],
       [`¿Cuánto da ${a.name} en 2026?`, a.amount],
@@ -72,7 +72,7 @@ for (const c of REGIONS) {
   page({
     routePath,
     title: `Ayudas en ${c.name} en 2026`,
-    descripcion: `Las ayudas que se piden en ${c.name}: ${r.name}, dependencia, discapacidad, pensiones no contributivas, alquiler y más, con los pasos para pedirlas.`,
+    description: `Las ayudas que se piden en ${c.name}: ${r.name}, dependencia, discapacidad, pensiones no contributivas, alquiler y más, con los pasos para pedirlas.`,
     data: questions([
       [`¿Cómo se llama la renta mínima en ${c.name}?`, `${r.name}. ${r.note ?? ''}`.trim()],
       [`¿Dónde se piden las ayudas de ${c.name}?`, `En la web oficial (${r.website}) o con ayuda de los servicios sociales de tu ayuntamiento.`],
@@ -90,7 +90,7 @@ for (const c of REGIONS) {
 page({
   routePath: '/comunidad/',
   title: 'Ayudas por comunidad autónoma',
-  descripcion: 'Elige tu comunidad autónoma y mira qué ayudas se piden allí y cómo.',
+  description: 'Elige tu comunidad autónoma y mira qué ayudas se piden allí y cómo.',
   data: { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Ayudas por comunidad autónoma' },
   body: `    <section aria-labelledby="headline">
       <h1 class="headline" id="headline">Ayudas por comunidad.</h1>

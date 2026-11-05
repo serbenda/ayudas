@@ -39,7 +39,7 @@ export const FIGURES = {
   dependentChild: { childWith33: 1000, adultWith65: 5962.8, adultWith75: 8942.4 },
 
   // Subsidio por desempleo (sobre el IPREM) y límite de rentas: 75 % del SMI sin pagas extra
-  allowance: { first6Months: 570, next6Months: 540, rest: 480, mayores52: 480, monthlyIncomeLimit: 915.75 },
+  allowance: { first6Months: 570, next6Months: 540, rest: 480, over52: 480, monthlyIncomeLimit: 915.75 },
 
   // Autónomos: tarifa plana de cotización (Ley 31/2022) y avales ICO para la primera vivienda (RDL 42/2021, ampliado a 2027)
   selfEmployed: { flatRate: 80, months: 12, extraMonths: 12 },

@@ -5,8 +5,8 @@
 (function () {
   var scriptTag = document.currentScript;
   var base = scriptTag ? new URL('./', scriptTag.src).href : 'https://ayudas.bendi.dev/';
-  var ROUTES = { questionnaire: '', mayores: 'mayores/', mapa: 'mapa/', catalogo: 'catalogo/' };
-  var TITLES = { questionnaire: 'Qué ayudas te pueden tocar', mayores: 'Ayudas para personas mayores', mapa: 'Ayudas de tu comunidad', catalogo: 'Todas las ayudas' };
+  var ROUTES = { cuestionario: '', mayores: 'mayores/', mapa: 'mapa/', catalogo: 'catalogo/' };
+  var TITLES = { cuestionario: 'Qué ayudas te pueden tocar', mayores: 'Ayudas para personas mayores', mapa: 'Ayudas de tu comunidad', catalogo: 'Todas las ayudas' };
   var frames = [];
   document.querySelectorAll('[data-ayudas]').forEach(function (box) {
     if (box.querySelector('iframe')) return;
@@ -21,9 +21,9 @@
     frames.push(f);
   });
   addEventListener('message', function (e) {
-    if (!e.data || e.data.benefits !== 'altura' || typeof e.data.height !== 'number') return;
+    if (!e.data || e.data.ayudas !== 'altura' || typeof e.data.altura !== 'number') return;
     frames.forEach(function (f) {
-      if (f.contentWindow === e.source) f.style.height = Math.min(Math.max(e.data.height, 400), 20000) + 'px';
+      if (f.contentWindow === e.source) f.style.height = Math.min(Math.max(e.data.altura, 400), 20000) + 'px';
     });
   });
 })();
