@@ -38,7 +38,7 @@ jobs:
       - name: Preparar la web
         run: |
           mkdir -p _site
-          cp -r index.html 404.html catalogo fuentes assets vendor robots.txt sitemap.xml .nojekyll _site/
+          cp -r index.html 404.html mayores catalogo fuentes assets vendor robots.txt sitemap.xml .nojekyll _site/
           # Versión en estilos y scripts: al publicar, nadie mezcla HTML nuevo con CSS o JS viejos
           v="${GITHUB_SHA::8}"
           find _site -name '*.html' -exec sed -i -E "s#(href=\"[^\"]+\.css)\"#\1?v=$v\"#g; s#(src=\"[^\"]+\.js)\"#\1?v=$v\"#g" {} +

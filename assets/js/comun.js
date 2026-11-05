@@ -35,3 +35,19 @@ for (const a of document.querySelectorAll('a[data-aviso]')) {
   u.searchParams.set('body', p.cuerpo.join('\n'));
   a.href = u.href;
 }
+
+// Letra grande y lectura fácil: se recuerda en este navegador (no es un dato personal)
+const botonFacil = document.getElementById('facil');
+if (botonFacil) {
+  const pintarFacil = () => botonFacil.setAttribute('aria-pressed', String('facil' in document.documentElement.dataset));
+  pintarFacil();
+  botonFacil.addEventListener('click', () => {
+    const activo = !('facil' in document.documentElement.dataset);
+    if (activo) document.documentElement.dataset.facil = '';
+    else delete document.documentElement.dataset.facil;
+    try {
+      localStorage.setItem('ayudas:facil', activo ? '1' : '0');
+    } catch {}
+    pintarFacil();
+  });
+}

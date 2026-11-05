@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ayudas para personas mayores · ayudas</title>
+  <meta name="description" content="Ayudas para personas mayores explicadas fácil: pensiones, dependencia, teleasistencia, luz, medicinas. Preguntas sencillas y letra grande.">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://ayudas.bendi.dev/mayores/">
+  <meta name="theme-color" content="#f3f1ec" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#12161e" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="../vendor/fuentes/archivo.css">
+  <link rel="stylesheet" href="../assets/css/estilos.css">
+  <script>try{if(localStorage.getItem('ayudas:facil')==='1')document.documentElement.dataset.facil=''}catch(e){}</script>
+</head>
+<body class="pagina-mayores">
+  <header class="envoltorio cabecera">
+    <a class="marca" href="../" aria-label="ayudas, inicio">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <circle class="aro" cx="32" cy="32" r="19.5" fill="none" stroke-width="13"/>
+        <circle class="bandas" cx="32" cy="32" r="19.5" fill="none" stroke-width="13" stroke-dasharray="15.32 15.31" stroke-dashoffset="7.66"/>
+      </svg>
+      <span>ayudas</span>
+    </a>
+    <nav class="nav" aria-label="Secciones">
+      <a href="../"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z M5.6 5.6l3.6 3.6 M14.8 14.8l3.6 3.6 M18.4 5.6l-3.6 3.6 M9.2 14.8l-3.6 3.6"/></svg><span>Tus ayudas</span></a>
+      <a href="../mayores/" aria-current="page"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z M9 21l2-6 M11 15l1-6 3 3 M12 9l-3 3 M17 12v9 M17 12a1.5 1.5 0 0 0-3 0"/></svg><span>Mayores</span></a>
+      <a href="../catalogo/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6h12 M8 12h12 M8 18h12 M4 6h.01 M4 12h.01 M4 18h.01"/></svg><span>Todas las ayudas</span></a>
+      <a href="../fuentes/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2Z M4 20a2 2 0 0 0 2 2h13v-4"/></svg><span>Fuentes</span></a>
+    </nav>
+  </header>
+  <div class="envoltorio barra">
+    <a class="boton urgente" href="../#ayuda-hoy">Necesito ayuda hoy</a>
+    <button type="button" class="boton secundario" id="facil" aria-pressed="false">Letra grande y fácil</button>
+  </div>
+
+  <main class="envoltorio">
+    <section id="bienvenida" aria-labelledby="titular">
+      <h1 class="titular" id="titular">Ayudas para personas mayores.</h1>
+      <p class="entradilla">Te hacemos unas preguntas sencillas.</p>
+      <p class="entradilla">Una pregunta cada vez.</p>
+      <p class="entradilla">Al final te decimos qué ayudas puedes pedir y cómo se piden, paso a paso.</p>
+      <ul class="tranquilo">
+        <li>Tarda unos 3 minutos.</li>
+        <li>No hace falta escribir: solo pulsar botones.</li>
+        <li>No pedimos tu nombre ni tu DNI.</li>
+        <li>Puede ayudarte un familiar o un vecino.</li>
+      </ul>
+      <div class="navegar">
+        <button type="button" class="boton grande" id="empezar">Empezar</button>
+        <button type="button" class="escuchar" data-escuchar="bienvenida"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9Z M16.5 8.5a5 5 0 0 1 0 7 M19 6a8.5 8.5 0 0 1 0 12"/></svg> Escuchar</button>
+      </div>
+    </section>
+
+    <section class="asistente" id="asistente" aria-live="polite" hidden></section>
+    <section class="resultado-mayores" id="resultado" hidden></section>
+  </main>
+
+  <footer class="envoltorio pie">
+    <div class="apoyo">
+      <span class="apoyo-corazon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 16 16"><path d="M8 14.2 6.9 13.2C3 9.7.5 7.4.5 4.6.5 2.3 2.3.5 4.6.5c1.3 0 2.5.6 3.4 1.6C8.9 1.1 10.1.5 11.4.5c2.3 0 4.1 1.8 4.1 4.1 0 2.8-2.5 5.1-6.4 8.6Z"/></svg></span>
+      <div class="apoyo-texto">
+        <p class="apoyo-titulo">¿Te sirve ayudas?</p>
+        <p>Es gratis, sin anuncios ni cookies. Si te es útil y quieres que siga creciendo, puedes apoyarla.</p>
+      </div>
+      <a class="apoyo-boton" href="https://github.com/sponsors/serbenda" rel="noopener">Apoyar en GitHub Sponsors</a>
+    </div>
+    <p>Web sin anuncios ni cookies, con datos oficiales. <a href="../fuentes/">Fuentes y condiciones</a>. <a href="../fuentes/#t-error">¿Ves un error o falta una ayuda?</a> Hermana de <a href="https://hucha.bendi.dev/">hucha</a> y <a href="https://bolsillo.bendi.dev/">bolsillo</a>.</p>
+  </footer>
+
+  <script type="module" src="../assets/js/mayores.js"></script>
+  <script type="module" src="../assets/js/comun.js"></script>
+</body>
+</html>

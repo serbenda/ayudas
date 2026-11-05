@@ -1,10 +1,14 @@
 // Portada: el cuestionario por pasos y la lista de ayudas que salen.
 // Nada se envía: las respuestas solo viven en esta página (y en el navegador si marcas «recordar»).
 
-import { evaluar, perfilVacio, totalHijos } from './reglas.js';
-import { AYUDAS, POR_ID, CATEGORIAS, COMUNIDADES, enlaceDe } from './ayudas.js';
+import { evaluar, perfilVacio, totalHijos, porDondeEmpezar } from './reglas.js';
+import { AYUDAS, POR_ID, CATEGORIAS, COMUNIDADES } from './ayudas.js';
+import { papelesPara, tramiteDe } from './tramites.js';
+import { DOCUMENTOS } from './guia.js';
 import { leerNumero } from './formato.js';
 import { icono } from './iconos.js';
+import { tarjeta, botonTelefono, esc } from './tarjeta.js';
+import { pintarEvolucion } from './evolucion.js';
 
 const form = document.getElementById('cuestionario');
 const pasos = [...form.querySelectorAll('.paso')];
@@ -17,6 +21,8 @@ const lista = document.getElementById('lista');
 const recordar = document.getElementById('recordar');
 const personasCaja = document.getElementById('personas');
 const CLAVE = 'ayudas:respuestas';
+const CLAVE_SEGUIR = 'ayudas:seguimiento';
+let seguimiento = {};
 const ORDEN = Object.fromEntries(AYUDAS.map((a, i) => [a.id, i]));
 
 let pasoActual = 1;
@@ -132,6 +138,8 @@ export function leerPerfil() {
   const p = perfilVacio();
   p.edad = valor('edad') === '' ? null : entero('edad', null);
   p.ccaa = valor('ccaa') || null;
+  p.madridCapital = p.ccaa === 'madrid' ? siNo('madridCapital') : null;
+  p.residencia = radio('residencia') || null;
   p.situacion = radio('situacion');
   p.pareja = radio('pareja') === 'si';
   p.adultos = Math.max(1, entero('adultos', 1));
@@ -167,6 +175,7 @@ export function leerPerfil() {
   p.hijosTenidos = contributiva ? entero('hijosTenidos') : 0;
   p.cotizado15 = visible(form.querySelector('[name="cotizado15"]')) ? siNo('cotizado15') : null;
   p.cotizadoUnAño = visible(form.querySelector('[name="cotizadoUnAño"]')) ? siNo('cotizadoUnAño') : null;
+  p.urgencias = Object.fromEntries(['comida', 'casaRiesgo', 'sinCasa', 'violencia', 'soledad'].map((k) => [k, form.elements[`u-${k}`].checked]));
   return p;
 }
 
@@ -177,6 +186,7 @@ function actualizarCondiciones() {
   const enParo = p.situacion === 'paro-cobrando' || p.situacion === 'paro-sin';
   const pideCotizado = (enParo && (p.edad ?? 0) >= 50) || (p.pension === 'no' && (p.edad ?? 0) >= 58);
   const reglas = {
+    madrid: p.ccaa === 'madrid',
     monoparental: !p.pareja && n > 0,
     'familia-numerosa': n >= 2 || (n >= 1 && p.bebe),
     'ingresos-propios': p.adultos > 1 || p.pareja,
@@ -215,37 +225,12 @@ function alCambiar() {
 // ── Resultados ──────────────────────────────────────────────────────────
 function mostrarResultados() {
   actualizarCondiciones();
+  pintarTelefonos();
   pintar();
   resultados.hidden = false;
   resultados.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   resultados.focus({ preventScroll: true });
   guardar();
-}
-
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-
-function tarjeta(r, ccaa) {
-  const a = POR_ID[r.id];
-  const enlace = enlaceDe(a, ccaa);
-  const etiqueta = r.estado === 'si' ? 'Cumples lo principal' : 'Mira si cumples';
-  const boton = enlace.url ? `<a class="boton" href="${esc(enlace.url)}" rel="noopener" target="_blank">Dónde se pide<span class="oculto"> (${esc(enlace.texto)}, se abre en otra pestaña)</span></a>` : '<span>Se pide en tu comunidad: elige la tuya arriba para ver el enlace.</span>';
-  return `
-  <li>
-    <details class="ayuda" data-estado="${r.estado}">
-      <summary>
-        <span class="ayuda-nombre">${esc(a.nombre)}</span>
-        <p class="ayuda-importe">${r.importe?.texto ? esc(r.importe.texto) : ''}</p>
-        <p class="ayuda-resumen"><span class="estado ${r.estado}">${etiqueta}</span> ${esc(a.resumen)}</p>
-      </summary>
-      <div class="ayuda-detalle">
-        ${r.motivos.length ? `<div><h4>Por qué te sale</h4><ul class="motivos">${r.motivos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
-        ${r.comprobar.length ? `<div><h4>Qué falta comprobar</h4><ul class="comprobar">${r.comprobar.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
-        <div><h4>Cuánto da en 2026</h4><p>${esc(a.cuantia)}</p></div>
-        <div><h4>Requisitos principales</h4><ul>${a.requisitos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>
-        <p class="ayuda-pie"><span>${esc(a.ambito)} · ${esc(a.organismo)}</span>${boton}</p>
-      </div>
-    </details>
-  </li>`;
 }
 
 function pintar() {
@@ -256,8 +241,26 @@ function pintar() {
   document.getElementById('n-si').firstChild.textContent = nSi;
   document.getElementById('n-quizas').firstChild.textContent = nQuizas;
   document.getElementById('resultados-texto').textContent = todos.length
-    ? `Con lo que has contestado salen ${todos.length} ${todos.length === 1 ? 'ayuda' : 'ayudas'}. Pulsa cada una para ver por qué, cuánto da y dónde se pide.`
+    ? `Con lo que has contestado salen ${todos.length} ${todos.length === 1 ? 'ayuda' : 'ayudas'}. Pulsa cada una para ver cómo se pide, paso a paso.`
     : 'Con lo que has contestado no sale ninguna ayuda. Prueba a completar más preguntas: los ingresos y quién vive contigo cambian mucho el resultado.';
+
+  // Por dónde empezar
+  const primeras = porDondeEmpezar(todos);
+  const empezar = document.getElementById('empezar');
+  empezar.hidden = !primeras.length;
+  document.getElementById('empezar-lista').innerHTML = primeras
+    .map((r) => {
+      const t = tramiteDe(r.id, p.ccaa);
+      return `<li><a href="#ayuda-${r.id}" data-abrir="${r.id}"><strong>${esc(POR_ID[r.id].nombre)}</strong></a><span>${esc(t.pasos[0])}</span></li>`;
+    })
+    .join('');
+
+  // Papeles de todas las ayudas que salen
+  const papeles = papelesPara(todos.map((r) => r.id));
+  document.getElementById('papeles-bloque').hidden = !papeles.length;
+  document.getElementById('papeles').innerHTML = papeles
+    .map(({ doc, ayudas }) => `<li><strong>${esc(DOCUMENTOS[doc].nombre)}</strong>. ${esc(DOCUMENTOS[doc].ayuda)} <small>Para: ${ayudas.map((id) => esc(POR_ID[id].nombre)).join(', ')}.</small></li>`)
+    .join('');
 
   const visibles = todos.filter((r) => filtro === 'todas' || r.estado === filtro);
   if (!visibles.length) {
@@ -267,12 +270,31 @@ function pintar() {
   lista.innerHTML = CATEGORIAS.map((c) => {
     const delGrupo = visibles.filter((r) => POR_ID[r.id].categoria === c.id);
     if (!delGrupo.length) return '';
-    return `<section class="grupo" aria-labelledby="g-${c.id}">
+    return `<section class="grupo grupo-${c.id}" aria-labelledby="g-${c.id}">
       <h3 class="grupo-titulo" id="g-${c.id}"><span class="insignia">${icono(c.icono)}</span>${esc(c.nombre)}</h3>
-      <ul class="lista-ayudas">${delGrupo.map((r) => tarjeta(r, p.ccaa)).join('')}</ul>
+      <ul class="lista-ayudas">${delGrupo.map((r) => tarjeta(r.id, { resultado: r, ccaa: p.ccaa, seguimiento: seguimiento[r.id] ?? '' })).join('')}</ul>
     </section>`;
   }).join('');
 }
+
+// Abrir una ayuda desde «Por dónde empezar»
+document.getElementById('empezar-lista').addEventListener('click', (e) => {
+  const a = e.target.closest('[data-abrir]');
+  if (!a) return;
+  const d = document.querySelector(`#ayuda-${a.dataset.abrir} details`);
+  if (d) d.open = true;
+});
+
+// Seguimiento: cómo va cada ayuda
+lista.addEventListener('change', (e) => {
+  const s = e.target.closest('[data-seguir]');
+  if (!s) return;
+  if (s.value) seguimiento[s.dataset.seguir] = s.value;
+  else delete seguimiento[s.dataset.seguir];
+  guardar();
+  pintar();
+  document.querySelector(`#ayuda-${s.dataset.seguir} details`)?.setAttribute('open', '');
+});
 
 for (const b of document.querySelectorAll('[data-filtro]')) {
   b.addEventListener('click', () => {
@@ -289,13 +311,17 @@ document.getElementById('borrar').addEventListener('click', () => {
   personasCaja.replaceChildren();
   monoparentalTocado = false;
   visitados = new Set([1]);
-  try { localStorage.removeItem(CLAVE); } catch {}
+  seguimiento = {};
+  try {
+    localStorage.removeItem(CLAVE);
+    localStorage.removeItem(CLAVE_SEGUIR);
+  } catch {}
   resultados.hidden = true;
   actualizarCondiciones();
   irA(1);
 });
 // Al imprimir, todas las ayudas abiertas
-addEventListener('beforeprint', () => lista.querySelectorAll('details').forEach((d) => (d.open = true)));
+addEventListener('beforeprint', () => resultados.querySelectorAll('details').forEach((d) => (d.open = true)));
 
 // ── Recordar respuestas (solo si se marca) ──────────────────────────────
 function respuestas() {
@@ -331,44 +357,63 @@ function rellenar(datos) {
 
 function guardar() {
   try {
-    if (recordar.checked) localStorage.setItem(CLAVE, JSON.stringify(respuestas()));
+    if (recordar.checked) {
+      localStorage.setItem(CLAVE, JSON.stringify(respuestas()));
+      localStorage.setItem(CLAVE_SEGUIR, JSON.stringify(seguimiento));
+    }
   } catch {}
 }
 
 recordar.addEventListener('change', () => {
   try {
     if (recordar.checked) guardar();
-    else localStorage.removeItem(CLAVE);
+    else {
+      localStorage.removeItem(CLAVE);
+      localStorage.removeItem(CLAVE_SEGUIR);
+    }
   } catch {}
 });
 
 // ── Ejemplos ────────────────────────────────────────────────────────────
 const EJEMPLOS = {
-  familia: { edad: '29', ccaa: 'madrid', situacion: 'cuenta-ajena', pareja: 'si', adultos: '2', 'hijos-de3a5': '1', bebe: true, ingresosHogar: '28.000', patrimonio: 'bajo', vivienda: 'alquiler' },
-  jubilada: { edad: '74', ccaa: 'andalucia', situacion: 'pensionista', pareja: 'no', adultos: '1', viudo: true, ingresosHogar: '10.500', patrimonio: 'bajo', vivienda: 'propia', pension: 'viudedad', pensionMes: '720', pensionDesde2021: 'si', hijosTenidos: '3' },
+  familia: { edad: '29', ccaa: 'madrid', madridCapital: 'si', residencia: 'si', situacion: 'cuenta-ajena', pareja: 'si', adultos: '2', 'hijos-de3a5': '1', bebe: true, ingresosHogar: '28.000', patrimonio: 'bajo', vivienda: 'alquiler' },
+  jubilada: { edad: '74', ccaa: 'madrid', madridCapital: 'si', residencia: 'si', 'u-soledad': true, situacion: 'pensionista', pareja: 'no', adultos: '1', viudo: true, ingresosHogar: '10.500', patrimonio: 'bajo', vivienda: 'propia', pension: 'viudedad', pensionMes: '720', pensionDesde2021: 'si', hijosTenidos: '3' },
   cuidador: {
-    edad: '52', ccaa: 'castilla-leon', situacion: 'cuenta-ajena', pareja: 'si', adultos: '3', 'hijos-de6a17': '1', ingresosHogar: '38.000', ingresosPropios: '21.000', vivienda: 'hipoteca',
+    edad: '52', ccaa: 'castilla-leon', residencia: 'si', situacion: 'cuenta-ajena', pareja: 'si', adultos: '3', 'hijos-de6a17': '1', ingresosHogar: '38.000', ingresosPropios: '21.000', vivienda: 'hipoteca',
     numCuidados: '1', 'p1-relacion': 'padre', 'p1-edad': '84', 'p1-discapacidad': '65', 'p1-dependencia': '2', 'p1-convive': true, 'p1-cuidoYo': true,
   },
-  paro: { edad: '55', ccaa: 'valencia', situacion: 'paro-sin', pareja: 'si', adultos: '2', ingresosHogar: '9.000', ingresosPropios: '0', patrimonio: 'bajo', vivienda: 'alquiler', cotizado15: 'si', cotizadoUnAño: 'no' },
+  paro: { edad: '55', ccaa: 'valencia', residencia: 'si', 'u-comida': true, situacion: 'paro-sin', pareja: 'si', adultos: '2', ingresosHogar: '9.000', ingresosPropios: '0', patrimonio: 'bajo', vivienda: 'alquiler', cotizado15: 'si', cotizadoUnAño: 'no' },
 };
 
 for (const b of document.querySelectorAll('[data-ejemplo]')) {
   b.addEventListener('click', () => {
     rellenar(EJEMPLOS[b.dataset.ejemplo]);
-    visitados = new Set([1, 2, 3, 4, 5]);
+    visitados = new Set([1, 2, 3, 4, 5, 6]);
     irA(1, { foco: false });
     mostrarResultados();
   });
 }
+
+// ── Necesito ayuda hoy ──────────────────────────────────────────────────
+function pintarTelefonos() {
+  const madrid = form.ccaa.value === 'madrid';
+  const claves = ['emergencias', 'violencia', 'crisis', 'cruzRoja', ...(madrid ? ['madrid012', 'linea010', 'mayoresMadrid'] : []), 'imv'];
+  document.getElementById('telefonos-hoy').innerHTML = claves.map(botonTelefono).join('');
+}
+form.ccaa.addEventListener('change', pintarTelefonos);
 
 // ── Arranque ────────────────────────────────────────────────────────────
 try {
   const guardadas = localStorage.getItem(CLAVE);
   if (guardadas) {
     rellenar(JSON.parse(guardadas));
+    seguimiento = JSON.parse(localStorage.getItem(CLAVE_SEGUIR) ?? '{}');
     recordar.checked = true;
   }
 } catch {}
 actualizarCondiciones();
+pintarTelefonos();
+pintarEvolucion(document.getElementById('evolucion'));
+document.getElementById('n-ayudas').textContent = AYUDAS.length;
+for (const el of document.querySelectorAll('[data-icono]')) el.innerHTML = icono(el.dataset.icono);
 irA(1, { foco: false });
