@@ -269,3 +269,32 @@ test('every page has a Content-Security-Policy and breaks none of it', async () 
     await context.close();
   }
 });
+
+test('high contrast and large text can be switched off again', async () => {
+  const { page, context } = await openPage('');
+  for (const [id, attr] of [
+    ['#contrast', 'data-contrast'],
+    ['#easy', 'data-easy'],
+  ]) {
+    await page.click(id);
+    assert.equal(await page.locator('html').getAttribute(attr), '', `${attr} on`);
+    assert.equal(await page.locator(id).getAttribute('aria-pressed'), 'true');
+    await page.click(id);
+    assert.equal(await page.locator('html').getAttribute(attr), null, `${attr} off`);
+    assert.equal(await page.locator(id).getAttribute('aria-pressed'), 'false');
+  }
+  await context.close();
+});
+
+test('seniors: back, skip and change answers work', async () => {
+  const { page, context } = await openPage('mayores/');
+  await page.click('#start');
+  const question = () => page.locator('#question').innerText();
+  const first = await question();
+  await page.click('#assistant [data-skip]');
+  const second = await question();
+  assert.notEqual(second, first, 'skip moves on');
+  await page.click('#assistant [data-back]');
+  assert.equal(await question(), first, 'back returns');
+  await context.close();
+});

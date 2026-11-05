@@ -86,7 +86,7 @@ function personTemplate(i) {
         <select name="p${n}-relationship">
           <option value="padre">Mi padre o mi madre</option>
           <option value="hijo">Mi hijo o hija</option>
-          <option value="partner">Mi pareja</option>
+          <option value="pareja">Mi pareja</option>
           <option value="otro">Otro familiar</option>
         </select>
       </label>

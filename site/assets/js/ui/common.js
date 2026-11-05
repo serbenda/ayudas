@@ -49,10 +49,10 @@ for (const a of document.querySelectorAll('a[data-notice]')) {
 // Large text and easy reading: remembered in this browser (it is not personal data)
 const easyButton = document.getElementById('easy');
 if (easyButton) {
-  const renderEasy = () => easyButton.setAttribute('aria-pressed', String('facil' in document.documentElement.dataset));
+  const renderEasy = () => easyButton.setAttribute('aria-pressed', String('easy' in document.documentElement.dataset));
   renderEasy();
   easyButton.addEventListener('click', () => {
-    const active = !('facil' in document.documentElement.dataset);
+    const active = !('easy' in document.documentElement.dataset);
     if (active) document.documentElement.dataset.easy = '';
     else delete document.documentElement.dataset.easy;
     try {
@@ -65,10 +65,10 @@ if (easyButton) {
 // High contrast: black on white (or the other way round in dark mode), thick borders and underlined links
 const contrastButton = document.getElementById('contrast');
 if (contrastButton) {
-  const render = () => contrastButton.setAttribute('aria-pressed', String('contraste' in document.documentElement.dataset));
+  const render = () => contrastButton.setAttribute('aria-pressed', String('contrast' in document.documentElement.dataset));
   render();
   contrastButton.addEventListener('click', () => {
-    const active = !('contraste' in document.documentElement.dataset);
+    const active = !('contrast' in document.documentElement.dataset);
     if (active) document.documentElement.dataset.contrast = '';
     else delete document.documentElement.dataset.contrast;
     try {
