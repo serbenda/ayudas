@@ -117,3 +117,16 @@ if ('widget' in document.documentElement.dataset) {
     addEventListener('load', avisar);
   }
 }
+
+// Menús de la barra (Voz e Idioma): solo uno abierto, y se cierran al pulsar fuera o con Escape
+const menus = [...document.querySelectorAll('.ajuste-voz, .ajuste-idioma')];
+for (const m of menus) m.addEventListener('toggle', () => m.open && menus.forEach((o) => o !== m && (o.open = false)));
+document.addEventListener('click', (e) => menus.forEach((m) => m.open && !m.contains(e.target) && (m.open = false)));
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  const abierto = menus.find((m) => m.open);
+  if (abierto) {
+    abierto.open = false;
+    abierto.querySelector('summary').focus();
+  }
+});
