@@ -10,7 +10,7 @@ import { RENTA_CCAA } from '../assets/js/comunidades.js';
 import { panelDe } from '../assets/js/panel-ccaa.js';
 import { IDIOMAS, FRASE } from './idiomas.mjs';
 import { icono } from '../assets/js/iconos.js';
-import { enlacesIdiomas } from '../assets/js/banderas.js';
+import { enlacesIdiomas, selectorIdioma } from '../assets/js/banderas.js';
 
 const SALIDA = process.argv[2] ?? '_site';
 const WEB = 'https://ayudas.bendi.dev';
@@ -113,7 +113,7 @@ for (const [codigo, t] of Object.entries(IDIOMAS)) {
     .replace('<span>Todas las ayudas</span>', `<span>${esc(t.nav.catalogo)}</span>`)
     .replace('<span>Mapa</span>', `<span>${esc(t.nav.mapa)}</span>`)
     .replace('<span>Fuentes</span>', `<span>${esc(t.nav.fuentes)}</span>`)
-    .replace(/<div class="envoltorio barra">[\s\S]*?<\/div>\n/, '')
+    .replace(/<div class="envoltorio barra">[\s\S]*?\n  <\/div>\n/, `<div class="envoltorio barra barra-guia">\n    ${selectorIdioma('/', codigo, t.idioma)}\n  </div>\n`)
     .replace(/<footer class="envoltorio pie">[\s\S]*?<\/footer>/, `<footer class="envoltorio pie" lang="${t.lang}">
     <p>${esc(t.nota)} <a href="/fuentes/#t-error">${esc(t.aviso)}</a>.</p>
     <nav class="idiomas-pie" aria-label="${esc(t.otros)}"><p>${esc(t.otros)}</p>${enlacesIdiomas('/', codigo)}</nav>

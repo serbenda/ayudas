@@ -15,6 +15,7 @@ export const FRASE = 'Hola. No hablo bien español. Necesito ayuda para pedir ay
 
 export const IDIOMAS = {
   ca: {
+    idioma: 'Idioma',
     escuchar: 'Escolta aquesta guia', escucharFrase: 'Escolta-la en castellà',
     nombre: 'Català', lang: 'ca', dir: 'ltr',
     titulo: 'Ajudes públiques a Espanya: guia per començar',
@@ -50,6 +51,7 @@ export const IDIOMAS = {
     otros: 'Altres idiomes',
   },
   va: {
+    idioma: 'Idioma',
     escuchar: 'Escolta esta guia', escucharFrase: 'Escolta-la en castellà',
     nombre: 'Valencià', lang: 'ca-ES-valencia', dir: 'ltr',
     titulo: 'Ajudes públiques a Espanya: guia per a començar',
@@ -85,6 +87,7 @@ export const IDIOMAS = {
     otros: 'Altres idiomes',
   },
   gl: {
+    idioma: 'Idioma',
     escuchar: 'Escoita esta guía', escucharFrase: 'Escóitaa en castelán',
     nombre: 'Galego', lang: 'gl', dir: 'ltr',
     titulo: 'Axudas públicas en España: guía para comezar',
@@ -120,6 +123,7 @@ export const IDIOMAS = {
     otros: 'Outros idiomas',
   },
   eu: {
+    idioma: 'Hizkuntza',
     escuchar: 'Entzun gida hau', escucharFrase: 'Entzun gaztelaniaz',
     nombre: 'Euskara', lang: 'eu', dir: 'ltr',
     titulo: 'Laguntza publikoak Espainian: hasteko gida',
@@ -155,6 +159,7 @@ export const IDIOMAS = {
     otros: 'Beste hizkuntza batzuk',
   },
   en: {
+    idioma: 'Language',
     escuchar: 'Listen to this guide', escucharFrase: 'Play it in Spanish',
     nombre: 'English', lang: 'en', dir: 'ltr',
     titulo: 'Public benefits in Spain: a starter guide',
