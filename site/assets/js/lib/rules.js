@@ -69,7 +69,10 @@ const hasCountableIncome = (p) => works(p) || p.situation === 'paro-cobrando' ||
 
 /** Everyone in the household with their circumstances: you and the people you care for*/
 function people(p) {
-  return [{ who: 'tú', relationship: 'yo', age: p.age, disability: p.disability, dependency: p.dependency, livesWith: true, iCare: false }, ...p.caredFor.map((c, i) => ({ who: personName(c, i), ...c }))];
+  return [
+    { who: 'tú', relationship: 'yo', age: p.age, disability: p.disability, dependency: p.dependency, livesWith: true, iCare: false },
+    ...p.caredFor.map((c, i) => ({ who: personName(c, i), ...c })),
+  ];
 }
 
 function personName(c, i) {
@@ -133,7 +136,9 @@ const RULES = {
       check.push('Tenéis ahorros o bienes: el límite de patrimonio sube con cada persona del hogar, compruébalo en el simulador.');
     }
     if (p.highWealth == null) check.push('Que vuestro patrimonio (sin contar la casa) no pase del límite.');
-    const reasons = [`Para vuestro hogar (${members(p)} ${members(p) === 1 ? 'persona' : 'personas'}${p.singleParent ? ', monoparental' : ''}) la renta garantizada es de ${monthly(rg)} (${yearly(annual)}).`];
+    const reasons = [
+      `Para vuestro hogar (${members(p)} ${members(p) === 1 ? 'persona' : 'personas'}${p.singleParent ? ', monoparental' : ''}) la renta garantizada es de ${monthly(rg)} (${yearly(annual)}).`,
+    ];
     if (p.householdIncome == null) {
       return { status: 'quizas', reasons, check: ['Depende de los ingresos de tu hogar, que no has puesto.', ...check], payment: { monthly: rg, text: `Hasta ${monthly(rg)}` } };
     }
@@ -155,7 +160,12 @@ const RULES = {
     if (p.householdIncome == null) return { status: 'quizas', reasons, check: ['Depende de los ingresos del hogar.', ...check], payment };
     if (p.householdIncome <= annual) return { status: 'si', reasons: [...reasons, `Vuestros ingresos están por debajo de la renta garantizada del IMV (${yearly(annual)}).`], check, payment };
     if (p.householdIncome <= annual * FIGURES.capi.incomeTimesLimit) {
-      return { status: 'quizas', reasons: [...reasons, 'Vuestros ingresos están en la franja en la que se puede cobrar (entera o en parte).'], check: ['El límite exacto de ingresos de tu tipo de hogar: el simulador de la Seguridad Social lo calcula.', ...check], payment };
+      return {
+        status: 'quizas',
+        reasons: [...reasons, 'Vuestros ingresos están en la franja en la que se puede cobrar (entera o en parte).'],
+        check: ['El límite exacto de ingresos de tu tipo de hogar: el simulador de la Seguridad Social lo calcula.', ...check],
+        payment,
+      };
     }
     return null;
   },
@@ -167,10 +177,20 @@ const RULES = {
     const payment = r?.payment ? { text: `Hasta ${monthly(r.payment)} (una persona)` } : undefined;
     const annual = guaranteedIncome(p) * 12;
     if (p.householdIncome != null && p.householdIncome < annual) {
-      return { status: 'quizas', reasons: ['Vuestros ingresos son bajos y tu comunidad puede tener una renta propia que complementa el IMV.', ...(name ? [name] : [])], check: ['Los requisitos de empadronamiento de tu comunidad.', ...(r?.note ? [r.note] : [])], payment };
+      return {
+        status: 'quizas',
+        reasons: ['Vuestros ingresos son bajos y tu comunidad puede tener una renta propia que complementa el IMV.', ...(name ? [name] : [])],
+        check: ['Los requisitos de empadronamiento de tu comunidad.', ...(r?.note ? [r.note] : [])],
+        payment,
+      };
     }
     if (p.householdIncome == null && p.situation === 'paro-sin') {
-      return { status: 'quizas', reasons: ['Estás en paro sin cobrar prestación.', ...(name ? [name] : [])], check: ['Los ingresos del hogar y el empadronamiento.', ...(r?.note ? [r.note] : [])], payment };
+      return {
+        status: 'quizas',
+        reasons: ['Estás en paro sin cobrar prestación.', ...(name ? [name] : [])],
+        check: ['Los ingresos del hogar y el empadronamiento.', ...(r?.note ? [r.note] : [])],
+        payment,
+      };
     }
     return null;
   },
@@ -242,7 +262,12 @@ const RULES = {
     if (p.singleParent) reasons.push('Sois una familia monoparental.');
     if (WITH_65.includes(p.disability)) reasons.push('Tienes una discapacidad del 65 % o más (cuenta si eres la madre).');
     if (!reasons.length) return null;
-    return { status: 'quizas', reasons, check: ['Que los ingresos del hogar no pasen del límite de la Seguridad Social.'], payment: { single: FIGURES.nacimiento.oneOffPayment, text: `${euros(FIGURES.nacimiento.oneOffPayment)} una vez` } };
+    return {
+      status: 'quizas',
+      reasons,
+      check: ['Que los ingresos del hogar no pasen del límite de la Seguridad Social.'],
+      payment: { single: FIGURES.nacimiento.oneOffPayment, text: `${euros(FIGURES.nacimiento.oneOffPayment)} una vez` },
+    };
   },
 
   'madrid-natalidad'(p) {
@@ -269,13 +294,18 @@ const RULES = {
       return { status: 'si', reasons: [`Tenéis ${n} hijos ${because}.`], check: [] };
     }
     if (n === 2 && p.baby) return { status: 'quizas', reasons: ['Con el bebé tendréis 3 hijos.'], check: ['Se pide cuando nazca.'] };
-    if (n === 2 && p.singleParent) return { status: 'quizas', reasons: ['Eres una familia monoparental con 2 hijos.'], check: ['Algunas comunidades reconocen como numerosa a la monoparental con 2 hijos.'] };
+    if (n === 2 && p.singleParent)
+      return { status: 'quizas', reasons: ['Eres una familia monoparental con 2 hijos.'], check: ['Algunas comunidades reconocen como numerosa a la monoparental con 2 hijos.'] };
     return null;
   },
 
   cume(p) {
     if (!p.childSeriousIllness || !works(p)) return null;
-    return { status: 'si', reasons: ['Tu hijo o hija tiene una enfermedad grave y trabajas.'], check: ['Que ambos progenitores trabajen (salvo familia monoparental).', 'Reducir la jornada al menos un 50 %.'] };
+    return {
+      status: 'si',
+      reasons: ['Tu hijo o hija tiene una enfermedad grave y trabajas.'],
+      check: ['Que ambos progenitores trabajen (salvo familia monoparental).', 'Reducir la jornada al menos un 50 %.'],
+    };
   },
 
   'escuela-infantil'(p) {
@@ -285,7 +315,12 @@ const RULES = {
 
   orfandad(p) {
     if (!p.widowed || totalChildren(p) === 0) return null;
-    return { status: 'quizas', reasons: ['Has enviudado y tienes hijos menores.'], check: ['Que tu pareja tuviera cotización o pensión.'], payment: { text: `Mínimo ${monthly(FIGURES.minimums.orfandad)} por hijo` } };
+    return {
+      status: 'quizas',
+      reasons: ['Has enviudado y tienes hijos menores.'],
+      check: ['Que tu pareja tuviera cotización o pensión.'],
+      payment: { text: `Mínimo ${monthly(FIGURES.minimums.orfandad)} por hijo` },
+    };
   },
 
   'pnc-jubilacion'(p) {
@@ -293,27 +328,54 @@ const RULES = {
     const { annual, perMonth } = FIGURES.pnc;
     const check = ['Haber vivido en España 10 años desde los 16.'];
     if (members(p) > 1) check.push('Si vives con familia, el límite de ingresos sube y cuentan también los suyos.');
-    if (p.ownIncome == null) return { status: 'quizas', reasons: ['Tienes 65 años o más y no cobras pensión.'], check: ['Depende de tus ingresos.', ...check], payment: { monthly: perMonth, text: `Hasta ${monthly(perMonth)}` } };
+    if (p.ownIncome == null)
+      return {
+        status: 'quizas',
+        reasons: ['Tienes 65 años o más y no cobras pensión.'],
+        check: ['Depende de tus ingresos.', ...check],
+        payment: { monthly: perMonth, text: `Hasta ${monthly(perMonth)}` },
+      };
     if (p.ownIncome >= annual) return null;
     const amount = round2(Math.max((annual - p.ownIncome) / 14, perMonth * 0.25));
-    return { status: 'si', reasons: ['Tienes 65 años o más y no cobras pensión.', `Tus ingresos (${yearly(p.ownIncome)}) no llegan a ${yearly(annual)}.`], check, payment: { monthly: amount, text: `≈ ${monthly(amount)} (14 pagas)` } };
+    return {
+      status: 'si',
+      reasons: ['Tienes 65 años o más y no cobras pensión.', `Tus ingresos (${yearly(p.ownIncome)}) no llegan a ${yearly(annual)}.`],
+      check,
+      payment: { monthly: amount, text: `≈ ${monthly(amount)} (14 pagas)` },
+    };
   },
 
   'pnc-invalidez'(p) {
     if (!WITH_65.includes(p.disability) || p.age == null || p.age < 18 || p.age >= 65 || p.pension !== 'no') return null;
     const { annual, perMonth } = FIGURES.pnc;
     const check = ['Haber vivido en España 5 años.'];
-    if (p.ownIncome == null) return { status: 'quizas', reasons: ['Tienes una discapacidad del 65 % o más y no cobras pensión.'], check: ['Depende de tus ingresos.', ...check], payment: { monthly: perMonth, text: `Hasta ${monthly(perMonth)}` } };
+    if (p.ownIncome == null)
+      return {
+        status: 'quizas',
+        reasons: ['Tienes una discapacidad del 65 % o más y no cobras pensión.'],
+        check: ['Depende de tus ingresos.', ...check],
+        payment: { monthly: perMonth, text: `Hasta ${monthly(perMonth)}` },
+      };
     if (p.ownIncome >= annual) return null;
     const amount = round2(Math.max((annual - p.ownIncome) / 14, perMonth * 0.25));
-    return { status: 'si', reasons: ['Tienes una discapacidad del 65 % o más y no cobras pensión.', `Tus ingresos no llegan a ${yearly(annual)}.`], check, payment: { monthly: amount, text: `≈ ${monthly(amount)} (14 pagas)` } };
+    return {
+      status: 'si',
+      reasons: ['Tienes una discapacidad del 65 % o más y no cobras pensión.', `Tus ingresos no llegan a ${yearly(annual)}.`],
+      check,
+      payment: { monthly: amount, text: `≈ ${monthly(amount)} (14 pagas)` },
+    };
   },
 
   'pnc-alquiler'(p) {
     if (p.housing !== 'alquiler') return null;
     const pnc = p.pension === 'pnc' || RULES['pnc-jubilacion'](p)?.status === 'si' || RULES['pnc-invalidez'](p)?.status === 'si';
     if (!pnc) return null;
-    return { status: 'si', reasons: ['Cobras (o te puede corresponder) una pensión no contributiva y vives de alquiler.'], check: ['Ser el titular del contrato y que el casero no sea un familiar cercano.'], payment: { yearly: FIGURES.pnc.annualRent, text: yearly(FIGURES.pnc.annualRent) } };
+    return {
+      status: 'si',
+      reasons: ['Cobras (o te puede corresponder) una pensión no contributiva y vives de alquiler.'],
+      check: ['Ser el titular del contrato y que el casero no sea un familiar cercano.'],
+      payment: { yearly: FIGURES.pnc.annualRent, text: yearly(FIGURES.pnc.annualRent) },
+    };
   },
 
   'complemento-minimos'(p) {
@@ -322,13 +384,19 @@ const RULES = {
     const limit = p.partner ? FIGURES.minimums.incomeLimit.withSpouse : FIGURES.minimums.incomeLimit.withoutSpouse;
     const check = [`Que tus otros ingresos (sin la pensión) no pasen de ${yearly(limit)}.`];
     if (min.withSpouse) check.push(`Si tu cónyuge depende de ti (casi sin ingresos), el mínimo sube a ${monthly(min.withSpouse)}.`);
-    if (p.pensionMonthly == null) return { status: 'quizas', reasons: [`La pensión mínima en tu caso (${min.caseLabel}) es de ${monthly(min.figure)}.`], check: ['Si tu pensión es menor, te la completan.', ...check] };
+    if (p.pensionMonthly == null)
+      return { status: 'quizas', reasons: [`La pensión mínima en tu caso (${min.caseLabel}) es de ${monthly(min.figure)}.`], check: ['Si tu pensión es menor, te la completan.', ...check] };
     if (p.pensionMonthly >= min.figure) {
       if (min.withSpouse && p.pensionMonthly < min.withSpouse) return { status: 'quizas', reasons: [`Con cónyuge a cargo la mínima es ${monthly(min.withSpouse)} y tu pensión es menor.`], check };
       return null;
     }
     const missing = round2(min.figure - p.pensionMonthly);
-    return { status: 'si', reasons: [`Tu pensión (${monthly(p.pensionMonthly)}) está por debajo de la mínima en tu caso (${min.caseLabel}): ${monthly(min.figure)}.`], check, payment: { monthly: missing, text: `≈ ${monthly(missing)} más` } };
+    return {
+      status: 'si',
+      reasons: [`Tu pensión (${monthly(p.pensionMonthly)}) está por debajo de la mínima en tu caso (${min.caseLabel}): ${monthly(min.figure)}.`],
+      check,
+      payment: { monthly: missing, text: `≈ ${monthly(missing)} más` },
+    };
   },
 
   'brecha-genero'(p) {
@@ -348,13 +416,20 @@ const RULES = {
     return {
       status: 'quizas',
       reasons: [`Tienes ${p.age} años y no cobras pensión.`],
-      check: [`En 2026 la edad ordinaria es ${FIGURES.jubilacion.age} (${FIGURES.jubilacion.longAge} con ${FIGURES.jubilacion.longContribution} cotizados).`, 'Mira tu vida laboral y el simulador de pensión en Tu Seguridad Social.'],
+      check: [
+        `En 2026 la edad ordinaria es ${FIGURES.jubilacion.age} (${FIGURES.jubilacion.longAge} con ${FIGURES.jubilacion.longContribution} cotizados).`,
+        'Mira tu vida laboral y el simulador de pensión en Tu Seguridad Social.',
+      ],
     };
   },
 
   viudedad(p) {
     if (!p.widowed || p.pension === 'viudedad') return null;
-    return { status: 'quizas', reasons: ['Has enviudado y no cobras pensión de viudedad.'], check: ['Que estuvierais casados o fuerais pareja de hecho registrada.', 'Que tu pareja tuviera cotización o pensión.'] };
+    return {
+      status: 'quizas',
+      reasons: ['Has enviudado y no cobras pensión de viudedad.'],
+      check: ['Que estuvierais casados o fuerais pareja de hecho registrada.', 'Que tu pareja tuviera cotización o pensión.'],
+    };
   },
 
   'imserso-viajes'(p) {
@@ -368,13 +443,21 @@ const RULES = {
     const eldersYouCareFor = p.caredFor.filter((c) => (c.age ?? 0) >= 65);
     const me = (p.age ?? 0) >= 65 && (p.adults === 1 || (p.age ?? 0) >= 80);
     if (!me && !eldersYouCareFor.length) return null;
-    return { status: 'quizas', reasons: [me ? (p.adults === 1 ? 'Tienes 65 años o más y vives solo o sola.' : 'Tienes 80 años o más.') : 'Cuidas de una persona mayor.'], check: ['Pide cita en los servicios sociales de tu ayuntamiento.'] };
+    return {
+      status: 'quizas',
+      reasons: [me ? (p.adults === 1 ? 'Tienes 65 años o más y vives solo o sola.' : 'Tienes 80 años o más.') : 'Cuidas de una persona mayor.'],
+      check: ['Pide cita en los servicios sociales de tu ayuntamiento.'],
+    };
   },
 
   'dependencia-valoracion'(p) {
     const who = people(p).filter((x) => x.dependency === 'necesita');
     if (!who.length) return null;
-    return { status: 'si', reasons: [`${capital(list(who.map((x) => x.who)))} ${who.length === 1 && who[0].relationship === 'yo' ? 'necesitas' : 'necesita'} ayuda para el día a día y no tiene la dependencia reconocida.`], check: ['Se pide en los servicios sociales: tardan meses, conviene pedirlo cuanto antes.'] };
+    return {
+      status: 'si',
+      reasons: [`${capital(list(who.map((x) => x.who)))} ${who.length === 1 && who[0].relationship === 'yo' ? 'necesitas' : 'necesita'} ayuda para el día a día y no tiene la dependencia reconocida.`],
+      check: ['Se pide en los servicios sociales: tardan meses, conviene pedirlo cuanto antes.'],
+    };
   },
 
   'dependencia-servicios'(p) {
@@ -394,13 +477,22 @@ const RULES = {
   'convenio-cuidadores'(p) {
     const who = p.caredFor.filter((c) => GRADES.includes(c.dependency) && c.iCare);
     if (!who.length) return null;
-    return { status: 'quizas', reasons: ['Cuidas a un familiar con dependencia reconocida.'], check: ['Que tenga la prestación por cuidados en el entorno familiar.', ...(works(p) ? ['No vale si trabajas a jornada completa.'] : [])], payment: { text: 'La cotización la paga el Estado' } };
+    return {
+      status: 'quizas',
+      reasons: ['Cuidas a un familiar con dependencia reconocida.'],
+      check: ['Que tenga la prestación por cuidados en el entorno familiar.', ...(works(p) ? ['No vale si trabajas a jornada completa.'] : [])],
+      payment: { text: 'La cotización la paga el Estado' },
+    };
   },
 
   'certificado-discapacidad'(p) {
     const who = people(p).filter((x) => x.disability === 'sin');
     if (!who.length) return null;
-    return { status: 'si', reasons: [`${capital(list(who.map((x) => x.who)))} ${who.length === 1 && who[0].relationship === 'yo' ? 'tienes' : 'tiene'} limitaciones pero sin certificado de discapacidad.`], check: ['Con un 33 % o más se abren la mayoría de ventajas.'] };
+    return {
+      status: 'si',
+      reasons: [`${capital(list(who.map((x) => x.who)))} ${who.length === 1 && who[0].relationship === 'yo' ? 'tienes' : 'tiene'} limitaciones pero sin certificado de discapacidad.`],
+      check: ['Con un 33 % o más se abren la mayoría de ventajas.'],
+    };
   },
 
   'hijo-cargo-discapacidad'(p) {
@@ -432,7 +524,11 @@ const RULES = {
   'ventajas-discapacidad'(p) {
     const who = people(p).filter((x) => WITH_33.includes(x.disability));
     if (!who.length) return null;
-    return { status: 'quizas', reasons: [`${capital(list(who.map((x) => x.who)))}: discapacidad del 33 % o más.`], check: ['Para la tarjeta de aparcamiento hace falta movilidad reducida.', 'El impuesto de circulación lo quita tu ayuntamiento.'] };
+    return {
+      status: 'quizas',
+      reasons: [`${capital(list(who.map((x) => x.who)))}: discapacidad del 33 % o más.`],
+      check: ['Para la tarjeta de aparcamiento hace falta movilidad reducida.', 'El impuesto de circulación lo quita tu ayuntamiento.'],
+    };
   },
 
   'bono-social'(p) {
@@ -458,7 +554,12 @@ const RULES = {
       status = 'si';
       severe = p.householdIncome <= lim.euros / 2;
     } else if (p.householdIncome == null && !status) {
-      return { status: 'quizas', reasons: [`Si vuestros ingresos no pasan de ${yearly(lim.euros)}, tenéis derecho.`], check, payment: { text: `${percent(FIGURES.socialDiscount.vulnerable)} de descuento` } };
+      return {
+        status: 'quizas',
+        reasons: [`Si vuestros ingresos no pasan de ${yearly(lim.euros)}, tenéis derecho.`],
+        check,
+        payment: { text: `${percent(FIGURES.socialDiscount.vulnerable)} de descuento` },
+      };
     }
     if (!status) return null;
     if (lim.times > 1.5 + 0.5 * Math.min(totalChildren(p), 2)) check.push('El límite es más alto porque en casa hay discapacidad, dependencia o es monoparental: hay que acreditarlo.');
@@ -469,7 +570,12 @@ const RULES = {
   'bono-termico'(p) {
     const discount = RULES['bono-social'](p);
     if (!discount) return null;
-    return { status: discount.status, reasons: ['Va unido al bono social de la luz.'], check: ['Tener el bono social de la luz a 31 de diciembre.'], payment: { yearly: FIGURES.socialDiscount.thermalMinimum, text: `Desde ${yearly(FIGURES.socialDiscount.thermalMinimum)}` } };
+    return {
+      status: discount.status,
+      reasons: ['Va unido al bono social de la luz.'],
+      check: ['Tener el bono social de la luz a 31 de diciembre.'],
+      payment: { yearly: FIGURES.socialDiscount.thermalMinimum, text: `Desde ${yearly(FIGURES.socialDiscount.thermalMinimum)}` },
+    };
   },
 
   'alquiler-joven'(p) {
@@ -479,7 +585,11 @@ const RULES = {
     return {
       status: 'quizas',
       reasons: [`Tienes ${p.age} años y vives de alquiler.`, ...(p.householdIncome != null ? [`Vuestros ingresos no pasan de ${yearly(limit)}.`] : [])],
-      check: ['Que tu comunidad tenga la convocatoria abierta (suele ser una vez al año).', 'Que el alquiler no pase del tope de tu comunidad.', ...(p.householdIncome == null ? [`Ingresos de hasta ${yearly(limit)}.`] : [])],
+      check: [
+        'Que tu comunidad tenga la convocatoria abierta (suele ser una vez al año).',
+        'Que el alquiler no pase del tope de tu comunidad.',
+        ...(p.householdIncome == null ? [`Ingresos de hasta ${yearly(limit)}.`] : []),
+      ],
       payment: { monthly: FIGURES.rent.young, text: `Hasta ${monthly(FIGURES.rent.young)}` },
     };
   },
@@ -502,7 +612,11 @@ const RULES = {
     return {
       status: hasCountableIncome(p) ? 'si' : 'quizas',
       reasons: [p.children.under3 ? `Tenéis ${p.children.under3} ${p.children.under3 === 1 ? 'hijo menor' : 'hijos menores'} de 3 años.` : 'Esperáis un bebé.'],
-      check: ['La pide la madre (o el padre con custodia exclusiva o si la madre ha fallecido).', 'Que trabaje, cobre el paro o haya trabajado 30 días al tener al hijo.', `Si pagáis guardería, hasta ${yearly(FIGURES.irpf.nursery)} más.`],
+      check: [
+        'La pide la madre (o el padre con custodia exclusiva o si la madre ha fallecido).',
+        'Que trabaje, cobre el paro o haya trabajado 30 días al tener al hijo.',
+        `Si pagáis guardería, hasta ${yearly(FIGURES.irpf.nursery)} más.`,
+      ],
       payment: { yearly: total, text: yearly(total) },
     };
   },
@@ -513,12 +627,22 @@ const RULES = {
     const minimum = special ? 5 : 3;
     const extra = Math.max(0, totalChildren(p) - minimum) * FIGURES.irpf.largeFamilyExtraChild;
     const total = (special ? FIGURES.irpf.largeFamilySpecial : FIGURES.irpf.largeFamilyGeneral) + extra;
-    return { status: hasCountableIncome(p) ? 'si' : 'quizas', reasons: [`Sois familia numerosa de categoría ${special ? 'especial' : 'general'}.`], check: ['Se puede cobrar por adelantado, cada mes, con el modelo 143.'], payment: { yearly: total, text: yearly(total) } };
+    return {
+      status: hasCountableIncome(p) ? 'si' : 'quizas',
+      reasons: [`Sois familia numerosa de categoría ${special ? 'especial' : 'general'}.`],
+      check: ['Se puede cobrar por adelantado, cada mes, con el modelo 143.'],
+      payment: { yearly: total, text: yearly(total) },
+    };
   },
 
   'deduccion-monoparental'(p) {
     if (!p.singleParent || totalChildren(p) < 2 || p.largeFamily !== 'no') return null;
-    return { status: 'quizas', reasons: ['Eres una familia monoparental con dos hijos.'], check: ['No cobrar pensión de alimentos por ellos.'], payment: { yearly: FIGURES.irpf.singleParentTwoChildren, text: yearly(FIGURES.irpf.singleParentTwoChildren) } };
+    return {
+      status: 'quizas',
+      reasons: ['Eres una familia monoparental con dos hijos.'],
+      check: ['No cobrar pensión de alimentos por ellos.'],
+      payment: { yearly: FIGURES.irpf.singleParentTwoChildren, text: yearly(FIGURES.irpf.singleParentTwoChildren) },
+    };
   },
 
   'deduccion-discapacidad-cargo'(p) {
@@ -527,24 +651,42 @@ const RULES = {
     const total = who.length * FIGURES.irpf.dependentDisability;
     const check = ['Que viva contigo o dependa de ti económicamente.'];
     if (who.some((c) => c.relationship === 'pareja')) check.push('Por la pareja, solo si sus ingresos no pasan de 8.000 € al año.');
-    return { status: hasCountableIncome(p) ? 'si' : 'quizas', reasons: who.map((c, i) => `${capital(personName(c, i))} tiene una discapacidad del ${c.disability} % o más.`), check, payment: { yearly: total, text: yearly(total) } };
+    return {
+      status: hasCountableIncome(p) ? 'si' : 'quizas',
+      reasons: who.map((c, i) => `${capital(personName(c, i))} tiene una discapacidad del ${c.disability} % o más.`),
+      check,
+      payment: { yearly: total, text: yearly(total) },
+    };
   },
 
   'minimo-discapacidad'(p) {
     if (!WITH_33.includes(p.disability)) return null;
     const figure = WITH_65.includes(p.disability) ? FIGURES.irpf.disabilityMinimum65 : FIGURES.irpf.disabilityMinimum33;
-    return { status: 'si', reasons: [`Tienes una discapacidad del ${p.disability} % o más.`], check: ['Díselo a tu empresa o pagador para que te retenga menos cada mes.'], payment: { text: `${yearly(figure)} sin IRPF` } };
+    return {
+      status: 'si',
+      reasons: [`Tienes una discapacidad del ${p.disability} % o más.`],
+      check: ['Díselo a tu empresa o pagador para que te retenga menos cada mes.'],
+      payment: { text: `${yearly(figure)} sin IRPF` },
+    };
   },
 
   'deducciones-ccaa'(p) {
     if (!(totalChildren(p) || p.baby || p.housing === 'alquiler' || p.caredFor.length || p.disability !== 'no')) return null;
-    return { status: 'quizas', reasons: ['Tienes circunstancias (hijos, alquiler, cuidados o discapacidad) que suelen tener deducción en las comunidades.'], check: ['Revísalas en Renta Web al hacer la declaración.'] };
+    return {
+      status: 'quizas',
+      reasons: ['Tienes circunstancias (hijos, alquiler, cuidados o discapacidad) que suelen tener deducción en las comunidades.'],
+      check: ['Revísalas en Renta Web al hacer la declaración.'],
+    };
   },
 
   becas(p) {
     const me = p.situation === 'estudiante' && (p.age ?? 0) >= 16;
     if (!me && !p.children.age6to17) return null;
-    return { status: 'quizas', reasons: [me ? 'Estudias.' : 'Tenéis hijos en edad escolar: al llegar a bachillerato, FP o universidad.'], check: ['Los umbrales de renta de la convocatoria de cada curso.'] };
+    return {
+      status: 'quizas',
+      reasons: [me ? 'Estudias.' : 'Tenéis hijos en edad escolar: al llegar a bachillerato, FP o universidad.'],
+      check: ['Los umbrales de renta de la convocatoria de cada curso.'],
+    };
   },
 
   'justicia-gratuita'(p) {
@@ -559,7 +701,13 @@ const RULES = {
   // ── If you need it now ─────────────────────────────────────────────────
   'violencia-genero'(p) {
     if (!p.urgent.violence) return null;
-    return { status: 'si', reasons: ['Has marcado que sufres violencia de género.'], check: ['Llama al 016 aunque no hayas denunciado: te orientan y no sale en la factura.'], payment: { text: '016 · 24 horas' }, urgent: true };
+    return {
+      status: 'si',
+      reasons: ['Has marcado que sufres violencia de género.'],
+      check: ['Llama al 016 aunque no hayas denunciado: te orientan y no sale en la factura.'],
+      payment: { text: '016 · 24 horas' },
+      urgent: true,
+    };
   },
 
   'sin-hogar'(p) {
@@ -580,7 +728,12 @@ const RULES = {
   'emergencia-social'(p) {
     const veryLow = p.householdIncome != null && p.householdIncome < guaranteedIncome(p) * 12 * 0.5;
     if (!p.urgent.food && !p.urgent.housingAtRisk && !p.urgent.homeless && !veryLow) return null;
-    return { status: p.urgent.food || p.urgent.housingAtRisk || p.urgent.homeless ? 'si' : 'quizas', reasons: [veryLow && !p.urgent.food ? 'Vuestros ingresos son muy bajos.' : 'No llegas a cubrir lo básico este mes.'], check: ['Pide cita urgente: no esperes a que llegue el IMV.'], urgent: true };
+    return {
+      status: p.urgent.food || p.urgent.housingAtRisk || p.urgent.homeless ? 'si' : 'quizas',
+      reasons: [veryLow && !p.urgent.food ? 'Vuestros ingresos son muy bajos.' : 'No llegas a cubrir lo básico este mes.'],
+      check: ['Pide cita urgente: no esperes a que llegue el IMV.'],
+      urgent: true,
+    };
   },
 
   soledad(p) {
@@ -625,7 +778,11 @@ const RULES = {
     return {
       status: 'quizas',
       reasons: ['Vives en Barcelona y tienes hijos menores.'],
-      check: ['Ser usuario de los servicios sociales del Ayuntamiento.', 'Los ingresos del hogar: hay un límite según cuántos sois.', 'Que esté abierta la convocatoria (en 2026, del 13 de mayo al 22 de junio).'],
+      check: [
+        'Ser usuario de los servicios sociales del Ayuntamiento.',
+        'Los ingresos del hogar: hay un límite según cuántos sois.',
+        'Que esté abierta la convocatoria (en 2026, del 13 de mayo al 22 de junio).',
+      ],
       payment: { text: 'Desde 600 € al año' },
     };
   },
@@ -651,7 +808,11 @@ const RULES = {
     if (p.city !== 'malaga') return null;
     const hasSmallChildren = p.children.under3 + p.children.age3to5 > 0 || p.baby;
     if (!hasSmallChildren && p.children.age6to17 === 0) return null;
-    return { status: 'quizas', reasons: ['Vives en Málaga y tienes hijos pequeños.'], check: ['Que los niños tengan de 4 meses a 10 años.', 'Que esté abierta la edición del año (en 2026, de julio a septiembre).'] };
+    return {
+      status: 'quizas',
+      reasons: ['Vives en Málaga y tienes hijos pequeños.'],
+      check: ['Que los niños tengan de 4 meses a 10 años.', 'Que esté abierta la edición del año (en 2026, de julio a septiembre).'],
+    };
   },
 
   'tarjeta-familias'(p) {
@@ -661,7 +822,12 @@ const RULES = {
     if (!low && !p.urgent.food) return null;
     const check = ['La concede servicios sociales tras una entrevista.'];
     if (p.madridCity == null) check.unshift('Solo para quien vive en la ciudad de Madrid (la capital).');
-    return { status: p.madridCity && low ? 'si' : 'quizas', reasons: [low ? `Vuestros ingresos (${yearly(p.householdIncome)}) no pasan de 752 € al mes.` : 'Has marcado que no llegas para comer.'], check, payment: { text: 'De 146 € a 735 € al mes' } };
+    return {
+      status: p.madridCity && low ? 'si' : 'quizas',
+      reasons: [low ? `Vuestros ingresos (${yearly(p.householdIncome)}) no pasan de 752 € al mes.` : 'Has marcado que no llegas para comer.'],
+      check,
+      payment: { text: 'De 146 € a 735 € al mes' },
+    };
   },
 
   'agua-canal'(p) {
@@ -686,7 +852,12 @@ const RULES = {
 
   'escuela-infantil-madrid'(p) {
     if (p.region !== 'madrid' || p.madridCity === false || !(p.children.under3 > 0 || p.baby)) return null;
-    return { status: p.madridCity ? 'si' : 'quizas', reasons: [p.baby ? 'Esperáis un bebé o tenéis uno pequeño.' : 'Tenéis hijos menores de 3 años.'], check: ['El plazo es en abril para el curso siguiente.', ...(p.madridCity ? [] : ['Solo para quien vive en la ciudad de Madrid.'])], payment: { text: 'Gratis (salvo comedor)' } };
+    return {
+      status: p.madridCity ? 'si' : 'quizas',
+      reasons: [p.baby ? 'Esperáis un bebé o tenéis uno pequeño.' : 'Tenéis hijos menores de 3 años.'],
+      check: ['El plazo es en abril para el curso siguiente.', ...(p.madridCity ? [] : ['Solo para quien vive en la ciudad de Madrid.'])],
+      payment: { text: 'Gratis (salvo comedor)' },
+    };
   },
 
   'teleasistencia-madrid'(p) {
@@ -700,8 +871,13 @@ const RULES = {
     const e = p.age;
     const reasons = [];
     let text = '';
-    if (e != null && e >= 65) { reasons.push('Tienes 65 años o más: viajas gratis.'); text = 'Gratis'; }
-    else if (e != null && e >= 15 && e <= 25) { reasons.push(`Tienes ${e} años: abono joven.`); text = '10 € al mes'; }
+    if (e != null && e >= 65) {
+      reasons.push('Tienes 65 años o más: viajas gratis.');
+      text = 'Gratis';
+    } else if (e != null && e >= 15 && e <= 25) {
+      reasons.push(`Tienes ${e} años: abono joven.`);
+      text = '10 € al mes';
+    }
     if (totalChildren(p) > 0) reasons.push('Los menores de 14 viajan gratis.');
     if (!reasons.length) return null;
     return { status: 'si', reasons, check: ['Necesitas la Tarjeta Transporte Público personal.'], payment: text ? { text } : undefined };
@@ -745,7 +921,11 @@ const RULES = {
     return {
       status: 'quizas',
       reasons: ['Has vuelto a España en el último año después de trabajar fuera.', ...(p.ownIncome != null ? [`Tus ingresos no pasan de ${monthly(S.monthlyIncomeLimit)}.`] : [])],
-      check: ['Tener la nacionalidad española.', 'Haber trabajado fuera al menos 12 meses en los últimos 6 años, fuera del Espacio Económico Europeo o en un país sin convenio de paro con España.', ...(p.ownIncome == null ? [`No tener ingresos de más de ${monthly(S.monthlyIncomeLimit)}.`] : [])],
+      check: [
+        'Tener la nacionalidad española.',
+        'Haber trabajado fuera al menos 12 meses en los últimos 6 años, fuera del Espacio Económico Europeo o en un país sin convenio de paro con España.',
+        ...(p.ownIncome == null ? [`No tener ingresos de más de ${monthly(S.monthlyIncomeLimit)}.`] : []),
+      ],
       payment: { monthly: S.first6Months, text: `${monthly(S.first6Months)} al principio` },
     };
   },
@@ -787,9 +967,27 @@ function capital(s) {
 
 // Benefits that require nationality, legal residence or being registered with the Tax Agency or Social Security
 const NEED_RESIDENCE = new Set([
-  'imv', 'capi', 'renta-minima', 'rmi-madrid', 'subsidio-desempleo', 'subsidio-52', 'paro', 'nacimiento', 'pago-unico-nacimiento',
-  'madrid-natalidad', 'titulo-familia-numerosa', 'pnc-jubilacion', 'pnc-invalidez', 'pnc-alquiler', 'alquiler-joven', 'alquiler-general',
-  'vivienda-social-madrid', 'bono-cultural-joven', 'dependencia-valoracion', 'dependencia-prestacion', 'hijo-cargo-discapacidad',
+  'imv',
+  'capi',
+  'renta-minima',
+  'rmi-madrid',
+  'subsidio-desempleo',
+  'subsidio-52',
+  'paro',
+  'nacimiento',
+  'pago-unico-nacimiento',
+  'madrid-natalidad',
+  'titulo-familia-numerosa',
+  'pnc-jubilacion',
+  'pnc-invalidez',
+  'pnc-alquiler',
+  'alquiler-joven',
+  'alquiler-general',
+  'vivienda-social-madrid',
+  'bono-cultural-joven',
+  'dependencia-valoracion',
+  'dependencia-prestacion',
+  'hijo-cargo-discapacidad',
 ]);
 
 // Rules for each region's own benefits
@@ -814,10 +1012,35 @@ export function evaluate(profile) {
 
 // Order in which to apply: urgent things first, then what opens the door to the rest
 const PRIORITY = [
-  'violencia-genero', 'sin-hogar', 'desahucio', 'alimentos', 'emergencia-social', 'sanidad-sin-papeles',
-  'imv', 'dependencia-valoracion', 'certificado-discapacidad', 'paro', 'subsidio-desempleo', 'subsidio-52', 'pnc-jubilacion', 'pnc-invalidez',
-  'complemento-minimos', 'rmi-madrid', 'renta-minima', 'tarjeta-familias', 'capi', 'nacimiento', 'madrid-natalidad', 'viudedad', 'orfandad',
-  'titulo-familia-numerosa', 'bono-social', 'brecha-genero', 'hijo-cargo-discapacidad', 'dependencia-prestacion', 'convenio-cuidadores',
+  'violencia-genero',
+  'sin-hogar',
+  'desahucio',
+  'alimentos',
+  'emergencia-social',
+  'sanidad-sin-papeles',
+  'imv',
+  'dependencia-valoracion',
+  'certificado-discapacidad',
+  'paro',
+  'subsidio-desempleo',
+  'subsidio-52',
+  'pnc-jubilacion',
+  'pnc-invalidez',
+  'complemento-minimos',
+  'rmi-madrid',
+  'renta-minima',
+  'tarjeta-familias',
+  'capi',
+  'nacimiento',
+  'madrid-natalidad',
+  'viudedad',
+  'orfandad',
+  'titulo-familia-numerosa',
+  'bono-social',
+  'brecha-genero',
+  'hijo-cargo-discapacidad',
+  'dependencia-prestacion',
+  'convenio-cuidadores',
 ];
 
 /** The first things to do, in order (at most `n`)*/
@@ -826,7 +1049,10 @@ export function whereToStart(results, n = 4) {
     const i = PRIORITY.indexOf(id);
     return i === -1 ? PRIORITY.length : i;
   };
-  return [...results].sort((a, b) => range(a.id) - range(b.id) || (a.status === b.status ? 0 : a.status === 'si' ? -1 : 1)).filter((r) => range(r.id) < PRIORITY.length).slice(0, n);
+  return [...results]
+    .sort((a, b) => range(a.id) - range(b.id) || (a.status === b.status ? 0 : a.status === 'si' ? -1 : 1))
+    .filter((r) => range(r.id) < PRIORITY.length)
+    .slice(0, n);
 }
 
 export const IDS_WITH_RULE = Object.keys(RULES);
@@ -865,7 +1091,9 @@ export function thresholdOf(id, profile) {
     case 'justicia-gratuita':
       return household((m === 1 ? 2 : m < 4 ? 2.5 : 3) * FIGURES.iprem.annual12);
     case 'complemento-minimos':
-      return p.pensionMonthly == null || !CONTRIBUTORY_PENSIONS.includes(p.pension) ? null : { yours: p.pensionMonthly, limit: minimumPension(p).figure, which: 'Tu pensión al mes', lowerIsBetter: true, text: 'pensión mínima' };
+      return p.pensionMonthly == null || !CONTRIBUTORY_PENSIONS.includes(p.pension)
+        ? null
+        : { yours: p.pensionMonthly, limit: minimumPension(p).figure, which: 'Tu pensión al mes', lowerIsBetter: true, text: 'pensión mínima' };
     default:
       return null;
   }

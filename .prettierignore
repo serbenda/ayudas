@@ -1,0 +1,8 @@
+# Generated outlines
+site/assets/js/data/map-shapes.js
+# CSS and HTML keep their compact hand-written style (see .editorconfig)
+*.css
+*.html
+_site/
+site/vendor/
+node_modules/

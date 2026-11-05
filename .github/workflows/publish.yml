@@ -29,6 +29,9 @@ jobs:
         with:
           node-version-file: .nvmrc
 
+      - name: Lint and formatting (ESLint, Prettier)
+        run: npm run lint
+
       - name: Unit tests
         run: npm test
 
@@ -128,4 +131,21 @@ jobs:
             else
               gh issue create --repo "$REPO" --title "$title" --body-file boe-news.md
             fi
+          fi
+
+      - name: Report a failed check
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          JOB: ${{ github.workflow }} / ${{ github.job }}
+        run: |
+          title="Ha fallado una comprobación automática"
+          body="La comprobación «$JOB» ha fallado por un error del propio script o de la Action, no por lo que vigila. Mira el registro: $RUN"
+          open=$(gh issue list --repo "$REPO" --state open --search "\"$title\" in:title" --json number --jq '.[0].number')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --repo "$REPO" --body "$body"
+          else
+            gh issue create --repo "$REPO" --title "$title" --body "$body"
           fi

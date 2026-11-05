@@ -15,7 +15,11 @@ export function fromLink(text) {
     const data = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0))));
     if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
     // Only text, numbers and checkboxes: nothing that could be executed
-    return Object.fromEntries(Object.entries(data).filter(([k, v]) => /^[\w\-ñ]+$/u.test(k) && ['string', 'number', 'boolean'].includes(typeof v)).map(([k, v]) => [k, typeof v === 'string' ? v.slice(0, 200) : v]));
+    return Object.fromEntries(
+      Object.entries(data)
+        .filter(([k, v]) => /^[\w\-ñ]+$/u.test(k) && ['string', 'number', 'boolean'].includes(typeof v))
+        .map(([k, v]) => [k, typeof v === 'string' ? v.slice(0, 200) : v]),
+    );
   } catch {
     return null;
   }

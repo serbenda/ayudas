@@ -89,7 +89,11 @@ export const TABLES = {
       label: n === 1 ? '1 persona' : n === 5 ? '5 o más' : `${n} personas`,
       figure: guaranteedIncome(p({ adults: 1, children: { age6to17: n - 1 } })),
     }));
-    return { title: 'Renta garantizada al mes según cuántos sois en casa', rows, note: `Un 22 % más (${euros(C.imv.base * C.imv.supplement)}) si es monoparental o hay discapacidad del 65 % o dependencia de grado III. Cobras la diferencia entre esta cifra y lo que ya ingresáis.` };
+    return {
+      title: 'Renta garantizada al mes según cuántos sois en casa',
+      rows,
+      note: `Un 22 % más (${euros(C.imv.base * C.imv.supplement)}) si es monoparental o hay discapacidad del 65 % o dependencia de grado III. Cobras la diferencia entre esta cifra y lo que ya ingresáis.`,
+    };
   },
   capi() {
     return {

@@ -1,0 +1,38 @@
+name: Falta una ayuda
+description: Una ayuda pública que la web no recoge.
+title: 'Falta una ayuda: '
+labels: [missing-benefit]
+body:
+  - type: markdown
+    attributes:
+      value: 'Gracias por avisar. No pongas datos personales (nombre, DNI, dirección, salud…): este aviso es público.'
+  - type: input
+    id: benefit
+    attributes:
+      label: ¿Qué ayuda falta?
+      placeholder: Ayuda de comedor escolar
+    validations:
+      required: true
+  - type: input
+    id: agency
+    attributes:
+      label: ¿Quién la da?
+      description: Estado, comunidad autónoma o ayuntamiento.
+      placeholder: Junta de Castilla y León
+    validations:
+      required: true
+  - type: textarea
+    id: who
+    attributes:
+      label: ¿Para quién es?
+      description: A quién va dirigida y qué da, si lo sabes.
+  - type: input
+    id: source
+    attributes:
+      label: Enlace oficial
+      placeholder: https://
+  - type: input
+    id: page
+    attributes:
+      label: Página
+      description: Se rellena sola si vienes desde la web.

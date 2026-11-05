@@ -31,7 +31,11 @@ chips.addEventListener('click', (e) => {
 });
 
 // Search ignoring accents and case
-const normal = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+const normal = (s) =>
+  s
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase();
 
 function renderSent() {
   const region = regionSelect.value || null;
@@ -47,7 +51,9 @@ function render() {
   if (sent.length) return renderSent();
   const q = normal(search.value.trim());
   const region = regionSelect.value || null;
-  const filtered = BENEFITS.filter((a) => (topic === 'todas' || a.category === topic) && (!q || normal([a.name, a.summary, a.amount, a.agency, ...a.requirements, ...(PROCEDURES[a.id]?.easy ?? [])].join(' ')).includes(q)));
+  const filtered = BENEFITS.filter(
+    (a) => (topic === 'todas' || a.category === topic) && (!q || normal([a.name, a.summary, a.amount, a.agency, ...a.requirements, ...(PROCEDURES[a.id]?.easy ?? [])].join(' ')).includes(q)),
+  );
   count.textContent = `${filtered.length} de ${BENEFITS.length} ayudas`;
   list.innerHTML = filtered.length
     ? CATEGORIES.map((c) => {

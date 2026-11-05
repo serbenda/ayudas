@@ -1,0 +1,30 @@
+name: Algo no funciona
+description: Una página en blanco, un botón que no hace nada, algo que se ve mal…
+title: 'Algo no funciona: '
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: 'Gracias por avisar. No pongas tus respuestas del cuestionario ni datos personales: este aviso es público.'
+  - type: textarea
+    id: what
+    attributes:
+      label: ¿Qué pasa?
+      description: Qué hacías, qué esperabas y qué ha pasado.
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Página
+      description: Se rellena sola si vienes desde la web.
+  - type: input
+    id: browser
+    attributes:
+      label: Navegador
+      description: Se rellena solo si vienes desde la web.
+  - type: input
+    id: screen
+    attributes:
+      label: Pantalla
+      description: Se rellena sola si vienes desde la web.

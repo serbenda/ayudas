@@ -4,7 +4,7 @@
 
 - Work on the `development` branch. Never commit to `main` directly.
 - Open a pull request from `development` to `main`. CI runs the unit tests, builds the site and runs the browser and accessibility tests; `main` is published to GitHub Pages when the PR is merged.
-- Scheduled Actions only open or update issues. They never commit or open pull requests: a person reviews every change.
+- Scheduled Actions only open or update issues. They never commit or open pull requests: a person reviews every change. See [docs/AUTOMATION.md](docs/AUTOMATION.md).
 
 ## Layout
 
@@ -33,14 +33,19 @@
 ## Style
 
 - No frameworks and no runtime dependencies. Dev tools (Playwright, axe, the font package) are installed with `--no-save` only where needed.
-- ES modules, 2-space indentation, LF line endings (see `.editorconfig`).
+- ES modules, 2-space indentation, LF line endings (see `.editorconfig`). JS is formatted with Prettier (`npm run format`) and checked with ESLint; CSS and HTML keep their compact hand-written style.
 - Every figure lives in `site/assets/js/data/figures.js` with its source. When a figure changes, change it there.
 - Every card has a review date in `site/assets/js/data/review.js`. Update it when you review a card.
 - Keep sentences on the site short and plain: tests check that the easy summaries stay short.
 
+## Reporting problems
+
+Wrong data, missing benefits and bugs go through the issue forms in `.github/ISSUE_TEMPLATE/` (the Sources page links to them with the page filled in). Security problems go privately: see [SECURITY.md](SECURITY.md).
+
 ## Before opening a pull request
 
 ```sh
+npm run lint
 npm test
 npm run build
 npm run tools        # once

@@ -36,9 +36,7 @@ export function thresholdBar(u) {
   const difference = Math.abs(u.limit - u.yours);
   const pct = (n) => `${Math.min(100, (n / max) * 100).toFixed(1)}%`;
   const limitLabel = u.text ?? 'límite';
-  const sentence = inside
-    ? `Estás ${euros(difference)} por debajo del ${limitLabel}.`
-    : `Te pasas ${euros(difference)} del ${limitLabel}.`;
+  const sentence = inside ? `Estás ${euros(difference)} por debajo del ${limitLabel}.` : `Te pasas ${euros(difference)} del ${limitLabel}.`;
   return `<figure class="threshold ${inside ? 'inside' : 'outside'}">
     <figcaption>${esc(u.which)}: <strong>${euros(u.yours)}</strong> · ${esc(limitLabel.charAt(0).toUpperCase() + limitLabel.slice(1))}: <strong>${euros(u.limit)}</strong></figcaption>
     <div class="threshold-track" role="img" aria-label="${esc(`${u.which}: ${euros(u.yours)}. ${limitLabel}: ${euros(u.limit)}. ${sentence}`)}">
@@ -56,7 +54,10 @@ export function tableBars(table, highlight = -1) {
   return `<figure class="bar-table">
     <figcaption>${esc(table.title)}</figcaption>
     <ul>${table.rows
-      .map((f, i) => `<li${i === highlight ? ' class="your-case"' : ''}><span class="tb-label">${esc(f.label)}${i === highlight ? ' <em>(tu caso)</em>' : ''}</span><span class="tb-track"><span class="tb-bar" style="width:${((f.figure / max) * 100).toFixed(1)}%"></span></span><strong>${euros(f.figure)}</strong></li>`)
+      .map(
+        (f, i) =>
+          `<li${i === highlight ? ' class="your-case"' : ''}><span class="tb-label">${esc(f.label)}${i === highlight ? ' <em>(tu caso)</em>' : ''}</span><span class="tb-track"><span class="tb-bar" style="width:${((f.figure / max) * 100).toFixed(1)}%"></span></span><strong>${euros(f.figure)}</strong></li>`,
+      )
       .join('')}</ul>
     ${table.note ? `<p class="note">${esc(table.note)}</p>` : ''}
   </figure>`;
@@ -96,11 +97,12 @@ export function benefitCard(id, { result = null, region = null, tracking, isOpen
   // Difficult words: they can be tapped to see what they mean (the first time they appear in the card)
   const used = new Set();
   const ex = (text) => markTerms(esc(text), used);
-  const track = tracking !== undefined
-    ? `<label class="track">¿Cómo va?
+  const track =
+    tracking !== undefined
+      ? `<label class="track">¿Cómo va?
         <select data-track="${id}">${TRACKING_STATES.map(([v, n]) => `<option value="${v}"${v === tracking ? ' selected' : ''}>${n}</option>`).join('')}</select>
       </label>`
-    : '';
+      : '';
   const trackingMark = tracking ? `<span class="tracking-mark ${tracking}">${esc(TRACKING_STATES.find(([v]) => v === tracking)?.[1] ?? '')}</span>` : '';
 
   return `

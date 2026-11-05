@@ -30,17 +30,19 @@ const sourcePage = (() => {
     return location.href;
   }
 })();
+// Each link opens one of the issue forms in .github/ISSUE_TEMPLATE/ with its fields filled in
 const TEMPLATES = {
-  bug: { title: 'Algo no funciona: ', body: ['**¿Qué pasa?** (página en blanco, un botón que no hace nada…)', '', '', '---', `Página: ${sourcePage}`, `Navegador: ${navigator.userAgent}`, `Pantalla: ${innerWidth}×${innerHeight}`] },
-  data: { title: 'Dato: ', body: ['**¿Qué cifra o requisito no cuadra?**', '', '', '**Enlace a la fuente oficial (si lo tienes):**', '', '', '---', `Página: ${sourcePage}`] },
-  missing: { title: 'Falta una ayuda: ', body: ['**¿Qué ayuda falta?** (nombre, quién la da y para quién es)', '', '', '**Enlace oficial:**', '', '', '---', `Página: ${sourcePage}`] },
+  bug: { template: 'bug.yml', title: 'Algo no funciona: ', fields: { page: sourcePage, browser: navigator.userAgent, screen: `${innerWidth}×${innerHeight}` } },
+  data: { template: 'data.yml', title: 'Dato: ', fields: { page: sourcePage } },
+  missing: { template: 'missing.yml', title: 'Falta una ayuda: ', fields: { page: sourcePage } },
 };
 for (const a of document.querySelectorAll('a[data-notice]')) {
-  const p = TEMPLATES[a.dataset.notice];
-  if (!p) continue;
+  const t = TEMPLATES[a.dataset.notice];
+  if (!t) continue;
   const u = new URL(a.href);
-  u.searchParams.set('title', p.title);
-  u.searchParams.set('body', p.body.join('\n'));
+  u.searchParams.set('template', t.template);
+  u.searchParams.set('title', t.title);
+  for (const [k, v] of Object.entries(t.fields)) u.searchParams.set(k, v);
   a.href = u.href;
 }
 

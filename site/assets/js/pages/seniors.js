@@ -18,58 +18,193 @@ let registerHistory = [];
 // ── The questions ──────────────────────────────────────────────────────
 // Each one: text, help (optional), options [text, value] and when it is asked (showIf)
 const QUESTIONS = [
-  { id: 'age', text: '¿Cuántos años tienes?', options: [['Menos de 60', 55], ['De 60 a 64', 62], ['De 65 a 79', 72], ['80 o más', 85]] },
+  {
+    id: 'age',
+    text: '¿Cuántos años tienes?',
+    options: [
+      ['Menos de 60', 55],
+      ['De 60 a 64', 62],
+      ['De 65 a 79', 72],
+      ['80 o más', 85],
+    ],
+  },
   {
     id: 'where',
     text: '¿Dónde vives?',
-    options: [['En la ciudad de Madrid', 'capital'], ['En otro pueblo de la Comunidad de Madrid', 'madrid'], ['En otra comunidad', 'otra']],
+    options: [
+      ['En la ciudad de Madrid', 'capital'],
+      ['En otro pueblo de la Comunidad de Madrid', 'madrid'],
+      ['En otra comunidad', 'otra'],
+    ],
   },
   { id: 'region', text: '¿En qué comunidad vives?', type: 'list', showIf: (r) => r.where === 'otra' },
-  { id: 'livingWith', text: '¿Con quién vives?', options: [['Vivo solo o sola', 'solo'], ['Con mi pareja', 'pareja'], ['Con otros familiares', 'familia']] },
+  {
+    id: 'livingWith',
+    text: '¿Con quién vives?',
+    options: [
+      ['Vivo solo o sola', 'solo'],
+      ['Con mi pareja', 'pareja'],
+      ['Con otros familiares', 'familia'],
+    ],
+  },
   {
     id: 'pension',
     text: '¿Cobras alguna pensión?',
-    options: [['Sí, de jubilación', 'jubilacion'], ['Sí, de viudedad', 'viudedad'], ['Sí, de incapacidad', 'incapacidad'], ['Sí, no contributiva', 'pnc'], ['No cobro pensión', 'no']],
+    options: [
+      ['Sí, de jubilación', 'jubilacion'],
+      ['Sí, de viudedad', 'viudedad'],
+      ['Sí, de incapacidad', 'incapacidad'],
+      ['Sí, no contributiva', 'pnc'],
+      ['No cobro pensión', 'no'],
+    ],
   },
   {
     id: 'pensionMonthly',
     text: '¿Cuánto cobras de pensión al mes, más o menos?',
     help: 'Lo pone en la carta de la Seguridad Social o en tu banco.',
     showIf: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension),
-    options: [['Menos de 700 €', 650], ['De 700 a 900 €', 800], ['De 900 a 1.100 €', 1000], ['De 1.100 a 1.500 €', 1300], ['Más de 1.500 €', 1800], ['No lo sé', null]],
+    options: [
+      ['Menos de 700 €', 650],
+      ['De 700 a 900 €', 800],
+      ['De 900 a 1.100 €', 1000],
+      ['De 1.100 a 1.500 €', 1300],
+      ['Más de 1.500 €', 1800],
+      ['No lo sé', null],
+    ],
   },
-  { id: 'since2021', text: '¿Empezaste a cobrar la pensión en 2021 o después?', showIf: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension), options: [['Sí', true], ['No, antes', false], ['No lo sé', null]] },
-  { id: 'children', text: '¿Cuántos hijos has tenido?', showIf: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension), options: [['Ninguno', 0], ['1', 1], ['2', 2], ['3', 3], ['4 o más', 4]] },
+  {
+    id: 'since2021',
+    text: '¿Empezaste a cobrar la pensión en 2021 o después?',
+    showIf: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension),
+    options: [
+      ['Sí', true],
+      ['No, antes', false],
+      ['No lo sé', null],
+    ],
+  },
+  {
+    id: 'children',
+    text: '¿Cuántos hijos has tenido?',
+    showIf: (r) => ['jubilacion', 'viudedad', 'incapacidad'].includes(r.pension),
+    options: [
+      ['Ninguno', 0],
+      ['1', 1],
+      ['2', 2],
+      ['3', 3],
+      ['4 o más', 4],
+    ],
+  },
   {
     id: 'income',
     text: '¿Tienes algún dinero que te entre cada mes?',
     showIf: (r) => r.pension === 'no',
-    options: [['No, nada', 0], ['Menos de 500 € al mes', 4000], ['Más de 500 € al mes', 9000], ['No lo sé', null]],
+    options: [
+      ['No, nada', 0],
+      ['Menos de 500 € al mes', 4000],
+      ['Más de 500 € al mes', 9000],
+      ['No lo sé', null],
+    ],
   },
   {
     id: 'household',
     text: '¿Cuánto dinero entra en casa al mes, entre todos?',
     help: 'Suma pensiones, sueldos y otras ayudas de las personas que viven contigo.',
     showIf: (r) => r.livingWith !== 'solo',
-    options: [['Menos de 800 €', 700 * 12], ['De 800 a 1.200 €', 1000 * 12], ['De 1.200 a 2.000 €', 1600 * 12], ['Más de 2.000 €', 2500 * 12], ['No lo sé', null]],
+    options: [
+      ['Menos de 800 €', 700 * 12],
+      ['De 800 a 1.200 €', 1000 * 12],
+      ['De 1.200 a 2.000 €', 1600 * 12],
+      ['Más de 2.000 €', 2500 * 12],
+      ['No lo sé', null],
+    ],
   },
-  { id: 'widowed', text: '¿Ha fallecido tu marido, tu mujer o tu pareja?', showIf: (r) => r.pension !== 'viudedad' && r.livingWith !== 'pareja', options: [['Sí', true], ['No', false]] },
+  {
+    id: 'widowed',
+    text: '¿Ha fallecido tu marido, tu mujer o tu pareja?',
+    showIf: (r) => r.pension !== 'viudedad' && r.livingWith !== 'pareja',
+    options: [
+      ['Sí', true],
+      ['No', false],
+    ],
+  },
   {
     id: 'dailyHelp',
     text: '¿Necesitas ayuda de otra persona para asearte, vestirte o comer?',
-    options: [['No', 'no'], ['Sí, pero no lo he pedido', 'necesita'], ['Lo he pedido y estoy esperando', 'tramite'], ['Sí, ya tengo el grado de dependencia', 'grado']],
+    options: [
+      ['No', 'no'],
+      ['Sí, pero no lo he pedido', 'necesita'],
+      ['Lo he pedido y estoy esperando', 'tramite'],
+      ['Sí, ya tengo el grado de dependencia', 'grado'],
+    ],
   },
-  { id: 'grade', text: '¿Qué grado de dependencia tienes?', showIf: (r) => r.dailyHelp === 'grado', options: [['Grado I', '1'], ['Grado II', '2'], ['Grado III', '3'], ['No me acuerdo', '1']] },
+  {
+    id: 'grade',
+    text: '¿Qué grado de dependencia tienes?',
+    showIf: (r) => r.dailyHelp === 'grado',
+    options: [
+      ['Grado I', '1'],
+      ['Grado II', '2'],
+      ['Grado III', '3'],
+      ['No me acuerdo', '1'],
+    ],
+  },
   {
     id: 'disability',
     text: '¿Tienes certificado de discapacidad?',
-    options: [['No', 'no'], ['No, pero tengo problemas de salud que me limitan', 'sin'], ['Sí, de menos del 65 %', '33'], ['Sí, del 65 % o más', '65']],
+    options: [
+      ['No', 'no'],
+      ['No, pero tengo problemas de salud que me limitan', 'sin'],
+      ['Sí, de menos del 65 %', '33'],
+      ['Sí, del 65 % o más', '65'],
+    ],
   },
-  { id: 'youCare', text: '¿Cuidas de alguien de tu familia que necesita ayuda?', options: [['No', 'no'], ['Sí, a mi pareja', 'pareja'], ['Sí, a un hijo o hija', 'hijo'], ['Sí, a otra persona', 'otro']] },
-  { id: 'careGrade', text: '¿Esa persona tiene la dependencia reconocida?', showIf: (r) => r.youCare && r.youCare !== 'no', options: [['Sí', '2'], ['No', 'necesita'], ['Lo hemos pedido', 'tramite']] },
-  { id: 'housing', text: '¿Tu casa es de alquiler?', options: [['Sí, pago alquiler', 'alquiler'], ['No, es mía', 'propia'], ['Otra situación', 'otra']] },
-  { id: 'reaches', text: '¿Te llega el dinero para comer y pagar la luz?', options: [['Sí', 'si'], ['Justo', 'justo'], ['No', 'no']] },
-  { id: 'soledad', text: '¿Te sientes solo o sola a menudo?', options: [['Sí', true], ['A veces', false], ['No', false]] },
+  {
+    id: 'youCare',
+    text: '¿Cuidas de alguien de tu familia que necesita ayuda?',
+    options: [
+      ['No', 'no'],
+      ['Sí, a mi pareja', 'pareja'],
+      ['Sí, a un hijo o hija', 'hijo'],
+      ['Sí, a otra persona', 'otro'],
+    ],
+  },
+  {
+    id: 'careGrade',
+    text: '¿Esa persona tiene la dependencia reconocida?',
+    showIf: (r) => r.youCare && r.youCare !== 'no',
+    options: [
+      ['Sí', '2'],
+      ['No', 'necesita'],
+      ['Lo hemos pedido', 'tramite'],
+    ],
+  },
+  {
+    id: 'housing',
+    text: '¿Tu casa es de alquiler?',
+    options: [
+      ['Sí, pago alquiler', 'alquiler'],
+      ['No, es mía', 'propia'],
+      ['Otra situación', 'otra'],
+    ],
+  },
+  {
+    id: 'reaches',
+    text: '¿Te llega el dinero para comer y pagar la luz?',
+    options: [
+      ['Sí', 'si'],
+      ['Justo', 'justo'],
+      ['No', 'no'],
+    ],
+  },
+  {
+    id: 'soledad',
+    text: '¿Te sientes solo o sola a menudo?',
+    options: [
+      ['Sí', true],
+      ['A veces', false],
+      ['No', false],
+    ],
+  },
 ];
 
 const activeQuestions = () => QUESTIONS.filter((q) => !q.showIf || q.showIf(answers));
@@ -87,9 +222,12 @@ function showQuestion(i) {
   if (!q) return showResult();
   const n = i + 1;
   const total = list.length;
-  const options = q.type === 'list'
-    ? `<div class="options-large">${REGIONS.filter((c) => c.id !== 'madrid').map((c) => `<button type="button" class="option-large" data-field-value="${c.id}">${esc(c.name)}</button>`).join('')}</div>`
-    : `<div class="options-large">${q.options.map(([t, v], k) => `<button type="button" class="option-large" data-position="${k}">${esc(t)}</button>`).join('')}</div>`;
+  const options =
+    q.type === 'list'
+      ? `<div class="options-large">${REGIONS.filter((c) => c.id !== 'madrid')
+          .map((c) => `<button type="button" class="option-large" data-field-value="${c.id}">${esc(c.name)}</button>`)
+          .join('')}</div>`
+      : `<div class="options-large">${q.options.map(([t], k) => `<button type="button" class="option-large" data-position="${k}">${esc(t)}</button>`).join('')}</div>`;
   box.innerHTML = `
     <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${n}" aria-label="Pregunta ${n} de ${total}">
       <span>Pregunta ${n} de ${total}</span>
@@ -138,7 +276,7 @@ function profile() {
   const r = answers;
   const p = emptyProfile();
   p.age = r.age ?? null;
-  p.region = r.where === 'capital' || r.where === 'madrid' ? 'madrid' : r.region ?? null;
+  p.region = r.where === 'capital' || r.where === 'madrid' ? 'madrid' : (r.region ?? null);
   p.madridCity = r.where === 'capital' ? true : r.where === 'madrid' ? false : null;
   p.partner = r.livingWith === 'pareja';
   p.adults = r.livingWith === 'solo' ? 1 : 2;
@@ -148,10 +286,10 @@ function profile() {
   p.pensionSince2021 = r.since2021 ?? null;
   p.childrenBorn = r.children ?? 0;
   p.widowed = r.pension === 'viudedad' || r.widowed === true;
-  const ownItems = p.pension === 'no' ? r.income ?? null : p.pensionMonthly != null ? p.pensionMonthly * 14 : null;
+  const ownItems = p.pension === 'no' ? (r.income ?? null) : p.pensionMonthly != null ? p.pensionMonthly * 14 : null;
   p.ownIncome = ownItems;
-  p.householdIncome = r.livingWith === 'solo' ? ownItems : r.household ?? null;
-  p.dependency = r.dailyHelp === 'grado' ? r.grade ?? '1' : r.dailyHelp ?? 'no';
+  p.householdIncome = r.livingWith === 'solo' ? ownItems : (r.household ?? null);
+  p.dependency = r.dailyHelp === 'grado' ? (r.grade ?? '1') : (r.dailyHelp ?? 'no');
   p.disability = r.disability ?? 'no';
   p.housing = r.housing ?? null;
   if (r.youCare && r.youCare !== 'no') {

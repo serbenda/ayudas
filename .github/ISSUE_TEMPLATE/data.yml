@@ -1,0 +1,34 @@
+name: Una cifra o un requisito no cuadra
+description: Una cuantía, un plazo, un requisito o un paso que no coincide con la fuente oficial.
+title: 'Dato: '
+labels: [data]
+body:
+  - type: markdown
+    attributes:
+      value: 'Gracias por avisar. No pongas datos personales (nombre, DNI, dirección, salud…): este aviso es público.'
+  - type: input
+    id: benefit
+    attributes:
+      label: ¿Qué ayuda?
+      description: El nombre de la ficha, o la dirección de la página.
+      placeholder: Ingreso Mínimo Vital
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: ¿Qué no cuadra?
+      description: Lo que pone la web y lo que debería poner.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Enlace a la fuente oficial
+      description: BOE, sede de la Seguridad Social, web de la comunidad… si lo tienes.
+      placeholder: https://
+  - type: input
+    id: page
+    attributes:
+      label: Página
+      description: Se rellena sola si vienes desde la web.

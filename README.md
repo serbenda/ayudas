@@ -159,6 +159,7 @@ tests/e2e/                     Browser and accessibility tests (Playwright + axe
 To run it locally (Node 22, see `.nvmrc`):
 
 ```sh
+npm run lint                  # ESLint and Prettier (npm run format fixes the formatting)
 npm test                      # unit tests
 npm run dev                   # serves site/ locally
 npm run build                 # builds _site/ (what GitHub Pages serves)
@@ -190,6 +191,8 @@ The site never changes on its own: an Action **warns** with a GitHub issue, a pe
 | Every 2 January ([`watch.yml`](.github/workflows/watch.yml)) | Every figure in `FIGURE_SOURCES`, plus the BOE of the last 60 days | Opens "Revisar las cifras de <year>" with the checklist and, if the BOE has already published the new minimum wage, the exact change to make in `figures.js` |
 
 Each card shows "Revisado en …" (reviewed in …). After reviewing one, update its date in `REVIEWED` or its next check date in `CHECK_ON`, both in [`review.js`](site/assets/js/data/review.js).
+
+What each check does, what to do with each issue and what can go wrong is explained in [docs/AUTOMATION.md](docs/AUTOMATION.md).
 
 Both workflows can also be run by hand from the Actions tab ("Run workflow"; for `watch.yml`, choose `weekly` or `january`).
 

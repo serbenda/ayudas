@@ -7,7 +7,8 @@ const ACCENT = { es: 'es-ES', en: 'en-GB', ca: 'ca-ES', gl: 'gl-ES', eu: 'eu-ES'
 // If there is no Galician, Catalan or Basque voice, it reads with a Spanish voice
 const FALLBACK = { ca: 'es', gl: 'es', eu: 'es' };
 // Low-quality or novelty voices (macOS, eSpeak…)
-const BAD_VOICES = /espeak|compact|eloquence|novelty|zarvox|albert|bad news|bells|bubbles|cellos|fred|jester|organ|superstar|trinoids|whisper|wobble|grandma|grandpa|rocko|shelley|eddy|flo|reed|sandy|bahh|boing|deranged|hysterical|pipe organ/i;
+const BAD_VOICES =
+  /espeak|compact|eloquence|novelty|zarvox|albert|bad news|bells|bubbles|cellos|fred|jester|organ|superstar|trinoids|whisper|wobble|grandma|grandpa|rocko|shelley|eddy|flo|reed|sandy|bahh|boing|deranged|hysterical|pipe organ/i;
 
 const language = (lang) => (lang ?? 'es').toLowerCase().split('-')[0];
 
@@ -132,12 +133,13 @@ export async function speak(text, { lang = 'es', button = null } = {}) {
 // Short, clear name: «Mónica · España ★ recomendada» instead of «Mónica (español (España))»
 const COUNTRIES = typeof Intl !== 'undefined' && Intl.DisplayNames ? new Intl.DisplayNames(['es'], { type: 'region' }) : null;
 export function voiceLabel(v, recommended = false) {
-  const name = v.name
-    .replace(/\s*\((?:[^()]|\([^()]*\))*\)\s*$/, '') // «(español (España))», «(Natural)»
-    .replace(/^(Microsoft|Google|Apple)\s+/i, '')
-    .replace(/\s+Online.*$/i, '')
-    .replace(/\s+-\s+.*$/, '')
-    .trim() || v.name;
+  const name =
+    v.name
+      .replace(/\s*\((?:[^()]|\([^()]*\))*\)\s*$/, '') // «(español (España))», «(Natural)»
+      .replace(/^(Microsoft|Google|Apple)\s+/i, '')
+      .replace(/\s+Online.*$/i, '')
+      .replace(/\s+-\s+.*$/, '')
+      .trim() || v.name;
   const finalName = /^google/i.test(v.name) ? 'Voz de Google' : name;
   const region = (v.lang ?? '').replace('_', '-').split('-')[1];
   let country = '';

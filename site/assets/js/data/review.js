@@ -40,7 +40,8 @@ export function toReview(ids, today = new Date()) {
     const months = (today.getFullYear() - a) * 12 + (today.getMonth() + 1 - m);
     if (months >= 12) notices.push({ id, reason: `lleva ${months} meses sin revisar (desde ${reviewedText(id)})` });
     const checkDate = CHECK_ON[id];
-    if (checkDate && new Date(`${checkDate}T00:00:00`) <= today) notices.push({ id, reason: `desde el ${checkDate.split('-').reverse().join('/')} toca mirar su convocatoria: si ha salido una nueva o ha cambiado el plazo, actualiza fechas y cuantías` });
+    if (checkDate && new Date(`${checkDate}T00:00:00`) <= today)
+      notices.push({ id, reason: `desde el ${checkDate.split('-').reverse().join('/')} toca mirar su convocatoria: si ha salido una nueva o ha cambiado el plazo, actualiza fechas y cuantías` });
   }
   return notices;
 }

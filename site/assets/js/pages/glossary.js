@@ -5,8 +5,14 @@ import { esc } from '../ui/card.js';
 const list = document.getElementById('words');
 const search = document.getElementById('word-search');
 const count = document.getElementById('word-count');
-const normal = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
-const WORDS = Object.entries(GLOSSARY).filter(([k]) => k !== 'subrayadas').sort(([a], [b]) => normal(a).localeCompare(normal(b), 'es'));
+const normal = (s) =>
+  s
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase();
+const WORDS = Object.entries(GLOSSARY)
+  .filter(([k]) => k !== 'subrayadas')
+  .sort(([a], [b]) => normal(a).localeCompare(normal(b), 'es'));
 
 function render() {
   const q = normal(search.value.trim());

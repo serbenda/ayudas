@@ -36,7 +36,10 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
         if (x.topic === 'Salario mínimo' && x.url) {
           const html = await (await fetch(x.url, { signal: AbortSignal.timeout(30000) })).text();
           const smi = smiFromText(html.replace(/<[^>]+>/g, ' '));
-          if (smi && smi !== FIGURES.smi.perMonth) proposals.push(`- **Salario mínimo**: ${FIGURES.smi.perMonth} → **${smi}** €/mes (${Math.round(smi * 14 * 100) / 100} €/año en 14 pagas). En \`site/assets/js/data/figures.js\`, cambia \`smi\` y revisa los límites que dependen de él (subsidio: 75 % del SMI). Fuente: [${x.title}](${x.url})`);
+          if (smi && smi !== FIGURES.smi.perMonth)
+            proposals.push(
+              `- **Salario mínimo**: ${FIGURES.smi.perMonth} → **${smi}** €/mes (${Math.round(smi * 14 * 100) / 100} €/año en 14 pagas). En \`site/assets/js/data/figures.js\`, cambia \`smi\` y revisa los límites que dependen de él (subsidio: 75 % del SMI). Fuente: [${x.title}](${x.url})`,
+            );
         }
       }
     } catch (e) {

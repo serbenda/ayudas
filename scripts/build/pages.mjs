@@ -23,7 +23,10 @@ function page({ routePath, title, description, body, data }) {
   const html = template
     .replace(/<title>.*?<\/title>/, `<title>${esc(title)} · ayudas</title>`)
     .replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${esc(description)}">`)
-    .replace(/<link rel="canonical" href=".*?">/, `<link rel="canonical" href="${SITE_URL}${routePath}">\n  <script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`)
+    .replace(
+      /<link rel="canonical" href=".*?">/,
+      `<link rel="canonical" href="${SITE_URL}${routePath}">\n  <script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`,
+    )
     .replace(/<main class="wrapper">[\s\S]*?<\/main>/, `<main class="wrapper">\n${body}\n  </main>`);
   const folder = join(OUTPUT, routePath);
   mkdirSync(folder, { recursive: true });
@@ -35,7 +38,8 @@ const questions = (list) => ({
   '@type': 'FAQPage',
   mainEntity: list.filter(([, r]) => r).map(([q, r]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: r } })),
 });
-const breadcrumbs = (steps) => `<nav class="breadcrumbs" aria-label="Estás en"><ol>${steps.map(([t, u]) => (u ? `<li><a href="${u}">${esc(t)}</a></li>` : `<li aria-current="page">${esc(t)}</li>`)).join('')}</ol></nav>`;
+const breadcrumbs = (steps) =>
+  `<nav class="breadcrumbs" aria-label="Estás en"><ol>${steps.map(([t, u]) => (u ? `<li><a href="${u}">${esc(t)}</a></li>` : `<li aria-current="page">${esc(t)}</li>`)).join('')}</ol></nav>`;
 
 const routes = ['/', '/mayores/', '/catalogo/', '/mapa/', '/entidades/', '/palabras/', '/fuentes/', '/comunidad/', ...Object.keys(LANGUAGES).map((c) => `/${c}/`)];
 
@@ -95,30 +99,46 @@ page({
   body: `    <section aria-labelledby="headline">
       <h1 class="headline" id="headline">Ayudas por comunidad.</h1>
       <p class="lead">Elige dónde vives. También puedes <a href="/mapa/">pulsar en el mapa</a>.</p>
-      <ul class="region-list">${REGIONS.filter((c) => MINIMUM_INCOME[c.id]).map((c) => `<li><a href="/comunidad/${c.id}/">${esc(c.name)}</a><span>${esc(MINIMUM_INCOME[c.id].name)}</span></li>`).join('')}</ul>
+      <ul class="region-list">${REGIONS.filter((c) => MINIMUM_INCOME[c.id])
+        .map((c) => `<li><a href="/comunidad/${c.id}/">${esc(c.name)}</a><span>${esc(MINIMUM_INCOME[c.id].name)}</span></li>`)
+        .join('')}</ul>
     </section>`,
 });
 
-
 // Guides in other languages: same header with translated texts, and their language
-const TODAY_PHONES = [['112', '112'], ['016', '016'], ['024', '024'], ['900 107 917', 'redCross']];
+const TODAY_PHONES = [
+  ['112', '112'],
+  ['016', '016'],
+  ['024', '024'],
+  ['900 107 917', 'redCross'],
+];
 for (const [code, t] of Object.entries(LANGUAGES)) {
-  let html = template
+  const html = template
     .replace('<html lang="es">', `<html lang="${t.lang}" dir="${t.dir}">`)
     .replace(/<title>.*?<\/title>/, `<title>${esc(t.title)} · ayudas</title>`)
     .replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${esc(t.descripcion)}">`)
-    .replace(/<link rel="canonical" href=".*?">/, `<link rel="canonical" href="${SITE_URL}/${code}/">\n${Object.entries(LANGUAGES).map(([c, o]) => `  <link rel="alternate" hreflang="${o.lang}" href="${SITE_URL}/${c}/">`).join('\n')}\n  <link rel="alternate" hreflang="es" href="${SITE_URL}/">`)
+    .replace(
+      /<link rel="canonical" href=".*?">/,
+      `<link rel="canonical" href="${SITE_URL}/${code}/">\n${Object.entries(LANGUAGES)
+        .map(([c, o]) => `  <link rel="alternate" hreflang="${o.lang}" href="${SITE_URL}/${c}/">`)
+        .join('\n')}\n  <link rel="alternate" hreflang="es" href="${SITE_URL}/">`,
+    )
     .replace('<span>Tus ayudas</span>', `<span>${esc(t.nav.home)}</span>`)
     .replace('<span>Mayores</span>', `<span>${esc(t.nav.mayores)}</span>`)
     .replace('<span>Todas las ayudas</span>', `<span>${esc(t.nav.catalogo)}</span>`)
     .replace('<span>Mapa</span>', `<span>${esc(t.nav.mapa)}</span>`)
     .replace('<span>Fuentes</span>', `<span>${esc(t.nav.sources)}</span>`)
     .replace(/<div class="wrapper bar">[\s\S]*?\n  <\/div>\n/, `<div class="wrapper bar guide-bar">\n    ${languageSelector('/', code, t.language)}\n  </div>\n`)
-    .replace(/<footer class="wrapper footer">[\s\S]*?<\/footer>/, `<footer class="wrapper footer" lang="${t.lang}">
+    .replace(
+      /<footer class="wrapper footer">[\s\S]*?<\/footer>/,
+      `<footer class="wrapper footer" lang="${t.lang}">
     <p>${esc(t.note)} <a href="/fuentes/#t-error">${esc(t.notice)}</a>.</p>
     <nav class="languages-footer" aria-label="${esc(t.others)}"><p>${esc(t.others)}</p>${languageLinks('/', code)}</nav>
-  </footer>`)
-    .replace(/<main class="wrapper">[\s\S]*?<\/main>/, `<main class="wrapper language-guide">
+  </footer>`,
+    )
+    .replace(
+      /<main class="wrapper">[\s\S]*?<\/main>/,
+      `<main class="wrapper language-guide">
     <section aria-labelledby="headline">
       <h1 class="headline card-headline" id="headline">${esc(t.title)}</h1>
       <p class="lead">${esc(t.intro)}</p>
@@ -137,17 +157,20 @@ for (const [code, t] of Object.entries(LANGUAGES)) {
       <p>${esc(t.use)}</p>
       <p class="card-actions"><a class="button" href="/" hreflang="es">${esc(t.button)}</a> <a class="button secondary" href="/mapa/" hreflang="es">${esc(t.mapa)}</a></p>
     </section>
-  </main>`);
+  </main>`,
+    );
   const folder = join(OUTPUT, code);
   mkdirSync(folder, { recursive: true });
   writeFileSync(join(folder, 'index.html'), html);
 }
 
-
-writeFileSync(join(OUTPUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+writeFileSync(
+  join(OUTPUT, 'sitemap.xml'),
+  `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${routes.map((r) => `  <url><loc>${SITE_URL}${r}</loc></url>`).join('\n')}
 </urlset>
-`);
+`,
+);
 
 console.log(`${BENEFITS.length} cards, ${routes.length} URLs in the sitemap (${Object.keys(BY_ID).length} benefits).`);

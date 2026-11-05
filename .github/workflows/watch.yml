@@ -37,6 +37,11 @@ jobs:
       - name: Cards not reviewed or past their deadline
         run: npm run watch:review
 
+      - name: New versions of the pinned Actions
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: npm run watch:actions
+
       - name: Open, update or close the issues
         env:
           GH_TOKEN: ${{ github.token }}
@@ -57,6 +62,24 @@ jobs:
           }
           report "Convocatorias nuevas de ayudas que recoge la web" new-calls.md no
           report "Fichas por revisar" to-review.md yes
+          report "Actualizaciones de las Actions" actions-updates.md yes
+
+      - name: Report a failed check
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          JOB: ${{ github.workflow }} / ${{ github.job }}
+        run: |
+          title="Ha fallado una comprobación automática"
+          body="La comprobación «$JOB» ha fallado por un error del propio script o de la Action, no por lo que vigila. Mira el registro: $RUN"
+          open=$(gh issue list --repo "$REPO" --state open --search "\"$title\" in:title" --json number --jq '.[0].number')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --repo "$REPO" --body "$body"
+          else
+            gh issue create --repo "$REPO" --title "$title" --body "$body"
+          fi
 
   january:
     if: (github.event_name == 'schedule' && github.event.schedule == '17 7 2 1 *') || (github.event_name == 'workflow_dispatch' && inputs.what == 'january')
@@ -75,3 +98,20 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: gh issue create --repo "$REPO" --title "Revisar las cifras de $(date +%Y)" --body-file january.md
+
+      - name: Report a failed check
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          JOB: ${{ github.workflow }} / ${{ github.job }}
+        run: |
+          title="Ha fallado una comprobación automática"
+          body="La comprobación «$JOB» ha fallado por un error del propio script o de la Action, no por lo que vigila. Mira el registro: $RUN"
+          open=$(gh issue list --repo "$REPO" --state open --search "\"$title\" in:title" --json number --jq '.[0].number')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --repo "$REPO" --body "$body"
+          else
+            gh issue create --repo "$REPO" --title "$title" --body "$body"
+          fi
