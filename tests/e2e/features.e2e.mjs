@@ -44,6 +44,8 @@ const STUBS = () => {
   Object.defineProperty(window, 'SpeechSynthesisUtterance', { value: U, configurable: true, writable: true });
   const voices = [
     { name: 'Mónica', lang: 'es-ES', voiceURI: 'monica', localService: true },
+    { name: 'Microsoft Elvira Online (Natural) - Spanish (Spain)', lang: 'es-ES', voiceURI: 'elvira' },
+    { name: 'Microsoft Dalia Online (Natural) - Spanish (Mexico)', lang: 'es-MX', voiceURI: 'dalia' },
     { name: 'Google español', lang: 'es-ES', voiceURI: 'google-es' },
     { name: 'Daniel', lang: 'en-GB', voiceURI: 'daniel' },
   ];
@@ -100,6 +102,11 @@ test('every feature works on every page', { timeout: 600000 }, async () => {
       ok(await page.locator('#voice-setting').evaluate((d) => d.open), 'not open');
       const n = await page.locator('#voice-setting select[name="voice"] option').count();
       ok(n >= 2, `voices ${n}`);
+      const panel = await page.locator('.voice-setting-panel').boundingBox();
+      for (const sel of ['select', '[data-try-voice]', '.note']) {
+        const b = await page.locator(`.voice-setting-panel ${sel}`).boundingBox();
+        ok(b.x + b.width <= panel.x + panel.width + 1, `${sel} sticks out of the voice panel`);
+      }
       await page.click('#voice-setting [data-try-voice]');
       await page.waitForTimeout(200);
       ok((await page.evaluate(() => window.__spoken.length)) > 0, 'did not speak');
@@ -314,6 +321,18 @@ test('every feature works on every page', { timeout: 600000 }, async () => {
     await page.goto(base + '?pro=0');
     await page.click('[data-example="familia"]');
     ok(!(await page.locator('#pro').isVisible()), 'pro off');
+    await context.close();
+  });
+
+  await check('voice panel fits on a phone (seniors page, long voice names)', async () => {
+    const { page, context } = await open('mayores/', { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    await page.click('#voice-setting summary');
+    const panel = await page.locator('.voice-setting-panel').boundingBox();
+    ok(panel.x >= 0 && panel.x + panel.width <= 390, `panel ${panel.x}+${panel.width}`);
+    for (const sel of ['select', '[data-try-voice]', '.note']) {
+      const b = await page.locator(`.voice-setting-panel ${sel}`).boundingBox();
+      ok(b.x + b.width <= panel.x + panel.width + 1, `${sel} sticks out`);
+    }
     await context.close();
   });
 
