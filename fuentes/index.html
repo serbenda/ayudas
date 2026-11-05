@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fuentes y condiciones · ayudas</title>
+  <meta name="description" content="De dónde salen las cifras de ayudas, cómo se calcula y qué pasa con tus respuestas.">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://ayudas.bendi.dev/fuentes/">
+  <meta name="theme-color" content="#f3f1ec" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#12161e" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="../vendor/fuentes/archivo.css">
+  <link rel="stylesheet" href="../assets/css/estilos.css">
+</head>
+<body>
+  <header class="envoltorio cabecera">
+    <a class="marca" href="../" aria-label="ayudas, inicio">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <circle class="aro" cx="32" cy="32" r="19.5" fill="none" stroke-width="13"/>
+        <circle class="bandas" cx="32" cy="32" r="19.5" fill="none" stroke-width="13" stroke-dasharray="15.32 15.31" stroke-dashoffset="7.66"/>
+      </svg>
+      <span>ayudas</span>
+    </a>
+    <nav class="nav" aria-label="Secciones">
+      <a href="../"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z M5.6 5.6l3.6 3.6 M14.8 14.8l3.6 3.6 M18.4 5.6l-3.6 3.6 M9.2 14.8l-3.6 3.6"/></svg><span>Tus ayudas</span></a>
+      <a href="../catalogo/"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6h12 M8 12h12 M8 18h12 M4 6h.01 M4 12h.01 M4 18h.01"/></svg><span>Todas las ayudas</span></a>
+      <a href="../fuentes/" aria-current="page"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2Z M4 20a2 2 0 0 0 2 2h13v-4"/></svg><span>Fuentes</span></a>
+    </nav>
+  </header>
+
+  <main class="envoltorio">
+    <article class="texto">
+      <section aria-labelledby="titular">
+        <h1 class="titular" id="titular">Fuentes y condiciones.</h1>
+        <p class="entradilla">De dónde salen las cifras, cómo se decide qué ayudas te salen y qué pasa con tus respuestas.</p>
+      </section>
+
+      <section aria-labelledby="t-como">
+        <div class="seccion-titulo"><h2 id="t-como">Cómo funciona</h2></div>
+        <p>Cada ayuda tiene unas reglas sencillas, escritas a partir de lo que dice el organismo que la da: edad, quién vive en casa, ingresos, discapacidad, dependencia, pensión… Con tus respuestas, cada ayuda sale de una de estas tres maneras:</p>
+        <ul>
+          <li><strong>Cumples lo principal:</strong> por lo que has contestado, encajas en los requisitos más importantes.</li>
+          <li><strong>Mira si cumples:</strong> puede corresponderte, pero depende de algo que no preguntamos (una convocatoria abierta, el límite exacto de tu comunidad, la cotización…).</li>
+          <li><strong>No sale:</strong> por lo que has contestado, no encaja.</li>
+        </ul>
+        <p>Las cantidades que se calculan (por ejemplo, lo que cobrarías de Ingreso Mínimo Vital) son <strong>orientativas</strong>: el organismo hace la cuenta con tus datos reales, que pueden ser distintos. Algunas ayudas no se pueden cobrar a la vez, y otras cuentan como ingreso para las demás.</p>
+      </section>
+
+      <section aria-labelledby="t-privacidad">
+        <div class="seccion-titulo"><h2 id="t-privacidad">Tus respuestas</h2></div>
+        <p>Las cuentas se hacen en tu navegador. Tus respuestas no se envían a ningún servidor. Solo se guardan en tu navegador si marcas «Recordar mis respuestas», y las borras con «Empezar de cero».</p>
+        <p>Se cuentan las visitas con <a href="https://www.goatcounter.com/" rel="noopener">GoatCounter</a>, sin cookies ni datos personales: solo qué página se ve, nunca lo que contestas.</p>
+      </section>
+
+      <section aria-labelledby="t-cifras">
+        <div class="seccion-titulo"><h2 id="t-cifras">Las cifras de <span id="año">2026</span></h2><p id="revisado"></p></div>
+        <div class="tabla-scroll">
+          <table>
+            <thead><tr><th scope="col">Qué</th><th scope="col">Cifra</th><th scope="col">Fuente</th></tr></thead>
+            <tbody id="tabla-cifras"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="t-organismos">
+        <div class="seccion-titulo"><h2 id="t-organismos">Dónde se piden</h2></div>
+        <ul>
+          <li><a href="https://sede.seg-social.gob.es/" rel="noopener">Sede de la Seguridad Social</a>: IMV, nacimiento, pensiones, complementos.</li>
+          <li><a href="https://imv.seg-social.es/" rel="noopener">Simulador del Ingreso Mínimo Vital</a>.</li>
+          <li><a href="https://sede.sepe.gob.es/" rel="noopener">Sede del SEPE</a>: paro y subsidios.</li>
+          <li><a href="https://sede.agenciatributaria.gob.es/" rel="noopener">Agencia Tributaria</a>: deducciones y su cobro anticipado.</li>
+          <li><a href="https://imserso.es/" rel="noopener">IMSERSO</a>: pensiones no contributivas, dependencia, turismo y termalismo.</li>
+          <li><a href="https://www.bonosocial.gob.es/" rel="noopener">Bono social</a>: luz y térmico.</li>
+          <li><a href="https://www.becaseducacion.gob.es/" rel="noopener">Becas del Ministerio de Educación</a>.</li>
+          <li>Los <strong>servicios sociales de tu ayuntamiento</strong>: orientan gratis y tramitan dependencia, teleasistencia, ayuda a domicilio y ayudas de emergencia.</li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="t-error">
+        <div class="seccion-titulo"><h2 id="t-error">¿Ves un error o falta una ayuda?</h2></div>
+        <p>Las ayudas cambian a menudo. Si una cifra no cuadra, falta una ayuda o algo no funciona, avisa en GitHub (necesitas una cuenta gratis):</p>
+        <ul>
+          <li><a href="https://github.com/serbenda/ayudas/issues/new" data-aviso="dato" rel="noopener">Una cifra o un requisito no cuadra</a></li>
+          <li><a href="https://github.com/serbenda/ayudas/issues/new" data-aviso="falta" rel="noopener">Falta una ayuda</a></li>
+          <li><a href="https://github.com/serbenda/ayudas/issues/new" data-aviso="fallo" rel="noopener">Algo no funciona</a></li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="t-condiciones">
+        <div class="seccion-titulo"><h2 id="t-condiciones">Condiciones</h2></div>
+        <p>Esta web es informativa y no está vinculada a ninguna administración. No sustituye al asesoramiento de los servicios sociales, de un graduado social o de la propia administración. Las cifras son de 2026 y pueden cambiar.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="envoltorio pie">
+    <div class="apoyo">
+      <span class="apoyo-corazon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 16 16"><path d="M8 14.2 6.9 13.2C3 9.7.5 7.4.5 4.6.5 2.3 2.3.5 4.6.5c1.3 0 2.5.6 3.4 1.6C8.9 1.1 10.1.5 11.4.5c2.3 0 4.1 1.8 4.1 4.1 0 2.8-2.5 5.1-6.4 8.6Z"/></svg></span>
+      <div class="apoyo-texto">
+        <p class="apoyo-titulo">¿Te sirve ayudas?</p>
+        <p>Es gratis, sin anuncios ni cookies. Si te es útil y quieres que siga creciendo, puedes apoyarla.</p>
+      </div>
+      <a class="apoyo-boton" href="https://github.com/sponsors/serbenda" rel="noopener">Apoyar en GitHub Sponsors</a>
+    </div>
+    <p>Web sin anuncios ni cookies, con datos oficiales. <a href="../fuentes/" aria-current="page">Fuentes y condiciones</a>. <a href="../fuentes/#t-error">¿Ves un error o falta una ayuda?</a> Hermana de <a href="https://hucha.bendi.dev/">hucha</a> y <a href="https://bolsillo.bendi.dev/">bolsillo</a>.</p>
+  </footer>
+
+  <script type="module" src="../assets/js/fuentes.js"></script>
+  <script type="module" src="../assets/js/comun.js"></script>
+</body>
+</html>
