@@ -1,0 +1,131 @@
+name: Test and publish
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Every Monday: check that the official links still work (UTC)
+    - cron: '23 6 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      # Actions pinned to a commit so they never change without us knowing (version in the comment)
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Self-hosted font (Archivo)
+        run: npm run font
+
+      - name: Build the site
+        run: npm run build -- "${GITHUB_SHA::8}"
+
+      - name: Install the test browser and axe
+        run: |
+          npm run tools
+          npx playwright install --with-deps chromium
+
+      - name: Browser and accessibility tests (mobile, tablet and desktop; light, dark and high contrast)
+        env:
+          CI: 'true'
+        run: |
+          set -o pipefail
+          npm run test:e2e 2>&1 | tee "$RUNNER_TEMP/e2e.log" || {
+            grep -E "^not ok|AssertionError|Error:|expected|actual|message:|^\s+[+-] " "$RUNNER_TEMP/e2e.log" | head -40 | sed 's/^/::error::/'
+            exit 1
+          }
+
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  deploy:
+    # Pull requests are only tested; the site is published from main
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  links:
+    # Official websites change often. Every week the links are checked and, if any is broken,
+    # an issue is opened (or updated); it closes itself when they all work again.
+    # The week's BOE is also checked in case a figure changes (pensions, minimum wage, IPREM, IMV…).
+    # Issue titles and bodies stay in Spanish: they are matched by title and read by the maintainer.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Check links
+        id: check
+        continue-on-error: true
+        run: npm run watch:links
+
+      - name: Open or close the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          BROKEN: ${{ steps.check.outcome == 'failure' }}
+        run: |
+          title="Enlaces oficiales rotos"
+          open=$(gh issue list --repo "$REPO" --state open --search "\"$title\" in:title" --json number --jq '.[0].number')
+          if [ "$BROKEN" = "true" ]; then
+            if [ -n "$open" ]; then
+              gh issue comment "$open" --repo "$REPO" --body-file broken-links.md
+            else
+              gh issue create --repo "$REPO" --title "$title" --body-file broken-links.md
+            fi
+          elif [ -n "$open" ]; then
+            gh issue close "$open" --repo "$REPO" --comment "Todos los enlaces vuelven a funcionar."
+          fi
+
+      - name: Watch the BOE (changes to pensions, minimum wage, IPREM, IMV, social discount…)
+        run: npm run watch:boe
+
+      - name: Report BOE news
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ -s boe-news.md ]; then
+            title="Novedades del BOE que pueden cambiar cifras"
+            open=$(gh issue list --repo "$REPO" --state open --search "\"$title\" in:title" --json number --jq '.[0].number')
+            if [ -n "$open" ]; then
+              gh issue comment "$open" --repo "$REPO" --body-file boe-news.md
+            else
+              gh issue create --repo "$REPO" --title "$title" --body-file boe-news.md
+            fi
+          fi

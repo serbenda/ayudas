@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Todas las ayudas · ayudas</title>
+  <meta name="description" content="Todas las ayudas públicas que recoge la web: qué dan en 2026, qué piden y dónde se piden.">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://ayudas.bendi.dev/catalogo/">
+  <meta name="theme-color" content="#f3f1ec" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#12161e" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../vendor/fonts/archivo.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script>(function(){var d=document.documentElement.dataset,q=location.search;if(/[?&]widget=1/.test(q))d.widget='';try{if(localStorage.getItem('ayudas:facil')==='1')d.easy='';if(localStorage.getItem('ayudas:contraste')==='1')d.contrast='';if(/[?&]pro=1/.test(q))localStorage.setItem('ayudas:pro','1');if(/[?&]pro=0/.test(q))localStorage.removeItem('ayudas:pro');if(localStorage.getItem('ayudas:pro')==='1')d.pro=''}catch(e){}})()</script>
+</head>
+<body>
+  <header class="wrapper header">
+    <a class="brand" href="../" aria-label="ayudas, inicio">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <circle class="ring" cx="32" cy="32" r="19.5" fill="none" stroke-width="13"/>
+        <circle class="stripes" cx="32" cy="32" r="19.5" fill="none" stroke-width="13" stroke-dasharray="15.32 15.31" stroke-dashoffset="7.66"/>
+      </svg>
+      <span>ayudas</span>
+    </a>
+    <nav class="nav" aria-label="Secciones">
+      <a href="../"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z M5.6 5.6l3.6 3.6 M14.8 14.8l3.6 3.6 M18.4 5.6l-3.6 3.6 M9.2 14.8l-3.6 3.6"/></svg><span>Tus ayudas</span></a>
+      <a href="../mayores/"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z M9 21l2-6 M11 15l1-6 3 3 M12 9l-3 3 M17 12v9 M17 12a1.5 1.5 0 0 0-3 0"/></svg><span>Mayores</span></a>
+      <a href="../catalogo/" aria-current="page"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6h12 M8 12h12 M8 18h12 M4 6h.01 M4 12h.01 M4 18h.01"/></svg><span>Todas las ayudas</span></a>
+      <a href="../mapa/"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z M9 4v14 M15 6v14"/></svg><span>Mapa</span></a>
+      <a href="../fuentes/"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2Z M4 20a2 2 0 0 0 2 2h13v-4"/></svg><span>Fuentes</span></a>
+    </nav>
+  </header>
+  <div class="wrapper bar">
+    <a class="button urgent" href="../#ayuda-hoy">Necesito ayuda hoy</a>
+    <button type="button" class="button secondary" id="easy" aria-pressed="false">Letra grande y fácil</button>
+    <button type="button" class="button secondary" id="contrast" aria-pressed="false">Alto contraste</button>
+    <div class="settings-bar">
+      <details class="voice-setting" id="voice-setting">
+        <summary class="button secondary"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9Z M16.5 8.5a5 5 0 0 1 0 7 M19 6a8.5 8.5 0 0 1 0 12"/></svg><span>Voz</span></summary>
+        <div class="voice-setting-panel">
+          <label>Voz que lee <select name="voice"><option value="">La del aparato</option></select></label>
+          <label class="checkbox"><input type="checkbox" name="slow"><span>Leer más despacio</span></label>
+          <button type="button" class="button secondary" data-try-voice="Hola. Así suena la voz que te lee las ayudas. Si no te gusta, elige otra.">Probar la voz</button>
+          <p class="note">La que lleva ★ es la que mejor suena en tu aparato. Si tu aparato tiene pocas, puedes descargar voces mejores en los ajustes de idioma o de accesibilidad del sistema.</p>
+        </div>
+      </details>
+      <details class="language-setting">
+        <summary class="button secondary" aria-label="Idioma: Español"><svg class="flag" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#aa151b"/><rect y="5" width="30" height="10" fill="#f1bf00"/></svg><span>Español</span></summary>
+        <ul class="language-setting-panel"><li><a href="../" hreflang="es" lang="es" aria-current="page"><svg class="flag" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#aa151b"/><rect y="5" width="30" height="10" fill="#f1bf00"/></svg><span>Español</span></a></li><li><a href="../ca/" hreflang="ca" lang="ca"><svg class="flag" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fcdd09"/><rect y="2.22" width="30" height="2.22" fill="#da121a"/><rect y="6.67" width="30" height="2.22" fill="#da121a"/><rect y="11.11" width="30" height="2.22" fill="#da121a"/><rect y="15.56" width="30" height="2.22" fill="#da121a"/></svg><span>Català</span></a></li><li><a href="../va/" hreflang="ca-ES-valencia" lang="ca-ES-valencia"><svg class="flag" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fcdd09"/><rect y="2.22" width="30" height="2.22" fill="#da121a"/><rect y="6.67" width="30" height="2.22" fill="#da121a"/><rect y="11.11" width="30" height="2.22" fill="#da121a"/><rect y="15.56" width="30" height="2.22" fill="#da121a"/><rect width="10.5" height="20" fill="#0073cf"/></svg><span>Valencià</span></a></li><li><a href="../gl/" hreflang="gl" lang="gl"><svg class="flag" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fff"/><path d="M0 0h4.6L30 16.6V20h-4.6L0 3.4Z" fill="#0099cc"/></svg><span>Galego</span></a></li><li><a href="../eu/" hreflang="eu" lang="eu"><svg class="flag" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#d52b1e"/><path d="M0 0 30 20M30 0 0 20" stroke="#009b48" stroke-width="3"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="3"/></svg><span>Euskara</span></a></li><li><a href="../en/" hreflang="en" lang="en"><svg class="flag" viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="60" height="40" fill="#012169"/><path d="M0 0 60 40M60 0 0 40" stroke="#fff" stroke-width="8"/><path d="M0 0 60 40M60 0 0 40" stroke="#c8102e" stroke-width="3"/><path d="M30 0v40M0 20h60" stroke="#fff" stroke-width="12"/><path d="M30 0v40M0 20h60" stroke="#c8102e" stroke-width="7"/></svg><span>English</span></a></li></ul>
+      </details>
+    </div>
+  </div>
+
+  <main class="wrapper">
+    <section aria-labelledby="headline">
+      <h1 class="headline" id="headline">Todas las ayudas.</h1>
+      <p class="lead">Las ayudas que recoge la web, con lo que dan en 2026, lo que piden y dónde se piden. Si prefieres que te digamos cuáles te pueden tocar a ti, <a href="../">contesta las preguntas</a>.</p>
+
+      <div class="filters">
+        <label class="search"><span class="visually-hidden">Buscar una ayuda</span><input id="search" type="search" placeholder="Busca: alquiler, pensión, bebé, dependencia…" autocomplete="off"></label>
+        <div class="filters-row">
+          <div class="chips" id="categories" role="group" aria-label="Temas"></div>
+          <label class="region-field">Tu comunidad (para los enlaces)
+            <select id="region-filter"><option value="">Sin elegir</option></select>
+          </label>
+        </div>
+      </div>
+      <p class="results-counter" id="count" aria-live="polite"></p>
+      <div id="list"></div>
+    </section>
+  </main>
+
+  <footer class="wrapper footer">
+    <div class="support">
+      <span class="support-heart" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 16 16"><path d="M8 14.2 6.9 13.2C3 9.7.5 7.4.5 4.6.5 2.3 2.3.5 4.6.5c1.3 0 2.5.6 3.4 1.6C8.9 1.1 10.1.5 11.4.5c2.3 0 4.1 1.8 4.1 4.1 0 2.8-2.5 5.1-6.4 8.6Z"/></svg></span>
+      <div class="support-text">
+        <p class="support-title">¿Te sirve ayudas?</p>
+        <p>Es gratis, sin anuncios ni cookies. Si te es útil y quieres que siga creciendo, puedes apoyarla.</p>
+      </div>
+      <a class="support-button" href="https://github.com/sponsors/serbenda" rel="noopener">Apoyar en GitHub Sponsors</a>
+    </div>
+    <p>Web sin anuncios ni cookies, con datos oficiales. <a href="../fuentes/">Fuentes y condiciones</a>. <a href="../entidades/">Para servicios sociales y entidades</a>. <a href="../palabras/">Palabras difíciles</a>. <a href="../fuentes/#t-error">¿Ves un error o falta una ayuda?</a> Hermana de <a href="https://hucha.bendi.dev/">hucha</a> y <a href="https://bolsillo.bendi.dev/">bolsillo</a>.</p>
+    <nav class="languages-footer" aria-label="Idiomas"><p>En otros idiomas</p><ul class="languages-list"><li><a href="../" hreflang="es" lang="es" aria-current="page"><svg class="flag" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#aa151b"/><rect y="5" width="30" height="10" fill="#f1bf00"/></svg><span>Español</span></a></li><li><a href="../ca/" hreflang="ca" lang="ca"><svg class="flag" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fcdd09"/><rect y="2.22" width="30" height="2.22" fill="#da121a"/><rect y="6.67" width="30" height="2.22" fill="#da121a"/><rect y="11.11" width="30" height="2.22" fill="#da121a"/><rect y="15.56" width="30" height="2.22" fill="#da121a"/></svg><span>Català</span></a></li><li><a href="../va/" hreflang="ca-ES-valencia" lang="ca-ES-valencia"><svg class="flag" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fcdd09"/><rect y="2.22" width="30" height="2.22" fill="#da121a"/><rect y="6.67" width="30" height="2.22" fill="#da121a"/><rect y="11.11" width="30" height="2.22" fill="#da121a"/><rect y="15.56" width="30" height="2.22" fill="#da121a"/><rect width="10.5" height="20" fill="#0073cf"/></svg><span>Valencià</span></a></li><li><a href="../gl/" hreflang="gl" lang="gl"><svg class="flag" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fff"/><path d="M0 0h4.6L30 16.6V20h-4.6L0 3.4Z" fill="#0099cc"/></svg><span>Galego</span></a></li><li><a href="../eu/" hreflang="eu" lang="eu"><svg class="flag" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#d52b1e"/><path d="M0 0 30 20M30 0 0 20" stroke="#009b48" stroke-width="3"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="3"/></svg><span>Euskara</span></a></li><li><a href="../en/" hreflang="en" lang="en"><svg class="flag" viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="60" height="40" fill="#012169"/><path d="M0 0 60 40M60 0 0 40" stroke="#fff" stroke-width="8"/><path d="M0 0 60 40M60 0 0 40" stroke="#c8102e" stroke-width="3"/><path d="M30 0v40M0 20h60" stroke="#fff" stroke-width="12"/><path d="M30 0v40M0 20h60" stroke="#c8102e" stroke-width="7"/></svg><span>English</span></a></li></ul></nav>
+  </footer>
+
+  <script type="module" src="../assets/js/pages/catalogue.js"></script>
+  <script type="module" src="../assets/js/ui/common.js"></script>
+</body>
+</html>

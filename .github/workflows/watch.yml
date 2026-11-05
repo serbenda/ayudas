@@ -1,0 +1,77 @@
+name: Watch for changes
+
+# Reports (as issues) everything that could leave the site out of date. It never changes the site itself:
+# a person reviews every change and it goes in through a pull request.
+# Issue titles and bodies stay in Spanish: they are matched by title and read by the maintainer.
+on:
+  schedule:
+    # Every Monday: new calls for regional and municipal benefits, and cards due for review (UTC)
+    - cron: '41 6 * * 1'
+    # Every 2 January: review checklist for the new year's figures
+    - cron: '17 7 2 1 *'
+  workflow_dispatch:
+    inputs:
+      what:
+        description: 'What to watch'
+        type: choice
+        options: [weekly, january]
+        default: weekly
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  weekly:
+    if: (github.event_name == 'schedule' && github.event.schedule == '41 6 * * 1') || (github.event_name == 'workflow_dispatch' && inputs.what == 'weekly')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: New calls in the National Grants Database (BDNS)
+        run: npm run watch:calls
+
+      - name: Cards not reviewed or past their deadline
+        run: npm run watch:review
+
+      - name: Open, update or close the issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          report() {
+            title="$1"; file="$2"; close="$3"
+            open=$(gh issue list --repo "$REPO" --state open --search "\"$title\" in:title" --json number --jq '.[0].number')
+            if [ -s "$file" ]; then
+              if [ -n "$open" ]; then
+                gh issue comment "$open" --repo "$REPO" --body-file "$file"
+              else
+                gh issue create --repo "$REPO" --title "$title" --body-file "$file"
+              fi
+            elif [ -n "$open" ] && [ "$close" = "yes" ]; then
+              gh issue close "$open" --repo "$REPO" --comment "Ya no hay nada pendiente."
+            fi
+          }
+          report "Convocatorias nuevas de ayudas que recoge la web" new-calls.md no
+          report "Fichas por revisar" to-review.md yes
+
+  january:
+    if: (github.event_name == 'schedule' && github.event.schedule == '17 7 2 1 *') || (github.event_name == 'workflow_dispatch' && inputs.what == 'january')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Prepare the review of the year's figures
+        run: npm run watch:january
+
+      - name: Open the yearly issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: gh issue create --repo "$REPO" --title "Revisar las cifras de $(date +%Y)" --body-file january.md

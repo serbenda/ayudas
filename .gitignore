@@ -1,8 +1,8 @@
 _site/
 node_modules/
-vendor/
-enlaces-rotos.md
-boe-novedades.md
-revisar.md
-convocatorias-novedades.md
-enero.md
+site/vendor/
+broken-links.md
+boe-news.md
+to-review.md
+new-calls.md
+january.md

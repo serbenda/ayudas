@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://ayudas.bendi.dev/"><img src="assets/img/favicon.svg" width="112" alt="ayudas logo: a life ring"></a>
+<a href="https://ayudas.bendi.dev/"><img src="site/assets/img/favicon.svg" width="112" alt="ayudas logo: a life ring"></a>
 
 # ayudas
 
@@ -9,8 +9,8 @@ Family, older people, pensions, disability, long-term care, housing, unemploymen
 
 [![Open the website](https://img.shields.io/badge/open_the_website-ayudas.bendi.dev-1f6b68?style=for-the-badge)](https://ayudas.bendi.dev/)
 
-[![Publish](https://github.com/serbenda/ayudas/actions/workflows/publicar.yml/badge.svg)](https://github.com/serbenda/ayudas/actions/workflows/publicar.yml)
-[![Watch for changes](https://github.com/serbenda/ayudas/actions/workflows/vigilar.yml/badge.svg)](https://github.com/serbenda/ayudas/actions/workflows/vigilar.yml)
+[![Publish](https://github.com/serbenda/ayudas/actions/workflows/publish.yml/badge.svg)](https://github.com/serbenda/ayudas/actions/workflows/publish.yml)
+[![Watch for changes](https://github.com/serbenda/ayudas/actions/workflows/watch.yml/badge.svg)](https://github.com/serbenda/ayudas/actions/workflows/watch.yml)
 ![No dependencies](https://img.shields.io/badge/dependencies-0-1f6b68)
 ![No cookies](https://img.shields.io/badge/cookies-0-1f6b68)
 [![Support on GitHub Sponsors](https://img.shields.io/badge/support-GitHub_Sponsors-bf3989?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/serbenda)
@@ -54,7 +54,7 @@ It is a sister project of [hucha](https://github.com/serbenda/hucha) (where publ
 | **Older people** (`/mayores/`) | For older people or anyone not comfortable with phones: one question at a time, big buttons, short sentences, **read aloud**, and each benefit's steps explained. |
 | **All benefits** (`/catalogo/`) | Every benefit card, with search (accent-insensitive) and topic filters. Pick your region and links point to its website. |
 | **Map** (`/mapa/`) | Map of Spain: tap your region (or pick it from a list) to see what its minimum income is called and how much it pays, the region's own benefits and the ones it manages, with their steps. |
-| **Cards** (`/ayuda/<id>/` and `/comunidad/<id>/`) | One page per benefit and per region, with FAQ structured data for search engines. Generated at publish time by `scripts/paginas.mjs`, which also builds `sitemap.xml`. |
+| **Cards** (`/ayuda/<id>/` and `/comunidad/<id>/`) | One page per benefit and per region, with FAQ structured data for search engines. Generated at build time by `scripts/build/pages.mjs`, which also builds `sitemap.xml`. |
 | **Difficult words** (`/palabras/`) | 74 bureaucratic terms (IPREM, padrón, Cl@ve, base imponible, recurso de alzada…) explained in short sentences, with search. In every card these words are underlined: tap one to see what it means. |
 | **Organisations** (`/entidades/`) | For social services and NGOs: professional mode (case reference and notes that print, all kept locally) and code to embed the questionnaire, the older people page or the map in another website (`embed.js`). |
 | **Language guides** (`/ca/`, `/va/`, `/gl/`, `/eu/`, `/en/`) | Starter guides in Catalan, Valencian, Galician, Basque and English: where to start, emergency numbers, the main benefits with their official Spanish names, and a sentence in Spanish to show at the counter. |
@@ -62,7 +62,7 @@ It is a sister project of [hucha](https://github.com/serbenda/hucha) (where publ
 
 ## Which benefits it covers
 
-84 benefits in eight topics. Each explains **how to apply, step by step**, with region-specific steps when they differ. Procedures live in [`assets/js/tramites.js`](assets/js/tramites.js); phone numbers, papers and difficult words in [`assets/js/guia.js`](assets/js/guia.js).
+84 benefits in eight topics. Each explains **how to apply, step by step**, with region-specific steps when they differ. Procedures live in [`procedures.js`](site/assets/js/data/procedures.js); phone numbers, papers and difficult words in [`guide.js`](site/assets/js/data/guide.js).
 
 - **If you need it now:** social emergency aid, food, gender violence (016), eviction, homelessness, loneliness, and healthcare without papers.
 - **Income and benefits:** Ingreso Mínimo Vital (minimum income), regional minimum income, unemployment benefit and allowances, allowance for over-52s.
@@ -71,7 +71,7 @@ It is a sister project of [hucha](https://github.com/serbenda/hucha) (where publ
 - **Disability and long-term care:** dependency assessment, family carer allowance, care services, free Social Security contributions for carers, disability certificate, dependent child allowance, non-contributory disability pension, tax and parking benefits.
 - **Housing and utilities:** electricity and heating social discount, rent aid (general and for young people), rent supplement for non-contributory pensioners, ICO state guarantee to buy a first home.
 - **Income tax deductions:** maternity and nursery, large family, single parent, relative with disability, disability allowance, and each region's own deductions.
-- **Each region's own benefits** ([`assets/js/ayudas-ccaa.js`](assets/js/ayudas-ccaa.js)): Tarxeta Benvida (Galicia), monthly child benefit (Basque Country), Becas Concilia 0-3 (Asturias), Bono Nacimiento (Castilla y León), birth grant in villages (Extremadura), Xec Cangur (Balearic Islands), supplement to the non-contributory pension (Canary Islands and Catalonia), third child and multiple births (Andalusia), large and single-parent families (Valencian Community, Castilla-La Mancha and Murcia), birth grants (Cantabria), children aged 0-3 (Navarre), multiple births (Aragon) and Bono Infantil (La Rioja). Each has its rule, its steps and the dates of its call for applications.
+- **Each region's own benefits** ([`regional-benefits.js`](site/assets/js/data/regional-benefits.js)): Tarxeta Benvida (Galicia), monthly child benefit (Basque Country), Becas Concilia 0-3 (Asturias), Bono Nacimiento (Castilla y León), birth grant in villages (Extremadura), Xec Cangur (Balearic Islands), supplement to the non-contributory pension (Canary Islands and Catalonia), third child and multiple births (Andalusia), large and single-parent families (Valencian Community, Castilla-La Mancha and Murcia), birth grants (Cantabria), children aged 0-3 (Navarre), multiple births (Aragon) and Bono Infantil (La Rioja). Each has its rule, its steps and the dates of its call for applications.
 - **Madrid region and city:** RMI, Tarjeta Familias, Canal de Isabel II water discount, social housing, free nursery schools, telecare, free transport from age 65.
 - **Large cities:** Barcelona Children's Fund, València birth grant, Zaragoza urgent aid, free childcare at home in Málaga, and the Basque Social Emergency Aid (AES).
 - **Self-employed:** €80 flat rate and self-employed unemployment benefit.
@@ -83,7 +83,7 @@ Per region the site also has: how much the minimum income pays (Ministry of Soci
 
 ## How it decides what you get
 
-Each benefit has a rule in [`assets/js/reglas.js`](assets/js/reglas.js) (pure functions, no DOM) — regional ones live next to their card in `assets/js/ayudas-ccaa.js` — that returns:
+Each benefit has a rule in [`rules.js`](site/assets/js/lib/rules.js) (pure functions, no DOM) — regional ones live next to their card in [`regional-benefits.js`](site/assets/js/data/regional-benefits.js) — that returns:
 
 - **You meet the main requirements** (`si`): with your answers you fit the key requirements.
 - **Check if you qualify** (`quizas`): it may apply, but it depends on something not asked or not answered.
@@ -102,7 +102,7 @@ Questions that do not apply are hidden (for example, the single-parent question 
 
 ## Figures and where they come from
 
-All figures are in a single place, [`assets/js/cifras.js`](assets/js/cifras.js), with their source next to them. When one changes (pension uprating, minimum wage, IPREM…), it is changed there and updates every card and rule.
+All figures are in a single place, [`figures.js`](site/assets/js/data/figures.js), with their source next to them. When one changes (pension uprating, minimum wage, IPREM…), it is changed there and updates every card and rule.
 
 | 2026 figure | Value | Source |
 | --- | --- | --- |
@@ -118,7 +118,7 @@ All figures are in a single place, [`assets/js/cifras.js`](assets/js/cifras.js),
 ## Accessibility
 
 - **Large, easy text**, **high contrast** and **listen** (read aloud) on every page.
-- **A more human voice** ([`assets/js/voz.js`](assets/js/voz.js)): picks the best voice each browser has (Edge: Microsoft "Natural" voices; iPhone and Mac: "enhanced" or "premium"; Chrome and Android: Google) and drops robotic and novelty ones. It reads sentence by sentence, with pauses and without Chrome's cut-off on long texts. The "Voz" menu lets you pick another voice ("Mónica · España ★ recomendada") and read more slowly. Language guides are read in their language, and the counter sentence always in Spanish.
+- **A more human voice** ([`voice.js`](site/assets/js/lib/voice.js)): picks the best voice each browser has (Edge: Microsoft "Natural" voices; iPhone and Mac: "enhanced" or "premium"; Chrome and Android: Google) and drops robotic and novelty ones. It reads sentence by sentence, with pauses and without Chrome's cut-off on long texts. The "Voz" menu lets you pick another voice ("Mónica · España ★ recomendada") and read more slowly. Language guides are read in their language, and the counter sentence always in Spanish.
 - **Difficult words explained** where they appear, plus a full glossary page.
 - **Language menu** with flags at the top of every page, next to "Voz".
 - Installs on the phone as an app and works offline.
@@ -135,42 +135,42 @@ All figures are in a single place, [`assets/js/cifras.js`](assets/js/cifras.js),
 
 ## How it is built
 
-HTML, CSS and JavaScript with no frameworks or dependencies. The font (Archivo) is served from the site itself.
+HTML, CSS and JavaScript (ES modules) with no frameworks and no runtime dependencies. The font (Archivo) is served from the site itself.
 
 ```
-index.html                  Questionnaire and results
-mayores/ catalogo/ mapa/    Older people, all benefits, map
-palabras/ entidades/        Difficult words, organisations
-fuentes/                    Sources and conditions
-assets/js/cifras.js         2026 figures and their sources
-assets/js/ayudas.js         Catalogue: what it is, how much, requirements, where to apply
-assets/js/ayudas-ccaa.js    Each region's own benefits (card, rule and steps together)
-assets/js/reglas.js         Rules: what you get with your answers
-assets/js/tramites.js       How to apply, step by step
-assets/js/comunidades.js    Minimum income per region and what each region manages
-assets/js/revision.js       When each card was reviewed and when to check its call again
-assets/js/voz.js            Read aloud with the best voice available
-assets/js/guia.js           Papers, phone numbers and difficult words
-tests/                      Rule tests (node --test) and browser tests (Playwright + axe)
-scripts/paginas.mjs         Generates per-benefit and per-region pages, language guides and the sitemap
-scripts/enlaces.mjs         Checks that official links still work
-scripts/boe.mjs             Watches the Spanish Official Gazette (BOE)
-scripts/convocatorias.mjs   Watches new calls for regional and city benefits (BDNS)
-scripts/caducidad.mjs       Lists cards to review
-scripts/enero.mjs           Prepares the yearly figures review
+site/                          What gets published (public URLs stay in Spanish)
+  index.html                   Questionnaire and results
+  mayores/ catalogo/ mapa/     Older people, all benefits, map
+  palabras/ entidades/         Difficult words, organisations
+  fuentes/                     Sources and conditions
+  embed.js  sw.js              Embed script and service worker
+  assets/css/styles.css
+  assets/img/                  Icons and favicon
+  assets/js/data/              Content: figures, benefits, procedures, regions, glossary…
+  assets/js/lib/               Pure logic: rules, formatting, voice, answers link, reminders
+  assets/js/ui/                Shared UI: benefit card, region panel, chart, sharing, common code
+  assets/js/pages/             One entry point per page
+scripts/build/                 build.mjs (into _site/), per-benefit and per-region pages, language guides, font
+scripts/watch/                 Links, BOE, BDNS calls, cards to review, January figures review
+tests/unit/                    Rules and features (node --test)
+tests/e2e/                     Browser and accessibility tests (Playwright + axe)
 ```
 
-To run it locally:
+To run it locally (Node 22, see `.nvmrc`):
 
 ```sh
-npm test       # rule tests
-npm run dev    # serves the site locally
-npm run e2e    # browser tests (needs Playwright and @axe-core/playwright)
+npm test                      # unit tests
+npm run dev                   # serves site/ locally
+npm run build                 # builds _site/ (what GitHub Pages serves)
+npm run tools                 # installs Playwright and axe for the browser tests
+npm run test:e2e              # browser tests against _site/ (SITE_ROOT=… to test another folder)
 ```
+
+Code (file names, identifiers, CSS classes, comments) is in English; the content and its ids are in Spanish. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## How it is published
 
-The [`publicar.yml`](.github/workflows/publicar.yml) Action:
+The [`publish.yml`](.github/workflows/publish.yml) Action:
 
 1. On every **PR to `main`**: runs the rule tests and the browser tests (axe WCAG 2.2 AA, no horizontal overflow, no errors) on mobile, tablet and desktop, in light, dark and high contrast.
 2. On every **push to `main`**: also publishes it to GitHub Pages, with the font included and a version on each CSS/JS file so nobody mixes new and old files.
@@ -183,15 +183,15 @@ The site never changes on its own: an Action **warns** with a GitHub issue, a pe
 
 | When | What it checks | What it does |
 | --- | --- | --- |
-| Every Monday ([`publicar.yml`](.github/workflows/publicar.yml)) | Every official link in the cards | Opens the issue "Enlaces oficiales rotos" if one breaks, and closes it when they work again |
-| Every Monday ([`publicar.yml`](.github/workflows/publicar.yml)) | The week's **BOE** (pensions, minimum wage, IPREM, IMV, social discount, dependency, unemployment, housing, prescription charges) | Opens "Novedades del BOE que pueden cambiar cifras" with the links |
-| Every Monday ([`vigilar.yml`](.github/workflows/vigilar.yml)) | New **calls for applications** for the regional and city benefits, in the National Grants Database (BDNS), which publishes the calls of every administration | Opens "Convocatorias nuevas de ayudas que recoge la web" with each call and the card it affects |
-| Every Monday ([`vigilar.yml`](.github/workflows/vigilar.yml)) | Cards **not reviewed for a year**, and cards whose call date has arrived (`MIRAR_EN` in [`assets/js/revision.js`](assets/js/revision.js)) | Opens "Fichas por revisar" as a checklist, and closes it when nothing is pending |
-| Every 2 January ([`vigilar.yml`](.github/workflows/vigilar.yml)) | Every figure in `FUENTES_CIFRAS`, plus the BOE of the last 60 days | Opens "Revisar las cifras de <year>" with the checklist and, if the BOE has already published the new minimum wage, the exact change to make in `cifras.js` |
+| Every Monday ([`publish.yml`](.github/workflows/publish.yml)) | Every official link in the cards | Opens the issue "Enlaces oficiales rotos" if one breaks, and closes it when they work again |
+| Every Monday ([`publish.yml`](.github/workflows/publish.yml)) | The week's **BOE** (pensions, minimum wage, IPREM, IMV, social discount, dependency, unemployment, housing, prescription charges) | Opens "Novedades del BOE que pueden cambiar cifras" with the links |
+| Every Monday ([`watch.yml`](.github/workflows/watch.yml)) | New **calls for applications** for the regional and city benefits, in the National Grants Database (BDNS), which publishes the calls of every administration | Opens "Convocatorias nuevas de ayudas que recoge la web" with each call and the card it affects |
+| Every Monday ([`watch.yml`](.github/workflows/watch.yml)) | Cards **not reviewed for a year**, and cards whose call date has arrived (`CHECK_ON` in [`review.js`](site/assets/js/data/review.js)) | Opens "Fichas por revisar" as a checklist, and closes it when nothing is pending |
+| Every 2 January ([`watch.yml`](.github/workflows/watch.yml)) | Every figure in `FIGURE_SOURCES`, plus the BOE of the last 60 days | Opens "Revisar las cifras de <year>" with the checklist and, if the BOE has already published the new minimum wage, the exact change to make in `figures.js` |
 
-Each card shows "Revisado en …" (reviewed in …). After reviewing one, update its date in `REVISADO` or its next check date in `MIRAR_EN`, both in `assets/js/revision.js`.
+Each card shows "Revisado en …" (reviewed in …). After reviewing one, update its date in `REVIEWED` or its next check date in `CHECK_ON`, both in [`review.js`](site/assets/js/data/review.js).
 
-Both workflows can also be run by hand from the Actions tab ("Run workflow"; for `vigilar.yml`, choose `semanal` or `enero`).
+Both workflows can also be run by hand from the Actions tab ("Run workflow"; for `watch.yml`, choose `weekly` or `january`).
 
 Other things to keep an eye on:
 
