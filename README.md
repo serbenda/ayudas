@@ -191,6 +191,8 @@ The site never changes on its own: an Action **warns** with a GitHub issue, a pe
 
 Each card shows "Revisado en …" (reviewed in …). After reviewing one, update its date in `REVIEWED` or its next check date in `CHECK_ON`, both in [`review.js`](site/assets/js/data/review.js).
 
+What each check does, what to do with each issue and what can go wrong is explained in [docs/AUTOMATION.md](docs/AUTOMATION.md).
+
 Both workflows can also be run by hand from the Actions tab ("Run workflow"; for `watch.yml`, choose `weekly` or `january`).
 
 Other things to keep an eye on:

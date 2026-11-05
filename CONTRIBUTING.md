@@ -4,7 +4,7 @@
 
 - Work on the `development` branch. Never commit to `main` directly.
 - Open a pull request from `development` to `main`. CI runs the unit tests, builds the site and runs the browser and accessibility tests; `main` is published to GitHub Pages when the PR is merged.
-- Scheduled Actions only open or update issues. They never commit or open pull requests: a person reviews every change.
+- Scheduled Actions only open or update issues. They never commit or open pull requests: a person reviews every change. See [docs/AUTOMATION.md](docs/AUTOMATION.md).
 
 ## Layout
 
