@@ -1,173 +1,204 @@
 <div align="center">
 
-<a href="https://ayudas.bendi.dev/"><img src="assets/img/favicon.svg" width="112" alt="Logo de ayudas: un salvavidas"></a>
+<a href="https://ayudas.bendi.dev/"><img src="assets/img/favicon.svg" width="112" alt="ayudas logo: a life ring"></a>
 
 # ayudas
 
-**Qué ayudas públicas te pueden corresponder en España, contestando unas preguntas.**<br>
-Familia, mayores, pensiones, discapacidad, dependencia, vivienda, paro y deducciones. Sin registro, sin cookies y sin que tus respuestas salgan del navegador.
+**Find out which public benefits you may be entitled to in Spain by answering a few questions.**<br>
+Family, older people, pensions, disability, long-term care, housing, unemployment and tax deductions. No sign-up, no cookies, and your answers never leave the browser.
 
-[![Abrir la web](https://img.shields.io/badge/abrir_la_web-ayudas.bendi.dev-1f6b68?style=for-the-badge)](https://ayudas.bendi.dev/)
+[![Open the website](https://img.shields.io/badge/open_the_website-ayudas.bendi.dev-1f6b68?style=for-the-badge)](https://ayudas.bendi.dev/)
 
-[![Publicación](https://github.com/serbenda/ayudas/actions/workflows/publicar.yml/badge.svg)](https://github.com/serbenda/ayudas/actions/workflows/publicar.yml)
-![Sin dependencias](https://img.shields.io/badge/dependencias-0-1f6b68)
-![Sin cookies](https://img.shields.io/badge/cookies-0-1f6b68)
-[![Apoya en GitHub Sponsors](https://img.shields.io/badge/apoya-GitHub_Sponsors-bf3989?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/serbenda)
-[![Todos los derechos reservados](https://img.shields.io/badge/licencia-todos_los_derechos_reservados-1c2230)](LICENSE)
+[![Publish](https://github.com/serbenda/ayudas/actions/workflows/publicar.yml/badge.svg)](https://github.com/serbenda/ayudas/actions/workflows/publicar.yml)
+[![Watch for changes](https://github.com/serbenda/ayudas/actions/workflows/vigilar.yml/badge.svg)](https://github.com/serbenda/ayudas/actions/workflows/vigilar.yml)
+![No dependencies](https://img.shields.io/badge/dependencies-0-1f6b68)
+![No cookies](https://img.shields.io/badge/cookies-0-1f6b68)
+[![Support on GitHub Sponsors](https://img.shields.io/badge/support-GitHub_Sponsors-bf3989?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/serbenda)
+[![All rights reserved](https://img.shields.io/badge/license-all_rights_reserved-1c2230)](LICENSE)
 
 </div>
 
 ---
 
-## Índice
+> The website itself is in Spanish (with starter guides in Catalan, Valencian, Galician, Basque and English). This README is in English. Benefit names are kept in Spanish, because that is how they are called at the counter.
 
-1. [Qué es](#qué-es)
-2. [Las páginas](#las-páginas)
-3. [Qué ayudas recoge](#qué-ayudas-recoge)
-4. [Cómo se decide qué te sale](#cómo-se-decide-qué-te-sale)
-5. [Las cifras y de dónde salen](#las-cifras-y-de-dónde-salen)
-6. [Privacidad](#privacidad)
-7. [Cómo está hecha](#cómo-está-hecha)
-8. [Cómo se publica](#cómo-se-publica)
-9. [Mantenerla al día](#mantenerla-al-día)
+## Contents
 
-## Qué es
+1. [What it is](#what-it-is)
+2. [Pages](#pages)
+3. [Which benefits it covers](#which-benefits-it-covers)
+4. [How it decides what you get](#how-it-decides-what-you-get)
+5. [Figures and where they come from](#figures-and-where-they-come-from)
+6. [Accessibility](#accessibility)
+7. [Privacy](#privacy)
+8. [How it is built](#how-it-is-built)
+9. [How it is published](#how-it-is-published)
+10. [Keeping it up to date (automatically)](#keeping-it-up-to-date-automatically)
 
-Mucha gente no pide ayudas a las que tiene derecho porque no sabe que existen o no sabe si cumple. **ayudas** hace unas preguntas sencillas (edad, quién vive en casa, ingresos, vivienda, discapacidad, dependencia, pensión, trabajo) y enseña las ayudas que te pueden corresponder, con:
+## What it is
 
-- **por qué te sale** cada una, con tus propios datos;
-- **qué falta comprobar** (una convocatoria, el límite exacto de tu comunidad, la cotización…);
-- **cuánto da en 2026** y, cuando se puede, una estimación para tu caso;
-- **dónde se pide**, con enlace a la sede oficial (o a la web de tu comunidad cuando la gestiona ella).
+Many people never claim benefits they are entitled to, because they do not know they exist or are not sure whether they qualify. **ayudas** asks a few simple questions (age, who lives at home, income, housing, disability, long-term care needs, pension, work) and shows the benefits you may be entitled to, with:
 
-Es hermana de [hucha](https://github.com/serbenda/hucha) (a dónde va el dinero público) y comparte su estilo.
+- **why it shows up**, using your own answers;
+- **what still needs checking** (an open call, your region's exact limit, contributions…);
+- **how much it pays in 2026** and, where possible, an estimate for your case;
+- **how to apply, step by step**: where, who to call, which papers to bring, how long it takes and what to do if they say no.
 
-## Las páginas
+It is a sister project of [hucha](https://github.com/serbenda/hucha) (where public money goes) and shares its style.
 
-| Página | Qué hay |
+## Pages
+
+| Page | What it has |
 | --- | --- |
-| **Tus ayudas** (`/`) | Cuestionario en 6 pasos y la lista de ayudas que te salen, con **por dónde empezar**, los **papeles** que necesitas juntos, el seguimiento de cada ayuda y una **hoja para imprimir**. Accesos por tema, botón «Necesito ayuda hoy» con teléfonos y un gráfico de cómo han subido las ayudas desde 2018. |
-| **Mayores** (`/mayores/`) | Para personas mayores o con poca soltura con el móvil: una pregunta cada vez, botones grandes, frases cortas, **lectura en voz alta** y los pasos de cada ayuda explicados. |
-| **Todas las ayudas** (`/catalogo/`) | Todas las fichas, con buscador (sin tildes) y filtro por tema. Elige tu comunidad y los enlaces apuntan a su web. |
-| **Mapa** (`/mapa/`) | Mapa de España: pulsas tu comunidad (o la eliges en una lista) y salen cómo se llama allí la renta mínima, las ayudas propias y las que tramita, con sus pasos. |
-| **Fichas** (`/ayuda/<id>/` y `/comunidad/<id>/`) | Una página por ayuda y por comunidad, con preguntas frecuentes para buscadores. Se generan al publicar con `scripts/paginas.mjs`, que también hace el `sitemap.xml`. |
-| **Entidades** (`/entidades/`) | Para servicios sociales y ONG: modo profesional (referencia del caso y notas que se imprimen, todo en local) y código para insertar el cuestionario, la página de mayores o el mapa en otra web (`embed.js`). |
-| **Fuentes** (`/fuentes/`) | Cómo funciona, la tabla de cifras de 2026 con su fuente, dónde se piden las ayudas y cómo avisar de un error. |
+| **Your benefits** (`/`) | A 6-step questionnaire and the list of benefits you may get, with **where to start**, the **papers** you need, progress tracking for each benefit and a **printable sheet**. Topic shortcuts, an "I need help today" button with phone numbers, and a chart of how benefits have risen since 2018. |
+| **Older people** (`/mayores/`) | For older people or anyone not comfortable with phones: one question at a time, big buttons, short sentences, **read aloud**, and each benefit's steps explained. |
+| **All benefits** (`/catalogo/`) | Every benefit card, with search (accent-insensitive) and topic filters. Pick your region and links point to its website. |
+| **Map** (`/mapa/`) | Map of Spain: tap your region (or pick it from a list) to see what its minimum income is called and how much it pays, the region's own benefits and the ones it manages, with their steps. |
+| **Cards** (`/ayuda/<id>/` and `/comunidad/<id>/`) | One page per benefit and per region, with FAQ structured data for search engines. Generated at publish time by `scripts/paginas.mjs`, which also builds `sitemap.xml`. |
+| **Difficult words** (`/palabras/`) | 74 bureaucratic terms (IPREM, padrón, Cl@ve, base imponible, recurso de alzada…) explained in short sentences, with search. In every card these words are underlined: tap one to see what it means. |
+| **Organisations** (`/entidades/`) | For social services and NGOs: professional mode (case reference and notes that print, all kept locally) and code to embed the questionnaire, the older people page or the map in another website (`embed.js`). |
+| **Language guides** (`/ca/`, `/va/`, `/gl/`, `/eu/`, `/en/`) | Starter guides in Catalan, Valencian, Galician, Basque and English: where to start, emergency numbers, the main benefits with their official Spanish names, and a sentence in Spanish to show at the counter. |
+| **Sources** (`/fuentes/`) | How it works, the 2026 figures with their sources, where benefits are applied for and how to report an error. |
 
-## Qué ayudas recoge
+## Which benefits it covers
 
-84 fichas en ocho temas. Cada una explica **cómo se pide paso a paso** (dónde, a quién llamar, qué papeles, cuánto tardan y qué hacer si dicen que no), con los pasos de la Comunidad de Madrid cuando son distintos. Los trámites están en [`assets/js/tramites.js`](assets/js/tramites.js) y los teléfonos, papeles y palabras difíciles en [`assets/js/guia.js`](assets/js/guia.js).
+84 benefits in eight topics. Each explains **how to apply, step by step**, with region-specific steps when they differ. Procedures live in [`assets/js/tramites.js`](assets/js/tramites.js); phone numbers, papers and difficult words in [`assets/js/guia.js`](assets/js/guia.js).
 
-- **Si lo necesitas ya:** emergencia social, comida, violencia de género (016), desahucio, sin hogar, soledad y sanidad sin papeles.
-- **Comunidad y Ayuntamiento de Madrid:** RMI, Tarjeta Familias, agua de Canal de Isabel II, vivienda social, escuelas infantiles gratis, teleasistencia (900 111 065), transporte gratis desde 65 años.
+- **If you need it now:** social emergency aid, food, gender violence (016), eviction, homelessness, loneliness, and healthcare without papers.
+- **Income and benefits:** Ingreso Mínimo Vital (minimum income), regional minimum income, unemployment benefit and allowances, allowance for over-52s.
+- **Children and family:** child support supplement, birth leave (19 weeks), birth allowance and one-off payment, large family title, care of children with serious illness, nursery school and school aid, orphan's pension.
+- **Older people and pensions:** non-contributory pension, minimum pension supplement, gender gap supplement, retirement, widow's pension, IMSERSO trips and spas, telecare and home help.
+- **Disability and long-term care:** dependency assessment, family carer allowance, care services, free Social Security contributions for carers, disability certificate, dependent child allowance, non-contributory disability pension, tax and parking benefits.
+- **Housing and utilities:** electricity and heating social discount, rent aid (general and for young people), rent supplement for non-contributory pensioners, ICO state guarantee to buy a first home.
+- **Income tax deductions:** maternity and nursery, large family, single parent, relative with disability, disability allowance, and each region's own deductions.
+- **Each region's own benefits** ([`assets/js/ayudas-ccaa.js`](assets/js/ayudas-ccaa.js)): Tarxeta Benvida (Galicia), monthly child benefit (Basque Country), Becas Concilia 0-3 (Asturias), Bono Nacimiento (Castilla y León), birth grant in villages (Extremadura), Xec Cangur (Balearic Islands), supplement to the non-contributory pension (Canary Islands and Catalonia), third child and multiple births (Andalusia), large and single-parent families (Valencian Community, Castilla-La Mancha and Murcia), birth grants (Cantabria), children aged 0-3 (Navarre), multiple births (Aragon) and Bono Infantil (La Rioja). Each has its rule, its steps and the dates of its call for applications.
+- **Madrid region and city:** RMI, Tarjeta Familias, Canal de Isabel II water discount, social housing, free nursery schools, telecare, free transport from age 65.
+- **Large cities:** Barcelona Children's Fund, València birth grant, Zaragoza urgent aid, free childcare at home in Málaga, and the Basque Social Emergency Aid (AES).
+- **Self-employed:** €80 flat rate and self-employed unemployment benefit.
+- **Returning to Spain:** allowance for returning emigrants.
+- **Health:** wheelchairs, prostheses and hearing aids from public healthcare; free or cheaper medicines.
+- **Other:** grants and free legal aid.
 
-- **Ingresos y prestaciones:** Ingreso Mínimo Vital, renta mínima autonómica, paro, subsidio por desempleo, subsidio para mayores de 52.
-- **Hijos y familia:** complemento de ayuda para la infancia, prestación por nacimiento (19 semanas), subsidio y pago único por nacimiento, ayuda a la natalidad de la Comunidad de Madrid, título de familia numerosa, cuidado de menores con enfermedad grave, escuela infantil y ayudas escolares, orfandad.
-- **Mayores y pensiones:** pensión no contributiva, complemento a mínimos, complemento de brecha de género, jubilación, viudedad, viajes y balnearios del IMSERSO, teleasistencia y ayuda a domicilio.
-- **Discapacidad y dependencia:** reconocimiento de la dependencia, prestación por cuidados en el entorno familiar, servicios de la dependencia, cotización gratis para cuidadores, certificado de discapacidad, asignación por hijo a cargo, PNC de invalidez, ventajas fiscales y de aparcamiento.
-- **Vivienda y suministros:** bono social de la luz y térmico, ayuda al alquiler (general y para jóvenes), complemento de alquiler para PNC.
-- **Deducciones en la renta:** maternidad y guardería, familia numerosa, monoparental, familiar con discapacidad, mínimo por discapacidad, deducciones autonómicas.
-- **Ayudas propias de cada comunidad** ([`assets/js/ayudas-ccaa.js`](assets/js/ayudas-ccaa.js)): Tarxeta Benvida (Galicia), ayudas mensuales por hijos (Euskadi), Becas Concilia 0-3 (Asturias), Bono Nacimiento (Castilla y León), natalidad en pueblos (Extremadura), Xec Cangur (Baleares), complemento a la pensión no contributiva (Canarias y Cataluña), tercer hijo y partos múltiples (Andalucía), familias numerosas y monoparentales (Comunitat Valenciana, Castilla-La Mancha y Murcia), natalidad (Cantabria), hijos de 0 a 3 años (Navarra), partos múltiples (Aragón) y Bono Infantil (La Rioja). Cada una con su regla, sus pasos y el plazo de su convocatoria.
-- **Grandes ciudades:** Fondo de Infancia de Barcelona, ayuda por nacimiento de València, ayudas de urgencia de Zaragoza, cuidado de niños gratis en Málaga y Ayudas de Emergencia Social de Euskadi.
-- **Autónomos y emprender:** tarifa plana de 80 €, paro de los autónomos (cese de actividad).
-- **Vuelta a España:** subsidio para emigrantes retornados.
-- **Comprar casa:** aval del ICO para la primera vivienda (jóvenes y familias con hijos).
-- **Salud:** sillas de ruedas, prótesis y audífonos de la sanidad pública; medicinas gratis o más baratas.
-- **Otras:** becas y abogado de oficio gratuito.
+Per region the site also has: how much the minimum income pays (Ministry of Social Rights figures and each region's own), who assesses dependency and disability and where to start, and its income tax deductions (with amounts for Andalusia, Catalonia, Galicia and Madrid).
 
-## Cómo se decide qué te sale
+## How it decides what you get
 
-Cada ayuda tiene una regla en [`assets/js/reglas.js`](assets/js/reglas.js) (funciones puras, sin DOM) que devuelve:
+Each benefit has a rule in [`assets/js/reglas.js`](assets/js/reglas.js) (pure functions, no DOM) — regional ones live next to their card in `assets/js/ayudas-ccaa.js` — that returns:
 
-- **Cumples lo principal** (`si`): con lo contestado encajas en los requisitos clave.
-- **Mira si cumples** (`quizas`): puede corresponderte, pero depende de algo no preguntado o no contestado.
-- nada, si no encaja.
+- **You meet the main requirements** (`si`): with your answers you fit the key requirements.
+- **Check if you qualify** (`quizas`): it may apply, but it depends on something not asked or not answered.
+- nothing, if it does not fit.
 
-Algunos cálculos que hace:
+Some of the calculations:
 
-- **Renta garantizada del IMV** según el hogar: 733,60 € un adulto, +30 % por persona (hasta el 220 %) y +22 % si es monoparental o hay discapacidad ≥ 65 % o dependencia de grado III. El IMV estimado es la renta garantizada menos los ingresos del hogar.
-- **Límite del bono social**: 1,5 veces el IPREM (14 pagas), +0,5 por cada menor (hasta dos) y +0,5 con discapacidad, dependencia de grado II o III o familia monoparental. Severo por debajo de la mitad.
-- **Pensión mínima** que te toca según tipo, edad y cónyuge, y el complemento hasta llegar a ella.
-- **Brecha de género**: 36,90 € por hijo (hasta 4) si la pensión empezó en 2021 o después.
+- **IMV guaranteed income** by household: €733.60 for one adult, +30% per extra person (up to 220%) and +22% for single-parent households or with disability ≥ 65% or grade III dependency. The estimated IMV is the guaranteed income minus household income.
+- **Electricity social discount limit**: 1.5 × IPREM (14 payments), +0.5 per child (up to two) and +0.5 with disability, grade II or III dependency or single-parent family. "Severe" below half.
+- **Minimum pension** for your type, age and spouse, and the supplement up to it.
+- **Gender gap supplement**: €36.90 per child (up to 4) if the pension started in 2021 or later.
 
-Si no tienes papeles, no salen las ayudas que piden residencia legal, pero sí las que no (médico, padrón, comida, emergencia). Lo urgente sale siempre primero en «Por dónde empezar».
+Without residence papers, benefits that require legal residence are hidden, but those that do not are shown (healthcare, municipal register, food, emergency aid). Urgent needs always come first in "Where to start".
 
-**Modo fácil:** el botón «Letra grande y fácil» agranda la letra y cambia los resúmenes por frases muy cortas. Las palabras difíciles (IPREM, PIA, Cl@ve…) se explican en cada ficha.
+Questions that do not apply are hidden (for example, the single-parent question only appears if you do not live with a partner and have children).
 
-Las preguntas que no aplican se esconden (por ejemplo, la de familia monoparental solo sale si no vives en pareja y tienes hijos).
+## Figures and where they come from
 
-## Las cifras y de dónde salen
+All figures are in a single place, [`assets/js/cifras.js`](assets/js/cifras.js), with their source next to them. When one changes (pension uprating, minimum wage, IPREM…), it is changed there and updates every card and rule.
 
-Todas las cifras están en un único sitio, [`assets/js/cifras.js`](assets/js/cifras.js), con su fuente al lado. Si cambia una (la revalorización de pensiones, el SMI, el IPREM…), se cambia ahí y se actualiza en todas las fichas y reglas.
-
-| Cifra 2026 | Valor | Fuente |
+| 2026 figure | Value | Source |
 | --- | --- | --- |
-| IPREM | 600 €/mes · 8.400 €/año | Prorrogado desde los Presupuestos de 2023 |
-| Salario mínimo | 1.221 €/mes · 17.094 €/año | Real Decreto 126/2026 |
-| Revalorización de pensiones | +2,7 % · mínimas +7 % · PNC e IMV +11,4 % | La Moncloa |
-| Pensión no contributiva | 8.803,20 €/año | La Moncloa, IMSERSO |
-| Subsidio por desempleo | 570 / 540 / 480 €/mes | SEPE |
-| Bono social de la luz | 42,5 % / 57,5 % | MITECO (vuelve al 35 % / 50 % en 2027 si no se prorroga) |
-| Alquiler joven | hasta 300 €/mes | Plan Estatal de Vivienda 2026-2030 |
+| IPREM | €600/month · €8,400/year | Extended from the 2023 State Budget |
+| Minimum wage (SMI) | €1,221/month · €17,094/year | Royal Decree 126/2026 |
+| Pension uprating | +2.7% · minimum +7% · non-contributory and IMV +11.4% | La Moncloa |
+| Non-contributory pension | €8,803.20/year | La Moncloa, IMSERSO |
+| Unemployment allowance | €570 / €540 / €480 per month | SEPE |
+| Electricity social discount | 42.5% / 57.5% | MITECO (back to 35% / 50% in 2027 unless extended) |
+| Young people's rent aid | up to €300/month | State Housing Plan 2026-2030 |
+| Regional minimum incomes | from €328 (Melilla) to €853.28 (Basque Country) per month for one person | Ministry of Social Rights minimum income report 2025, and each region for 2026 |
 
-## Accesibilidad
+## Accessibility
 
-- **Letra grande y fácil**, **alto contraste** y **escuchar** (lectura en voz alta) en todas las páginas.
-- **Voz más humana** ([`assets/js/voz.js`](assets/js/voz.js)): elige la mejor voz de cada navegador (Edge: voces «Natural» de Microsoft; iPhone y Mac: «mejoradas» o «premium»; Chrome y Android: Google) y descarta las robóticas. Lee frase a frase, con pausas y sin cortarse en textos largos. El botón «Voz» deja elegir otra y leer más despacio. Las guías se leen en su idioma (catalán, valenciano, gallego, euskera o inglés; si el aparato no tiene esa voz, en castellano) y la frase para la ventanilla, en castellano.
-- Se instala en el móvil como una app y funciona sin conexión.
-- **Enviar a un familiar**: manda solo la lista de ayudas y un enlace con los pasos (`/catalogo/?ver=…`), nunca las respuestas.
-- **Por comunidad:** cuánto da la renta mínima en cada una (cifras del Ministerio de Derechos Sociales y de cada comunidad), quién valora la dependencia y la discapacidad y dónde se empieza, y sus deducciones del IRPF (con cantidades en Andalucía, Cataluña, Galicia y Madrid).
-- **Guías en otros idiomas** (`/ca/`, `/va/`, `/gl/`, `/eu/` y `/en/`): por dónde empezar, teléfonos de urgencia, las ayudas principales con su nombre oficial y una frase en castellano para enseñar en la ventanilla.
-- Pasos de la renta mínima de las 17 comunidades y de Ceuta y Melilla, y pasos propios de la Comunidad de Madrid, Andalucía, Cataluña y la Comunitat Valenciana en otras ayudas.
-- **Avisos en mi calendario**: descarga un `.ics` con las fechas que no hay que dejar pasar (declaración de la pensión no contributiva, campaña de la renta, convocatoria del alquiler, renovación del bono social).
-- **Guardar en un enlace**: las respuestas van en el enlace después de `#`, que el navegador no envía a ningún servidor.
+- **Large, easy text**, **high contrast** and **listen** (read aloud) on every page.
+- **A more human voice** ([`assets/js/voz.js`](assets/js/voz.js)): picks the best voice each browser has (Edge: Microsoft "Natural" voices; iPhone and Mac: "enhanced" or "premium"; Chrome and Android: Google) and drops robotic and novelty ones. It reads sentence by sentence, with pauses and without Chrome's cut-off on long texts. The "Voz" menu lets you pick another voice ("Mónica · España ★ recomendada") and read more slowly. Language guides are read in their language, and the counter sentence always in Spanish.
+- **Difficult words explained** where they appear, plus a full glossary page.
+- **Language menu** with flags at the top of every page, next to "Voz".
+- Installs on the phone as an app and works offline.
+- **Send to a relative**: sends only the list of benefits and a link with the steps (`/catalogo/?ver=…`), never the answers.
+- **Calendar reminders**: downloads an `.ics` with dates not to miss (non-contributory pension income statement, income tax campaign, rent aid call, social discount renewal).
+- **Save in a link**: answers go in the link after `#`, which the browser never sends to any server.
+- Tested with axe (WCAG 2.2 AA) on mobile, tablet and desktop, in light, dark and high-contrast modes.
 
-## Privacidad
+## Privacy
 
-- Las reglas se ejecutan en el navegador. **No hay servidor que reciba las respuestas.**
-- Solo se guardan en el navegador (`localStorage`) si se marca «Recordar mis respuestas»; «Empezar de cero» las borra.
-- Las visitas se cuentan con GoatCounter, sin cookies, como `/ayudas/…` en el mismo panel que el resto de webs de bendi.dev. Nunca se cuentan las respuestas.
+- Rules run in the browser. **There is no server receiving the answers.**
+- Answers are only stored in the browser (`localStorage`) if you tick "Remember my answers"; "Start over" deletes them.
+- Visits are counted with GoatCounter, without cookies, as `/ayudas/…` in the same dashboard as the other bendi.dev websites. Answers are never counted.
 
-## Cómo está hecha
+## How it is built
 
-HTML, CSS y JavaScript sin frameworks ni dependencias. La fuente (Archivo) se sirve desde la propia web.
+HTML, CSS and JavaScript with no frameworks or dependencies. The font (Archivo) is served from the site itself.
 
 ```
-index.html            Cuestionario y resultados
-catalogo/index.html   Todas las ayudas
-fuentes/index.html    Fuentes y condiciones
-assets/js/cifras.js   Cifras de 2026 y sus fuentes
-assets/js/ayudas.js   Catálogo: qué es, cuánto da, requisitos y dónde se pide
-assets/js/reglas.js   Reglas: qué te sale con tus respuestas
-assets/js/portada.js  Cuestionario por pasos
-tests/                Tests de las reglas (node --test)
-scripts/enlaces.mjs   Comprueba que los enlaces oficiales siguen vivos
+index.html                  Questionnaire and results
+mayores/ catalogo/ mapa/    Older people, all benefits, map
+palabras/ entidades/        Difficult words, organisations
+fuentes/                    Sources and conditions
+assets/js/cifras.js         2026 figures and their sources
+assets/js/ayudas.js         Catalogue: what it is, how much, requirements, where to apply
+assets/js/ayudas-ccaa.js    Each region's own benefits (card, rule and steps together)
+assets/js/reglas.js         Rules: what you get with your answers
+assets/js/tramites.js       How to apply, step by step
+assets/js/comunidades.js    Minimum income per region and what each region manages
+assets/js/revision.js       When each card was reviewed and when to check its call again
+assets/js/voz.js            Read aloud with the best voice available
+assets/js/guia.js           Papers, phone numbers and difficult words
+tests/                      Rule tests (node --test) and browser tests (Playwright + axe)
+scripts/paginas.mjs         Generates per-benefit and per-region pages, language guides and the sitemap
+scripts/enlaces.mjs         Checks that official links still work
+scripts/boe.mjs             Watches the Spanish Official Gazette (BOE)
+scripts/convocatorias.mjs   Watches new calls for regional and city benefits (BDNS)
+scripts/caducidad.mjs       Lists cards to review
+scripts/enero.mjs           Prepares the yearly figures review
 ```
 
-Para verla en local:
+To run it locally:
 
 ```sh
-npm test       # tests de las reglas
-npm run dev    # sirve la web en local
+npm test       # rule tests
+npm run dev    # serves the site locally
+npm run e2e    # browser tests (needs Playwright and @axe-core/playwright)
 ```
 
-## Cómo se publica
+## How it is published
 
-La Action [`publicar.yml`](.github/workflows/publicar.yml):
+The [`publicar.yml`](.github/workflows/publicar.yml) Action:
 
-1. En cada **PR a `main`**: pasa los tests de reglas y los de navegador (axe WCAG 2.2 AA, sin desbordar, sin errores) en móvil, tablet y ordenador, claro, oscuro y alto contraste.
-2. En cada **push a `main`**: además, la publica en GitHub Pages, con la fuente incluida y una versión en cada CSS/JS para que nadie mezcle ficheros nuevos y viejos.
-3. **Cada lunes**: comprueba los enlaces oficiales (issue si alguno se rompe) y **mira el BOE de la semana**: si sale algo sobre pensiones, SMI, IPREM, IMV, bono social, dependencia, paro, vivienda o copago, abre un issue para revisar las cifras.
+1. On every **PR to `main`**: runs the rule tests and the browser tests (axe WCAG 2.2 AA, no horizontal overflow, no errors) on mobile, tablet and desktop, in light, dark and high contrast.
+2. On every **push to `main`**: also publishes it to GitHub Pages, with the font included and a version on each CSS/JS file so nobody mixes new and old files.
 
-Se trabaja en la rama `development` y se lleva a `main` con una PR.
+Work happens on the `development` branch and reaches `main` through a PR.
 
-## Mantenerla al día
+## Keeping it up to date (automatically)
 
-- **Enero**: revalorización de pensiones, IMV y PNC; SMI cuando se publique.
-- **Cuando haya Presupuestos**: IPREM.
-- **Antes de 2027**: descuentos del bono social, edad de jubilación (67 años) y la posible prestación universal por crianza, que en 2026 **no** está aprobada.
-- Si alguien avisa de un error o de una ayuda que falta, llega como issue desde la página de Fuentes.
+The site never changes on its own: an Action **warns** with a GitHub issue, a person reviews it and the change goes in through a PR. Wrong figures on a benefits website can hurt people, so a human always checks.
+
+| When | What it checks | What it does |
+| --- | --- | --- |
+| Every Monday ([`publicar.yml`](.github/workflows/publicar.yml)) | Every official link in the cards | Opens the issue "Enlaces oficiales rotos" if one breaks, and closes it when they work again |
+| Every Monday ([`publicar.yml`](.github/workflows/publicar.yml)) | The week's **BOE** (pensions, minimum wage, IPREM, IMV, social discount, dependency, unemployment, housing, prescription charges) | Opens "Novedades del BOE que pueden cambiar cifras" with the links |
+| Every Monday ([`vigilar.yml`](.github/workflows/vigilar.yml)) | New **calls for applications** for the regional and city benefits, in the National Grants Database (BDNS), which publishes the calls of every administration | Opens "Convocatorias nuevas de ayudas que recoge la web" with each call and the card it affects |
+| Every Monday ([`vigilar.yml`](.github/workflows/vigilar.yml)) | Cards **not reviewed for a year**, and cards whose call date has arrived (`MIRAR_EN` in [`assets/js/revision.js`](assets/js/revision.js)) | Opens "Fichas por revisar" as a checklist, and closes it when nothing is pending |
+| Every 2 January ([`vigilar.yml`](.github/workflows/vigilar.yml)) | Every figure in `FUENTES_CIFRAS`, plus the BOE of the last 60 days | Opens "Revisar las cifras de <year>" with the checklist and, if the BOE has already published the new minimum wage, the exact change to make in `cifras.js` |
+
+Each card shows "Revisado en …" (reviewed in …). After reviewing one, update its date in `REVISADO` or its next check date in `MIRAR_EN`, both in `assets/js/revision.js`.
+
+Both workflows can also be run by hand from the Actions tab ("Run workflow"; for `vigilar.yml`, choose `semanal` or `enero`).
+
+Other things to keep an eye on:
+
+- **When there is a new State Budget**: IPREM.
+- **Before 2027**: electricity social discount percentages, retirement age (67) and the possible universal child-rearing benefit, which is **not** approved in 2026.
+- Error reports and missing benefits arrive as issues from the Sources page.
 
 ---
 
-<sub>Web informativa, no vinculada a ninguna administración. Quien decide si te corresponde una ayuda es el organismo que la gestiona.</sub>
+<sub>Informational website, not linked to any public administration. Whether you are entitled to a benefit is decided by the body that manages it.</sub>

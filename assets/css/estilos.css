@@ -871,3 +871,4 @@ button.termino:focus-visible { outline: 3px solid var(--foco); outline-offset: 2
 @media (max-width: 40rem) {
   .barra-ajustes { display: contents; }
 }
+.revisado { color: var(--tenue); font-size: 0.85rem; }

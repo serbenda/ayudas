@@ -152,3 +152,20 @@ test('ayudas propias de cada comunidad: ficha, regla, pasos y salen solo allí',
   assert.ok(ids({ ...familia, ccaa: 'canarias' }).includes('complemento-pnc-canarias'));
   assert.ok(ids({ ...familia, ccaa: 'murcia' }).includes('familias-especiales-murcia'));
 });
+
+test('vigilancia: fichas por revisar, convocatorias y salario mínimo del BOE', async () => {
+  const { porRevisar, MIRAR_EN } = await import('../assets/js/revision.js');
+  const { VIGILAR, delaRegion } = await import('../scripts/convocatorias.mjs');
+  const { smiDelTexto } = await import('../scripts/enero.mjs');
+  assert.deepEqual(porRevisar(['imv'], new Date(2026, 10, 5)), []);
+  assert.match(porRevisar(['imv'], new Date(2027, 11, 1))[0].motivo, /meses sin revisar/);
+  assert.match(porRevisar(['xec-cangur'], new Date(2027, 5, 2))[0].motivo, /toca mirar/);
+  for (const id of Object.keys(MIRAR_EN)) assert.ok(POR_ID[id], id);
+  for (const [, , id] of VIGILAR) assert.ok(POR_ID[id], id);
+  const resp = { content: [{ descripcion: 'Tarxeta Benvida 2027', nivel1: 'AUTONOMICA', nivel2: 'GALICIA' }, { descripcion: 'Otra', nivel2: 'ARAGÓN' }] };
+  assert.equal(delaRegion(resp, 'GALICIA').length, 1);
+  assert.equal(delaRegion(resp, 'ARAGON').length, 1, 'sin tildes');
+  assert.equal(delaRegion({}, 'GALICIA').length, 0);
+  assert.equal(smiDelTexto('el salario mínimo queda fijado en 1.260,50 euros/mes'), 1260.5);
+  assert.equal(smiDelTexto('sin cifras'), null);
+});
