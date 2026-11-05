@@ -44,6 +44,12 @@ export const TELEFONOS = {
   andalucia: { numero: '955 012 012', texto: 'Junta de Andalucía', cuando: 'Información de sus ayudas. También el 012.' },
   cataluna: { numero: '012', texto: 'Generalitat de Catalunya', cuando: 'Gratis. Para pedir cita, dudas y ver cómo va tu trámite.', gratis: true },
   valencia: { numero: '012', texto: 'Generalitat Valenciana', cuando: 'Información de sus ayudas.' },
+  balearesDependencia: { numero: '971 177 200', texto: 'Govern balear: dependencia y discapacidad', cuando: 'Dirección General de Atención a la Dependencia.' },
+  canal: { numero: '900 365 365', texto: 'Canal de Isabel II', cuando: 'Gratis. Atención comercial en días laborables de 8:30 a 20:00; averías, a cualquier hora.', gratis: true },
+  baleares: { numero: '012', texto: 'Govern de les Illes Balears', cuando: 'De lunes a viernes de 8 a 20 h y sábados de 9 a 14 h. Desde fuera de Baleares: 971 22 57 91.' },
+  galicia: { numero: '012', texto: 'Xunta de Galicia', cuando: 'Información de sus ayudas y trámites.' },
+  castillaMancha: { numero: '012', texto: 'Junta de Castilla-La Mancha', cuando: 'Información de sus ayudas y trámites.' },
+  castillaLeon: { numero: '012', texto: 'Junta de Castilla y León', cuando: 'Información de sus ayudas y trámites.' },
   linea010: { numero: '010', texto: 'Ayuntamiento de Madrid (Línea Madrid)', cuando: 'Desde fuera de Madrid: 91 480 00 10.' },
   mayoresMadrid: { numero: '900 111 065', texto: 'Línea para mayores de 65 (Ayuntamiento de Madrid)', cuando: 'Gratis, las 24 horas. Información y trámites sin salir de casa.', gratis: true },
 };

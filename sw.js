@@ -2,14 +2,14 @@
 // Páginas, estilos y scripts: primero la red (así nunca se mezclan versiones); sin conexión, lo último guardado.
 // Fuente e imágenes: lo guardado, y se actualiza en segundo plano.
 
-const VERSION = 'ayudas-v3';
+const VERSION = 'ayudas-v4';
 const BASICOS = [
   './', 'mayores/', 'catalogo/', 'mapa/', 'fuentes/',
   'assets/css/estilos.css',
   'assets/js/comun.js', 'assets/js/portada.js', 'assets/js/mayores.js', 'assets/js/catalogo.js', 'assets/js/fuentes.js',
   'assets/js/reglas.js', 'assets/js/ayudas.js', 'assets/js/tramites.js', 'assets/js/guia.js', 'assets/js/cifras.js',
   'assets/js/formato.js', 'assets/js/iconos.js', 'assets/js/tarjeta.js', 'assets/js/evolucion.js', 'assets/js/compartir.js', 'assets/js/ejemplos.js',
-  'assets/js/mapa.js', 'assets/js/mapa-datos.js', 'assets/js/panel-ccaa.js', 'assets/js/comunidades.js', 'assets/js/recordatorios.js', 'assets/js/enlace.js',
+  'assets/js/mapa.js', 'assets/js/mapa-datos.js', 'assets/js/panel-ccaa.js', 'assets/js/comunidades.js', 'assets/js/recordatorios.js', 'assets/js/enlace.js', 'assets/js/ccaa-tramites.js', 'assets/js/deducciones.js',
   'assets/img/favicon.svg', 'manifest.webmanifest',
 ];
 

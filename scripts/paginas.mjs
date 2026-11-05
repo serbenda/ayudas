@@ -8,6 +8,8 @@ import { tramiteDe } from '../assets/js/tramites.js';
 import { tarjeta, esc } from '../assets/js/tarjeta.js';
 import { RENTA_CCAA } from '../assets/js/comunidades.js';
 import { panelDe } from '../assets/js/panel-ccaa.js';
+import { IDIOMAS, FRASE } from './idiomas.mjs';
+import { icono } from '../assets/js/iconos.js';
 
 const SALIDA = process.argv[2] ?? '_site';
 const WEB = 'https://ayudas.bendi.dev';
@@ -34,7 +36,7 @@ const preguntas = (lista) => ({
 });
 const migas = (pasos) => `<nav class="migas" aria-label="Estás en"><ol>${pasos.map(([t, u]) => (u ? `<li><a href="${u}">${esc(t)}</a></li>` : `<li aria-current="page">${esc(t)}</li>`)).join('')}</ol></nav>`;
 
-const rutas = ['/', '/mayores/', '/catalogo/', '/mapa/', '/entidades/', '/fuentes/', '/comunidad/'];
+const rutas = ['/', '/mayores/', '/catalogo/', '/mapa/', '/entidades/', '/fuentes/', '/comunidad/', ...Object.keys(IDIOMAS).map((c) => `/${c}/`)];
 
 for (const a of AYUDAS) {
   const t = tramiteDe(a.id, null);
@@ -95,6 +97,55 @@ pagina({
       <ul class="lista-comunidades">${COMUNIDADES.filter((c) => RENTA_CCAA[c.id]).map((c) => `<li><a href="/comunidad/${c.id}/">${esc(c.nombre)}</a><span>${esc(RENTA_CCAA[c.id].nombre)}</span></li>`).join('')}</ul>
     </section>`,
 });
+
+
+// Guías en otros idiomas: misma cabecera con los textos traducidos, lang y dir (árabe de derecha a izquierda)
+const TELEFONOS_HOY = [['112', '112'], ['016', '016'], ['024', '024'], ['900 107 917', 'cruz']];
+for (const [codigo, t] of Object.entries(IDIOMAS)) {
+  let html = plantilla
+    .replace('<html lang="es">', `<html lang="${t.lang}" dir="${t.dir}">`)
+    .replace(/<title>.*?<\/title>/, `<title>${esc(t.titulo)} · ayudas</title>`)
+    .replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${esc(t.descripcion)}">`)
+    .replace(/<link rel="canonical" href=".*?">/, `<link rel="canonical" href="${WEB}/${codigo}/">\n${Object.values(IDIOMAS).map((o) => `  <link rel="alternate" hreflang="${o.lang}" href="${WEB}/${o.lang}/">`).join('\n')}\n  <link rel="alternate" hreflang="es" href="${WEB}/">`)
+    .replace('<span>Tus ayudas</span>', `<span>${esc(t.nav.inicio)}</span>`)
+    .replace('<span>Mayores</span>', `<span>${esc(t.nav.mayores)}</span>`)
+    .replace('<span>Todas las ayudas</span>', `<span>${esc(t.nav.catalogo)}</span>`)
+    .replace('<span>Mapa</span>', `<span>${esc(t.nav.mapa)}</span>`)
+    .replace('<span>Fuentes</span>', `<span>${esc(t.nav.fuentes)}</span>`)
+    .replace(/<div class="envoltorio barra">[\s\S]*?<\/div>\n/, '')
+    .replace(/<footer class="envoltorio pie">[\s\S]*?<\/footer>/, `<footer class="envoltorio pie" lang="${t.lang}">
+    <p>${esc(t.nota)} <a href="/fuentes/#t-error">${esc(t.aviso)}</a>.</p>
+    <p lang="es">${otrosIdiomas(codigo)}</p>
+  </footer>`)
+    .replace(/<main class="envoltorio">[\s\S]*?<\/main>/, `<main class="envoltorio guia-idioma">
+    <section aria-labelledby="titular">
+      <h1 class="titular titular-ficha" id="titular">${esc(t.titulo)}</h1>
+      <p class="entradilla">${esc(t.entradilla)}</p>
+      <section class="ayuda-hoy" aria-labelledby="t-hoy">
+        <h2 id="t-hoy">${esc(t.hoy)}</h2>
+        <div class="llamadas">${TELEFONOS_HOY.map(([n, k]) => `<a class="llamar" href="tel:${n.replace(/\s/g, '')}"><span class="llamar-icono">${icono('telefono')}</span><span><strong dir="ltr">${n}</strong><small>${esc(t.tel[k])}</small></span></a>`).join('')}</div>
+      </section>
+      <h2 class="seccion-titulo">${esc(t.pasosTitulo)}</h2>
+      <ol class="pasos-tramite">${t.pasos.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
+      <h2 class="seccion-titulo">${esc(t.ayudasTitulo)}</h2>
+      <dl class="guia-ayudas">${t.ayudas.map(([n, x]) => `<div><dt lang="es" dir="ltr">${esc(n)}</dt><dd>${esc(x)}</dd></div>`).join('')}</dl>
+      <h2 class="seccion-titulo">${esc(t.frase)}</h2>
+      <p class="frase-ventanilla" lang="es" dir="ltr">${esc(FRASE)}</p>
+      <p>${esc(t.usar)}</p>
+      <p class="ficha-acciones"><a class="boton" href="/" hreflang="es">${esc(t.boton)}</a> <a class="boton secundario" href="/mapa/" hreflang="es">${esc(t.mapa)}</a></p>
+    </section>
+  </main>`);
+  const carpeta = join(SALIDA, codigo);
+  mkdirSync(carpeta, { recursive: true });
+  writeFileSync(join(carpeta, 'index.html'), html);
+}
+
+function otrosIdiomas(actual) {
+  return [['es', 'Español', '/'], ...Object.entries(IDIOMAS).map(([c, o]) => [c, o.nombre, `/${c}/`])]
+    .filter(([c]) => c !== actual)
+    .map(([c, n, u]) => `<a href="${u}" hreflang="${c}" lang="${c}">${esc(n)}</a>`)
+    .join(' · ');
+}
 
 writeFileSync(join(SALIDA, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

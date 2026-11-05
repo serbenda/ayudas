@@ -783,3 +783,13 @@ section + .empezar { margin-top: 1.75rem; }
 .entidades-opciones li { background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio); padding: 1rem 1.1rem; }
 .entidades-opciones h3 { margin: 0 0 0.4rem; font-size: 1.15rem; }
 .entidades-vista { width: 100%; border: 1px solid var(--linea); border-radius: var(--radio); height: 34rem; background: var(--papel); }
+
+/* Guías en otros idiomas */
+.guia-ayudas { display: grid; gap: 0.75rem; margin: 0; }
+.guia-ayudas div { background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio); padding: 0.9rem 1.1rem; }
+.guia-ayudas dt { font-weight: 700; font-size: 1.1rem; }
+.guia-ayudas dd { margin: 0.3rem 0 0; }
+[dir='rtl'] .guia-ayudas dt { text-align: right; }
+.frase-ventanilla { font-size: 1.35rem; font-weight: 600; line-height: 1.45; background: var(--acento-suave); border-left: 5px solid var(--acento); border-radius: var(--radio); padding: 1rem 1.2rem; max-width: var(--medida); }
+[dir='rtl'] .frase-ventanilla { text-align: left; }
+.idiomas-pie a { white-space: nowrap; }

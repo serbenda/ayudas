@@ -65,3 +65,42 @@ test('enlace con respuestas: ida y vuelta, y rechaza lo raro', () => {
   assert.equal(deEnlace(aEnlace({ a: 1 }).slice(0, 3)), null);
   assert.deepEqual(deEnlace(Buffer.from(JSON.stringify({ '<x>': 'y', ok: { a: 1 } })).toString('base64url')), {});
 });
+
+test('cada comunidad tiene cuánto da su renta, sus deducciones y quién valora la dependencia', async () => {
+  const { cuantiaRenta } = await import('../assets/js/comunidades.js');
+  const { deduccionesDe } = await import('../assets/js/deducciones.js');
+  for (const c of COMUNIDADES) {
+    assert.match(cuantiaRenta(c.id) ?? '', /Hasta [\d.,]+ € al mes/, `cuantía de ${c.id}`);
+    if (!['ceuta', 'melilla'].includes(c.id)) assert.ok(deduccionesDe(c.id), `deducciones de ${c.id}`);
+    if (c.id !== 'madrid') {
+      assert.notDeepEqual(tramiteDe('dependencia-valoracion', c.id).pasos, tramiteDe('dependencia-valoracion', null).pasos, `dependencia en ${c.id}`);
+      assert.notDeepEqual(tramiteDe('certificado-discapacidad', c.id).pasos, tramiteDe('certificado-discapacidad', null).pasos, `discapacidad en ${c.id}`);
+    }
+  }
+  assert.ok(deduccionesDe('navarra').foral);
+  assert.ok(tramiteDe('renta-minima', 'galicia').telefonos.includes('galicia'));
+});
+
+test('ayudas de grandes ciudades: solo si vives allí', () => {
+  const hijos = { hijos: { menor3: 0, de3a5: 1, de6a17: 0 } };
+  assert.ok(ids({ ccaa: 'cataluna', ciudad: 'barcelona', ...hijos }).includes('fons-infancia-barcelona'));
+  assert.ok(!ids({ ccaa: 'cataluna', ciudad: null, ...hijos }).includes('fons-infancia-barcelona'));
+  assert.ok(ids({ ccaa: 'valencia', ciudad: 'valencia', bebe: true }).includes('natalidad-valencia'));
+  assert.ok(ids({ ccaa: 'aragon', ciudad: 'zaragoza', situacion: 'paro-sin' }).includes('urgencia-zaragoza'));
+  assert.ok(ids({ ccaa: 'andalucia', ciudad: 'malaga', ...hijos }).includes('nos-cuidamos-malaga'));
+  assert.ok(ids({ ccaa: 'pais-vasco', situacion: 'paro-sin' }).includes('aes-euskadi'));
+  assert.ok(!ids({ ccaa: 'galicia', situacion: 'paro-sin' }).includes('aes-euskadi'));
+});
+
+test('guías en otros idiomas: completas y con los mismos apartados', async () => {
+  const { IDIOMAS } = await import('../scripts/idiomas.mjs');
+  const claves = Object.keys(IDIOMAS.en).sort();
+  for (const [codigo, t] of Object.entries(IDIOMAS)) {
+    assert.deepEqual(Object.keys(t).sort(), claves, codigo);
+    assert.equal(t.pasos.length, 3, codigo);
+    assert.ok(t.ayudas.length >= 9, codigo);
+    for (const k of ['112', '016', '024', 'cruz']) assert.ok(t.tel[k], `${codigo} ${k}`);
+    assert.ok(!/undefined|NaN/.test(JSON.stringify(t)), codigo);
+  }
+  assert.equal(IDIOMAS.ar.dir, 'rtl');
+});

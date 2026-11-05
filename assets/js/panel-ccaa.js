@@ -1,7 +1,7 @@
 // Lo que se ve al elegir una comunidad: en el mapa y en la página propia de cada comunidad
 
 import { COMUNIDADES } from './ayudas.js';
-import { RENTA_CCAA, ayudasDe } from './comunidades.js';
+import { RENTA_CCAA, ayudasDe, cuantiaRenta } from './comunidades.js';
 import { tarjeta, esc } from './tarjeta.js';
 
 export const nombreDe = (id) => COMUNIDADES.find((c) => c.id === id)?.nombre ?? id;
@@ -15,6 +15,7 @@ export function panelDe(id, { titulo = true } = {}) {
     <div class="ccaa-renta">
       <p class="ccaa-etiqueta">Aquí la renta mínima se llama</p>
       <p class="ccaa-nombre">${esc(r.nombre)}</p>
+      ${cuantiaRenta(id) ? `<p class="ccaa-cuantia">${esc(cuantiaRenta(id))} Se cobra la diferencia con lo que ya entra en casa.</p>` : ''}
       ${r.nota ? `<p>${esc(r.nota)}</p>` : ''}
       <p><a href="${r.sede}" rel="noopener">Web oficial de ${esc(nombreDe(id))}</a> · <a href="/comunidad/${id}/">Página de ${esc(nombreDe(id))}</a></p>
     </div>

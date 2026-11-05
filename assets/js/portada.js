@@ -2,6 +2,7 @@
 // Nada se envía: las respuestas solo viven en esta página (y en el navegador si marcas «recordar»).
 
 import { evaluar, perfilVacio, totalHijos, porDondeEmpezar, dineroEstimado } from './reglas.js';
+import { CIUDADES } from './comunidades.js';
 import { euros } from './formato.js';
 import { AYUDAS, POR_ID, CATEGORIAS, COMUNIDADES } from './ayudas.js';
 import { papelesPara, tramiteDe } from './tramites.js';
@@ -143,6 +144,7 @@ export function leerPerfil() {
   p.edad = valor('edad') === '' ? null : entero('edad', null);
   p.ccaa = valor('ccaa') || null;
   p.madridCapital = p.ccaa === 'madrid' ? siNo('madridCapital') : null;
+  p.ciudad = CIUDADES[p.ccaa] && siNo('enCiudad') ? CIUDADES[p.ccaa].id : null;
   p.residencia = radio('residencia') || null;
   p.situacion = radio('situacion');
   p.emprender = form.emprender.checked;
@@ -193,6 +195,7 @@ function actualizarCondiciones() {
   const pideCotizado = (enParo && (p.edad ?? 0) >= 50) || (p.pension === 'no' && (p.edad ?? 0) >= 58);
   const reglas = {
     madrid: p.ccaa === 'madrid',
+    ciudad: Boolean(CIUDADES[p.ccaa]),
     monoparental: !p.pareja && n > 0,
     'familia-numerosa': n >= 2 || (n >= 1 && p.bebe),
     'ingresos-propios': p.adultos > 1 || p.pareja,
@@ -203,6 +206,7 @@ function actualizarCondiciones() {
     'nada-paso5': p.pension === 'no' && !enParo && !pideCotizado,
   };
   for (const el of form.querySelectorAll('[data-si]')) el.hidden = !reglas[el.dataset.si];
+  if (CIUDADES[p.ccaa]) document.getElementById('nombre-ciudad').textContent = `la ciudad de ${CIUDADES[p.ccaa].nombre}`;
   // Una persona sola con hijos: casi siempre es monoparental (se puede desmarcar)
   if (reglas.monoparental && !monoparentalTocado && radio('pareja') === 'no' && p.adultos === 1) form.monoparental.checked = true;
 }

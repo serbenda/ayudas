@@ -6,6 +6,9 @@
 // plazo:    cuándo se pide · respuesta: cuánto tardan y qué hacer si dicen que no
 // ojo:      avisos importantes (orden, compatibilidades)
 // Revisado en noviembre de 2026 con las sedes oficiales (Seguridad Social, SEPE, Comunidad y Ayuntamiento de Madrid).
+import { VALORACION_CCAA, INFO_CCAA, pasosDependencia, pasosDiscapacidad } from './ccaa-tramites.js';
+import { AYUDAS_DE_LA_COMUNIDAD } from './comunidades.js';
+
 
 const SIN_INTERNET = 'Si no te manejas con internet, pide ayuda en los servicios sociales de tu ayuntamiento. Te ayudan gratis.';
 const RECLAMAR_SS = 'Si te dicen que no y crees que sí te toca, presenta una «reclamación previa» en la Seguridad Social. Tienes 30 días.';
@@ -475,10 +478,11 @@ export const TRAMITES = {
   'agua-canal': {
     facil: ['Descuento en el recibo del agua en la Comunidad de Madrid.', 'Para hogares vulnerables, familias numerosas o casas con muchas personas.'],
     pasos: [
-      'Llama a Canal de Isabel II (el teléfono está en tu recibo) o entra en su oficina virtual, en «Tarifas y bonificaciones».',
+      'Llama gratis a Canal de Isabel II, 900 365 365, o entra en su oficina virtual, en «Tarifas y bonificaciones».',
       'Di qué bonificación pides: exención social, familia numerosa o vivienda con muchas personas.',
       'Para la exención social te piden el IMV o un informe de servicios sociales.',
     ],
+    telefonos: ['canal'],
     documentos: ['dni', 'padron', 'tituloFN', 'informeSocial'],
     plazo: 'Cuando quieras. Se renueva cada cierto tiempo.',
     respuesta: 'Te avisan en el recibo.',
@@ -707,7 +711,7 @@ export const TRAMITES = {
     ],
     telefonos: ['citaSepe', 'sepe'],
     documentos: ['dni', 'demanda', 'ingresos', 'iban'],
-    plazo: 'Dentro de los 12 meses desde que volviste. Si pasa ese plazo, lo pierdes.',
+    plazo: 'Cuanto antes después de volver: el plazo es corto. Al apuntarte como demandante, pregunta en el SEPE la fecha límite de tu caso.',
     respuesta: 'Te contestan por carta o en tu área personal del SEPE. Si es «no», puedes reclamar en 30 días.',
     ojo: ['Si trabajaste en la Unión Europea o en Suiza, pide allí el formulario U1: ese tiempo cuenta para el paro normal en España.'],
   },
@@ -739,16 +743,102 @@ export const TRAMITES = {
     respuesta: 'Si te dicen que no, puedes reclamar al servicio de salud de tu comunidad.',
     ojo: ['Cada producto tiene una vida mínima: no se renueva antes de ese tiempo salvo que cambie tu situación.'],
   },
+  'aes-euskadi': {
+    facil: ['Ayuda para un gasto que no puedes pagar.', 'Se pide en los servicios sociales de tu ayuntamiento.'],
+    pasos: [
+      'Pide cita en los servicios sociales de tu ayuntamiento.',
+      'Explica qué gasto no puedes pagar: alquiler, luz, comida, una deuda, un mueble o un arreglo.',
+      'Lleva el padrón, tus ingresos y la factura o el presupuesto del gasto.',
+      'La trabajadora social te ayuda a rellenar la solicitud.',
+    ],
+    telefonos: [],
+    documentos: ['dni', 'padron', 'ingresos', 'extractos', 'iban'],
+    plazo: 'Durante el año, mientras el ayuntamiento tenga dinero para estas ayudas. Pídela pronto.',
+    respuesta: 'Te contesta el ayuntamiento. Si es «no», puedes recurrir.',
+    ojo: ['Si cobras la RGI o el IMV también puedes pedirla.'],
+  },
+  'fons-infancia-barcelona': {
+    facil: ['Dinero para familias con hijos e ingresos bajos en Barcelona.', 'Se pide una vez al año.'],
+    pasos: [
+      'Si no lo eres ya, hazte usuario de tu Centro de Servicios Sociales: pide cita en el 010.',
+      'Espera a que abra la convocatoria (en 2026 fue del 13 de mayo al 22 de junio).',
+      'Pídela en la Oficina Virtual de Trámites del Ayuntamiento (ajuntament.barcelona.cat) o con ayuda en tu centro de servicios sociales.',
+      'Si la custodia es compartida, cada progenitor cobra la mitad.',
+    ],
+    telefonos: [],
+    documentos: ['dni', 'padron', 'libroFamilia', 'ingresos', 'iban'],
+    plazo: 'Una vez al año, en el plazo de la convocatoria.',
+    respuesta: 'Te avisan por la Oficina Virtual o por carta.',
+  },
+  'natalidad-valencia': {
+    facil: ['400 € por cada bebé si vives en València.', 'Pídela en los 2 meses después del nacimiento.'],
+    pasos: [
+      'Empadrona al bebé en València.',
+      'Pide la ayuda en la sede electrónica del Ayuntamiento (sede.valencia.es), trámite PA.AY.15.',
+      'Si tienes dudas, llama al 963 539 935 o escribe a ayudasnatalidad@valencia.es con un teléfono de contacto.',
+    ],
+    telefonos: [],
+    documentos: ['dni', 'padron', 'libroFamilia', 'iban'],
+    plazo: 'En los 2 meses siguientes al nacimiento, la adopción o el acogimiento. Convocatoria de 2026: hasta el 1 de marzo de 2027.',
+    respuesta: 'Te avisan por la sede electrónica.',
+  },
+  'urgencia-zaragoza': {
+    facil: ['Ayuda puntual del Ayuntamiento de Zaragoza.', 'Para comida, alquiler, luz o cosas del colegio.'],
+    pasos: [
+      'Pide cita en tu centro municipal de servicios sociales: llama al 010 (976 721 100 desde fuera de Zaragoza).',
+      'Cuenta a la trabajadora social qué necesitáis.',
+      'Lleva el padrón, tus ingresos y las facturas o recibos del gasto.',
+    ],
+    telefonos: [],
+    documentos: ['dni', 'padron', 'ingresos', 'iban'],
+    plazo: 'Cuando lo necesites.',
+    respuesta: 'Si es urgente, te la dan en poco tiempo.',
+  },
+  'nos-cuidamos-malaga': {
+    facil: ['Alguien cuida gratis a tus hijos en casa unas horas.', 'Para que puedas trabajar, formarte o ir a una cita.'],
+    pasos: [
+      'Espera a que abra la edición del año (en 2026, se pudo pedir desde el 11 de junio).',
+      'Pídelo en sede.malaga.eu (trámites de Igualdad) o en malagaciudadcorresponsable.eu.',
+      'También en persona, en las oficinas municipales de atención a la ciudadanía (OMAC).',
+      'Hace falta el permiso de los dos progenitores o tutores.',
+    ],
+    telefonos: [],
+    documentos: ['dni', 'padron', 'libroFamilia', 'ingresos'],
+    plazo: 'Mientras esté abierta la edición y queden horas.',
+    respuesta: 'Te llama el Ayuntamiento para organizar las horas.',
+  },
 };
 
 /** El trámite de una ayuda para tu comunidad (en Madrid, los pasos y teléfonos de Madrid si los hay) */
+// Dependencia y discapacidad: pasos de cada comunidad a partir de quién valora y dónde se empieza
+for (const [ccaa, v] of Object.entries(VALORACION_CCAA)) {
+  for (const [id, clave, pasos] of [['dependencia-valoracion', 'dependencia', pasosDependencia], ['certificado-discapacidad', 'discapacidad', pasosDiscapacidad]]) {
+    if (!v[clave]) continue;
+    const t = TRAMITES[id];
+    t.pasosCcaa ??= {};
+    t.pasosCcaa[ccaa] ??= pasos(v[clave]);
+    if (v[clave].telefono) {
+      t.telefonosCcaa ??= {};
+      t.telefonosCcaa[ccaa] ??= [v[clave].telefono];
+    }
+  }
+}
+
+// En las ayudas que tramita la comunidad, su teléfono de información va primero
+const DE_LA_COMUNIDAD = new Set(AYUDAS_DE_LA_COMUNIDAD);
+function telefonosDe(id, t, ccaa) {
+  const propios = t.telefonosCcaa?.[ccaa] || (ccaa === 'madrid' && t.telefonosMadrid) || t.telefonos || [];
+  const info = DE_LA_COMUNIDAD.has(id) && INFO_CCAA[ccaa];
+  return info ? [...new Set([info, ...propios])] : propios;
+}
+
 export function tramiteDe(id, ccaa) {
   const t = TRAMITES[id] ?? { facil: [], pasos: [], documentos: [] };
   const madrid = ccaa === 'madrid';
   return {
     ...t,
     pasos: t.pasosCcaa?.[ccaa] || (madrid && t.pasosMadrid) || t.pasos || [],
-    telefonos: t.telefonosCcaa?.[ccaa] || (madrid && t.telefonosMadrid) || t.telefonos || [],
+    telefonos: telefonosDe(id, t, ccaa),
     documentos: t.documentosCcaa?.[ccaa] || t.documentos || [],
     respuesta: t.respuestaCcaa?.[ccaa] || t.respuesta,
     pasosAntes: SIN_INTERNET,
