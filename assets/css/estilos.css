@@ -557,7 +557,7 @@ section + .empezar { margin-top: 1.75rem; }
 }
 
 /* ── Portada más cálida: héroe con ilustración, confianza y temas ───── */
-:root { --calido: #f6d7b8; --calido-fuerte: #c8692b; --s-smi: #2a78d6; --s-pnc: #eb6834; --s-imv: #1baf7a; --s-iprem: #eda100; }
+:root { --calido: #f6d7b8; --calido-fuerte: #a14e16; --s-smi: #2a78d6; --s-pnc: #eb6834; --s-imv: #1baf7a; --s-iprem: #eda100; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) { --calido: #4a3322; --calido-fuerte: #e8935a; --s-smi: #3987e5; --s-pnc: #d95926; --s-imv: #199e70; --s-iprem: #c98500; }
 }
