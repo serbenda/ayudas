@@ -5,6 +5,7 @@
 // Cifras de 2026: Andalucía y Canarias (igual que el IMV), Baleares (Govern, desde junio), Navarra (Orden Foral 5/2026) y Madrid (tope del SMI).
 
 import { euros } from './formato.js';
+import { POR_CCAA } from './ayudas-ccaa.js';
 
 export const RENTA_CCAA = {
   andalucia: { importe: 733.6, maximo: 1613.92, anio: 2026, nombre: 'Renta Mínima de Inserción Social (RMISA)', sede: 'https://www.juntadeandalucia.es/', nota: 'No se puede cobrar a la vez que el IMV, salvo en casos urgentes.' },
@@ -61,7 +62,8 @@ export function cuantiaRenta(ccaa) {
 }
 
 export function ayudasDe(ccaa) {
-  const propias = AYUDAS_PROPIAS[ccaa];
+  const base = AYUDAS_PROPIAS[ccaa];
+  const propias = base || POR_CCAA[ccaa] ? { ...base, comunidad: [...(base?.comunidad ?? []), ...(POR_CCAA[ccaa] ?? [])], capital: base?.capital ?? [] } : undefined;
   // En Madrid la RMI propia sustituye a la ficha general de renta mínima
   const comunes = propias?.comunidad.includes('rmi-madrid') ? AYUDAS_DE_LA_COMUNIDAD.filter((id) => id !== 'renta-minima') : AYUDAS_DE_LA_COMUNIDAD;
   return { comunes, propias: propias?.comunidad ?? [], capital: propias?.capital ?? [], nombreCapital: propias?.nombreCapital };

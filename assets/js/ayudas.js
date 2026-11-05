@@ -3,6 +3,7 @@
 
 import { CIFRAS as C } from './cifras.js';
 import { euros, porcentaje } from './formato.js';
+import { AYUDAS_CCAA } from './ayudas-ccaa.js';
 
 export const CATEGORIAS = [
   { id: 'urgente', nombre: 'Si lo necesitas ya', icono: 'urgente' },
@@ -818,6 +819,9 @@ export const AYUDAS = [
     enlace: { texto: 'bonoculturajoven.gob.es', url: 'https://bonoculturajoven.gob.es/' },
   },
 ];
+
+// Ayudas propias de cada comunidad (ayudas-ccaa.js): se añaden al catálogo con su ficha
+for (const { regla, tramite, ccaa, ...ficha } of AYUDAS_CCAA) AYUDAS.push(ficha);
 
 export const POR_ID = Object.fromEntries(AYUDAS.map((a) => [a.id, a]));
 

@@ -8,6 +8,7 @@
 
 import { CIFRAS } from './cifras.js';
 import { RENTA_CCAA } from './comunidades.js';
+import { AYUDAS_CCAA } from './ayudas-ccaa.js';
 import { euros, porcentaje } from './formato.js';
 
 const PENSIONES_CONTRIBUTIVAS = ['jubilacion', 'viudedad', 'incapacidad'];
@@ -790,6 +791,9 @@ const PIDEN_RESIDENCIA = new Set([
   'madrid-natalidad', 'titulo-familia-numerosa', 'pnc-jubilacion', 'pnc-invalidez', 'pnc-alquiler', 'alquiler-joven', 'alquiler-general',
   'vivienda-social-madrid', 'bono-cultural-joven', 'dependencia-valoracion', 'dependencia-prestacion', 'hijo-cargo-discapacidad',
 ]);
+
+// Reglas de las ayudas propias de cada comunidad
+for (const a of AYUDAS_CCAA) REGLAS[a.id] = a.regla;
 
 /** Evalúa todas las reglas. Devuelve los resultados en el orden del catálogo. */
 export function evaluar(perfil) {

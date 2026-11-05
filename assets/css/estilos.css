@@ -860,3 +860,14 @@ button.termino:focus-visible { outline: 3px solid var(--foco); outline-offset: 2
 .palabras dt { font-weight: 700; font-size: 1.1rem; }
 .palabras dd { margin: 0.25rem 0 0; }
 #buscar-palabra { margin-top: 1rem; }
+
+/* Voz e Idioma van juntos: se abren justo debajo de su botón, alineados a su borde derecho */
+.barra-ajustes { display: flex; gap: 0.5rem; }
+@media (min-width: 40.01rem) {
+  .barra-ajustes .ajuste-voz, .barra-ajustes .ajuste-idioma, .barra-guia .ajuste-idioma { position: relative; }
+  .ajuste-voz-panel { right: 0; left: auto; width: 22rem; max-width: calc(100vw - 2rem); }
+  .ajuste-idioma-panel { right: 0; left: auto; width: 14rem; }
+}
+@media (max-width: 40rem) {
+  .barra-ajustes { display: contents; }
+}

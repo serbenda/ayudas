@@ -8,6 +8,7 @@
 // Revisado en noviembre de 2026 con las sedes oficiales (Seguridad Social, SEPE, Comunidad y Ayuntamiento de Madrid).
 import { VALORACION_CCAA, INFO_CCAA, pasosDependencia, pasosDiscapacidad } from './ccaa-tramites.js';
 import { AYUDAS_DE_LA_COMUNIDAD } from './comunidades.js';
+import { AYUDAS_CCAA } from './ayudas-ccaa.js';
 
 
 const SIN_INTERNET = 'Si no te manejas con internet, pide ayuda en los servicios sociales de tu ayuntamiento. Te ayudan gratis.';
@@ -810,6 +811,9 @@ export const TRAMITES = {
 };
 
 /** El trámite de una ayuda para tu comunidad (en Madrid, los pasos y teléfonos de Madrid si los hay) */
+// Ayudas propias de cada comunidad: su trámite viene con la ficha
+for (const a of AYUDAS_CCAA) TRAMITES[a.id] = a.tramite;
+
 // Dependencia y discapacidad: pasos de cada comunidad a partir de quién valora y dónde se empieza
 for (const [ccaa, v] of Object.entries(VALORACION_CCAA)) {
   for (const [id, clave, pasos] of [['dependencia-valoracion', 'dependencia', pasosDependencia], ['certificado-discapacidad', 'discapacidad', pasosDiscapacidad]]) {

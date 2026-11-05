@@ -56,7 +56,7 @@ Es hermana de [hucha](https://github.com/serbenda/hucha) (a dónde va el dinero 
 
 ## Qué ayudas recoge
 
-68 fichas en ocho temas. Cada una explica **cómo se pide paso a paso** (dónde, a quién llamar, qué papeles, cuánto tardan y qué hacer si dicen que no), con los pasos de la Comunidad de Madrid cuando son distintos. Los trámites están en [`assets/js/tramites.js`](assets/js/tramites.js) y los teléfonos, papeles y palabras difíciles en [`assets/js/guia.js`](assets/js/guia.js).
+84 fichas en ocho temas. Cada una explica **cómo se pide paso a paso** (dónde, a quién llamar, qué papeles, cuánto tardan y qué hacer si dicen que no), con los pasos de la Comunidad de Madrid cuando son distintos. Los trámites están en [`assets/js/tramites.js`](assets/js/tramites.js) y los teléfonos, papeles y palabras difíciles en [`assets/js/guia.js`](assets/js/guia.js).
 
 - **Si lo necesitas ya:** emergencia social, comida, violencia de género (016), desahucio, sin hogar, soledad y sanidad sin papeles.
 - **Comunidad y Ayuntamiento de Madrid:** RMI, Tarjeta Familias, agua de Canal de Isabel II, vivienda social, escuelas infantiles gratis, teleasistencia (900 111 065), transporte gratis desde 65 años.
@@ -67,6 +67,7 @@ Es hermana de [hucha](https://github.com/serbenda/hucha) (a dónde va el dinero 
 - **Discapacidad y dependencia:** reconocimiento de la dependencia, prestación por cuidados en el entorno familiar, servicios de la dependencia, cotización gratis para cuidadores, certificado de discapacidad, asignación por hijo a cargo, PNC de invalidez, ventajas fiscales y de aparcamiento.
 - **Vivienda y suministros:** bono social de la luz y térmico, ayuda al alquiler (general y para jóvenes), complemento de alquiler para PNC.
 - **Deducciones en la renta:** maternidad y guardería, familia numerosa, monoparental, familiar con discapacidad, mínimo por discapacidad, deducciones autonómicas.
+- **Ayudas propias de cada comunidad** ([`assets/js/ayudas-ccaa.js`](assets/js/ayudas-ccaa.js)): Tarxeta Benvida (Galicia), ayudas mensuales por hijos (Euskadi), Becas Concilia 0-3 (Asturias), Bono Nacimiento (Castilla y León), natalidad en pueblos (Extremadura), Xec Cangur (Baleares), complemento a la pensión no contributiva (Canarias y Cataluña), tercer hijo y partos múltiples (Andalucía), familias numerosas y monoparentales (Comunitat Valenciana, Castilla-La Mancha y Murcia), natalidad (Cantabria), hijos de 0 a 3 años (Navarra), partos múltiples (Aragón) y Bono Infantil (La Rioja). Cada una con su regla, sus pasos y el plazo de su convocatoria.
 - **Grandes ciudades:** Fondo de Infancia de Barcelona, ayuda por nacimiento de València, ayudas de urgencia de Zaragoza, cuidado de niños gratis en Málaga y Ayudas de Emergencia Social de Euskadi.
 - **Autónomos y emprender:** tarifa plana de 80 €, paro de los autónomos (cese de actividad).
 - **Vuelta a España:** subsidio para emigrantes retornados.

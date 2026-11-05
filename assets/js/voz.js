@@ -129,6 +129,25 @@ export async function hablar(texto, { lang = 'es', boton = null } = {}) {
   });
 }
 
+// Nombre corto y claro: «Mónica · España ★ recomendada» en vez de «Mónica (español (España))»
+const PAISES = typeof Intl !== 'undefined' && Intl.DisplayNames ? new Intl.DisplayNames(['es'], { type: 'region' }) : null;
+export function etiquetaVoz(v, recomendada = false) {
+  const nombre = v.name
+    .replace(/\s*\((?:[^()]|\([^()]*\))*\)\s*$/, '') // «(español (España))», «(Natural)»
+    .replace(/^(Microsoft|Google|Apple)\s+/i, '')
+    .replace(/\s+Online.*$/i, '')
+    .replace(/\s+-\s+.*$/, '')
+    .trim() || v.name;
+  const nombreFinal = /^google/i.test(v.name) ? 'Voz de Google' : nombre;
+  const region = (v.lang ?? '').replace('_', '-').split('-')[1];
+  let pais = '';
+  try {
+    pais = region && PAISES ? PAISES.of(region.toUpperCase()) : '';
+  } catch {}
+  const natural = /natural|neural|premium|mejorada|enhanced/i.test(v.name) ? ' (natural)' : '';
+  return `${nombreFinal}${natural}${pais ? ` · ${pais}` : ''}${recomendada ? ' ★ recomendada' : ''}`.replace(/</g, '&lt;');
+}
+
 /** Rellena el ajuste de voz (si la página lo tiene): lista de voces del idioma, ritmo y «Probar» */
 export async function prepararAjustes() {
   const caja = document.getElementById('ajuste-voz');
@@ -139,10 +158,14 @@ export async function prepararAjustes() {
   }
   const lang = document.documentElement.lang || 'es';
   const select = caja.querySelector('select[name="voz"]');
-  const lista = (await voces()).filter((v) => idioma(v.lang) === idioma(lang)).sort((a, b) => puntuar(b, lang) - puntuar(a, lang));
+  const todas = (await voces()).filter((v) => idioma(v.lang) === idioma(lang)).sort((a, b) => puntuar(b, lang) - puntuar(a, lang));
+  // Fuera las voces de broma o robóticas (Grandma, Rocko, eSpeak…), salvo que no haya otras
+  const buenas = todas.filter((v) => !MALAS.test(v.name));
+  const lista = buenas.length ? buenas : todas;
   const actual = await vozPara(lang);
+  const mejor = lista[0];
   select.innerHTML = lista.length
-    ? lista.map((v) => `<option value="${v.voiceURI.replace(/"/g, '&quot;')}"${v === actual ? ' selected' : ''}>${v.name.replace(/</g, '&lt;')}${puntuar(v, lang) >= 60 ? ' ★' : ''}</option>`).join('')
+    ? lista.map((v) => `<option value="${v.voiceURI.replace(/"/g, '&quot;')}"${v === actual ? ' selected' : ''}>${etiquetaVoz(v, v === mejor)}</option>`).join('')
     : '<option value="">La del aparato</option>';
   select.addEventListener('change', () => {
     try {
