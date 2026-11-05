@@ -112,11 +112,11 @@ Todas las cifras están en un único sitio, [`assets/js/cifras.js`](assets/js/ci
 ## Accesibilidad
 
 - **Letra grande y fácil**, **alto contraste** y **escuchar** (lectura en voz alta) en todas las páginas.
-- **Voz más humana** ([`assets/js/voz.js`](assets/js/voz.js)): elige la mejor voz de cada navegador (Edge: voces «Natural» de Microsoft; iPhone y Mac: «mejoradas» o «premium»; Chrome y Android: Google) y descarta las robóticas. Lee frase a frase, con pausas y sin cortarse en textos largos. El botón «Voz» deja elegir otra y leer más despacio. Las guías se leen en su idioma (inglés, árabe, rumano…) y la frase para la ventanilla, en castellano.
+- **Voz más humana** ([`assets/js/voz.js`](assets/js/voz.js)): elige la mejor voz de cada navegador (Edge: voces «Natural» de Microsoft; iPhone y Mac: «mejoradas» o «premium»; Chrome y Android: Google) y descarta las robóticas. Lee frase a frase, con pausas y sin cortarse en textos largos. El botón «Voz» deja elegir otra y leer más despacio. Las guías se leen en su idioma (catalán, valenciano, gallego, euskera o inglés; si el aparato no tiene esa voz, en castellano) y la frase para la ventanilla, en castellano.
 - Se instala en el móvil como una app y funciona sin conexión.
 - **Enviar a un familiar**: manda solo la lista de ayudas y un enlace con los pasos (`/catalogo/?ver=…`), nunca las respuestas.
 - **Por comunidad:** cuánto da la renta mínima en cada una (cifras del Ministerio de Derechos Sociales y de cada comunidad), quién valora la dependencia y la discapacidad y dónde se empieza, y sus deducciones del IRPF (con cantidades en Andalucía, Cataluña, Galicia y Madrid).
-- **Guías en otros idiomas** (`/ca/`, `/gl/`, `/eu/`, `/en/`, `/ar/`, `/ro/`): por dónde empezar, teléfonos de urgencia, las ayudas principales con su nombre oficial y una frase en castellano para enseñar en la ventanilla. El árabe va de derecha a izquierda.
+- **Guías en otros idiomas** (`/ca/`, `/va/`, `/gl/`, `/eu/` y `/en/`): por dónde empezar, teléfonos de urgencia, las ayudas principales con su nombre oficial y una frase en castellano para enseñar en la ventanilla.
 - Pasos de la renta mínima de las 17 comunidades y de Ceuta y Melilla, y pasos propios de la Comunidad de Madrid, Andalucía, Cataluña y la Comunitat Valenciana en otras ayudas.
 - **Avisos en mi calendario**: descarga un `.ics` con las fechas que no hay que dejar pasar (declaración de la pensión no contributiva, campaña de la renta, convocatoria del alquiler, renovación del bono social).
 - **Guardar en un enlace**: las respuestas van en el enlace después de `#`, que el navegador no envía a ningún servidor.

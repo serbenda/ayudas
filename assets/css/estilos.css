@@ -789,9 +789,7 @@ section + .empezar { margin-top: 1.75rem; }
 .guia-ayudas div { background: var(--superficie); border: 1px solid var(--linea); border-radius: var(--radio); padding: 0.9rem 1.1rem; }
 .guia-ayudas dt { font-weight: 700; font-size: 1.1rem; }
 .guia-ayudas dd { margin: 0.3rem 0 0; }
-[dir='rtl'] .guia-ayudas dt { text-align: right; }
 .frase-ventanilla { font-size: 1.35rem; font-weight: 600; line-height: 1.45; background: var(--acento-suave); border-left: 5px solid var(--acento); border-radius: var(--radio); padding: 1rem 1.2rem; max-width: var(--medida); }
-[dir='rtl'] .frase-ventanilla { text-align: left; }
 .idiomas-pie a { white-space: nowrap; }
 
 /* Ajuste de voz */
